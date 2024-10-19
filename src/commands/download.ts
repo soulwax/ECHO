@@ -158,8 +158,8 @@ export default class DownloadCommand implements Command {
     }
 
     // Filter out special characters and ensure .mp3 extension
-    filename = filename.replace(/[^a-zA-Z0-9_\-\.]/g, '')
-      .replace(/\.mp3+$/, '.mp3');
+    filename = filename.replace(/\.mp3+$/, '.mp3');/*.replace(/[^a-zA-Z0-9_\-\.]/g, '')*/
+      
     if (!filename.endsWith('.mp3')) {
       filename += '.mp3';
     }

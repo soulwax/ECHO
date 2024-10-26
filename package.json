@@ -85,7 +85,7 @@
   "license": "MIT",
   "name": "muse",
   "private": true,
-  "repository": "git@github.com:museofficial/muse.git",
+  "repository": "git@github.com:soulwax/ECHO.git",
   "resolutions": {
     "@types/ws": "8.5.4"
   },
@@ -98,7 +98,7 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "migrations:generate": "npm run prisma:with-env migrate dev",
     "migrations:run": "npm run prisma:with-env migrate deploy",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && yarn build && npm run prisma:generate",
     "prisma:generate": "prisma generate",
     "prisma:with-env": "npm run env:set-database-url prisma",
     "release": "release-it",

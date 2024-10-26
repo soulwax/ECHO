@@ -1,5 +1,32 @@
 {
   "author": "soulwax@github.com",
+  "license": "MIT",
+  "name": "muse",
+  "private": true,
+  "repository": "git@github.com:soulwax/ECHO.git",
+  "type": "module",
+  "types": "dts/types",
+  "version": "2.9.4",
+  "scripts": {
+    "build": "tsc",
+    "cache:clear-key-value": "npm run env:set-database-url tsx src/scripts/cache-clear-key-value.ts",
+    "dev": "npm run env:set-database-url -- tsx watch src/scripts/start.ts",
+    "env:set-database-url": "tsx src/scripts/run-with-database-url.ts",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "migrations:generate": "npm run prisma:with-env migrate dev",
+    "migrations:run": "npm run prisma:with-env migrate deploy",
+    "postinstall": "patch-package && yarn build && npm run prisma:generate",
+    "prisma:generate": "prisma generate",
+    "prisma:with-env": "npm run env:set-database-url prisma",
+    "release": "release-it",
+    "start": "npm run env:set-database-url -- node dist/scripts/migrate-and-start.js",
+    "start:dev": "npm run env:set-database-url -- tsx src/scripts/migrate-and-start.ts",
+    "start:pm2": "pm2 start --name muse yarn -- start",
+    "start:pm2:dev": "pm2 start npm --name=\"my-app\" -- run dev",
+    "test": "npm run lint",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@discordjs/builders": "1.1.0",
     "@discordjs/opus": "^0.8.0",
@@ -82,34 +109,7 @@
       "pre-commit": "npm test"
     }
   },
-  "license": "MIT",
-  "name": "muse",
-  "private": true,
-  "repository": "git@github.com:soulwax/ECHO.git",
   "resolutions": {
     "@types/ws": "8.5.4"
-  },
-  "scripts": {
-    "build": "tsc",
-    "cache:clear-key-value": "npm run env:set-database-url tsx src/scripts/cache-clear-key-value.ts",
-    "dev": "npm run env:set-database-url -- tsx watch src/scripts/start.ts",
-    "env:set-database-url": "tsx src/scripts/run-with-database-url.ts",
-    "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "migrations:generate": "npm run prisma:with-env migrate dev",
-    "migrations:run": "npm run prisma:with-env migrate deploy",
-    "postinstall": "patch-package && yarn build && npm run prisma:generate",
-    "prisma:generate": "prisma generate",
-    "prisma:with-env": "npm run env:set-database-url prisma",
-    "release": "release-it",
-    "start": "npm run env:set-database-url -- node dist/scripts/migrate-and-start.js",
-    "start:dev": "npm run env:set-database-url -- tsx src/scripts/migrate-and-start.ts",
-    "start:pm2": "pm2 start --name muse yarn -- start",
-    "start:pm2:dev": "pm2 start --name muse yarn -- run dev",
-    "test": "npm run lint",
-    "typecheck": "tsc --noEmit"
-  },
-  "type": "module",
-  "types": "dts/types",
-  "version": "2.9.4"
+  }
 }

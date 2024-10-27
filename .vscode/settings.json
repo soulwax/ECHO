@@ -1,0 +1,26 @@
+{
+    "peacock.remoteColor": "#1F4F4F",
+    "workbench.colorCustomizations": {
+      "activityBar.activeBackground": "#2d7474",
+      "activityBar.background": "#2d7474",
+      "statusBar.background": "#1f4f4f",
+      "statusBarItem.hoverBackground": "#2d7474",
+      "statusBarItem.remoteBackground": "#1f4f4f",
+      "statusBar.debuggingBackground": "#4f1f1f",
+      "sash.hoverBorder": "#2d7474",
+      "titleBar.activeBackground": "#1f4f4f",
+      "titleBar.inactiveBackground": "#1f4f4f99",
+      "activityBar.foreground": "#e7e7e7",
+      "activityBar.inactiveForeground": "#e7e7e799",
+      "activityBarBadge.background": "#5c245c",
+      "activityBarBadge.foreground": "#e7e7e7",
+      "commandCenter.border": "#e7e7e799",
+      "statusBar.debuggingForeground": "#e7e7e7",
+      "statusBar.foreground": "#e7e7e7",
+      "statusBarItem.remoteForeground": "#e7e7e7",
+      "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#4CAF50",
+    "angular.log": "verbose"
+}

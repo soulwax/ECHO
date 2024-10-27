@@ -1,5 +1,3 @@
-// File: src/utils/duration-string-to-seconds.ts
-
 import parse from 'parse-duration';
 
 /**
@@ -8,16 +6,16 @@ import parse from 'parse-duration';
  * @returns seconds
  */
 const durationStringToSeconds = (str: string) => {
-  let seconds;
-  const isInputSeconds = Boolean(/\d+$/.exec(str));
+	let seconds;
+	const isInputSeconds = Boolean(/\d+$/.exec(str));
 
-  if (isInputSeconds) {
-    seconds = Number.parseInt(str, 10);
-  } else {
-    seconds = parse(str) / 1000;
-  }
+	if (isInputSeconds) {
+		seconds = Number.parseInt(str, 10);
+	} else {
+		seconds = parse(str) / 1000;
+	}
 
-  return seconds;
+	return seconds;
 };
 
 export default durationStringToSeconds;

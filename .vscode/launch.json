@@ -1,15 +1,43 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+  // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+  // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    // Main command for vscode to start the application and debug it.
     {
-      "name": "Attach to Process",
-      "port": 9230,
+      "name": "Launch Debugging",
+      "request": "launch",
+      "args": ["run", "dev"],
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    },
+    // Launch this if you already have `npm run dev` running but the debugger hasn't attached itself yet.
+    {
+      "name": "Attach to Process (via Port)",
+      "port": 9331,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "type": "node"
+    },
+    // Once this is launched, it will keep the process alive even if you close vscode.
+    // Useful for production environments.
+    {
+      "name": "Launch Application in PM2",
+      "command": "npm run pm2",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    // This is the least useful command but I added it for completness' sake.
+    // It launches the compiled javascript version of the project found in the `dist` folder.
+    // the dist folder will only appear when you compile the project with `npm run build`.
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Distribution",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/dist/app.js"
     }
   ]
 }

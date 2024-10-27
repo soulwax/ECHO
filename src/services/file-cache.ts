@@ -1,5 +1,3 @@
-// File: src/services/file-cache.ts
-
 import {promises as fs, createWriteStream} from 'fs';
 import path from 'path';
 import {inject, injectable} from 'inversify';
@@ -16,7 +14,7 @@ export default class FileCacheProvider {
   private readonly config: Config;
 
   constructor(@inject(TYPES.Config) config: Config) {
-    this.config = config;
+  	this.config = config;
   }
 
   /**
@@ -25,40 +23,40 @@ export default class FileCacheProvider {
    * @param hash lookup key
    */
   async getPathFor(hash: string): Promise<string | null> {
-    const model = await prisma.fileCache.findUnique({
-      where: {
-        hash,
-      },
-    });
+  	const model = await prisma.fileCache.findUnique({
+  		where: {
+  			hash,
+  		},
+  	});
 
-    if (!model) {
-      return null;
-    }
+  	if (!model) {
+  		return null;
+  	}
 
-    const resolvedPath = path.join(this.config.CACHE_DIR, hash);
+  	const resolvedPath = path.join(this.config.CACHE_DIR, hash);
 
-    try {
-      await fs.access(resolvedPath);
-    } catch (_: unknown) {
-      await prisma.fileCache.delete({
-        where: {
-          hash,
-        },
-      });
+  	try {
+  		await fs.access(resolvedPath);
+  	} catch (_: unknown) {
+  		await prisma.fileCache.delete({
+  			where: {
+  				hash,
+  			},
+  		});
 
-      return null;
-    }
+  		return null;
+  	}
 
-    await prisma.fileCache.update({
-      where: {
-        hash,
-      },
-      data: {
-        accessedAt: new Date(),
-      },
-    });
+  	await prisma.fileCache.update({
+  		where: {
+  			hash,
+  		},
+  		data: {
+  			accessedAt: new Date(),
+  		},
+  	});
 
-    return resolvedPath;
+  	return resolvedPath;
   }
 
   /**
@@ -68,31 +66,31 @@ export default class FileCacheProvider {
    * @param hash lookup key
    */
   createWriteStream(hash: string) {
-    const tmpPath = path.join(this.config.CACHE_DIR, 'tmp', hash);
-    const finalPath = path.join(this.config.CACHE_DIR, hash);
+  	const tmpPath = path.join(this.config.CACHE_DIR, 'tmp', hash);
+  	const finalPath = path.join(this.config.CACHE_DIR, hash);
 
-    const stream = createWriteStream(tmpPath);
+  	const stream = createWriteStream(tmpPath);
 
-    stream.on('close', async () => {
-      // Only move if size is non-zero (may have errored out)
-      const stats = await fs.stat(tmpPath);
+  	stream.on('close', async () => {
+  		// Only move if size is non-zero (may have errored out)
+  		const stats = await fs.stat(tmpPath);
 
-      if (stats.size !== 0) {
-        await fs.rename(tmpPath, finalPath);
+  		if (stats.size !== 0) {
+  			await fs.rename(tmpPath, finalPath);
 
-        await prisma.fileCache.create({
-          data: {
-            hash,
-            accessedAt: new Date(),
-            bytes: stats.size,
-          },
-        });
-      }
+  			await prisma.fileCache.create({
+  				data: {
+  					hash,
+  					accessedAt: new Date(),
+  					bytes: stats.size,
+  				},
+  			});
+  		}
 
-      await this.evictOldestIfNecessary();
-    });
+  		await this.evictOldestIfNecessary();
+  	});
 
-    return stream;
+  	return stream;
   }
 
   /**
@@ -101,85 +99,85 @@ export default class FileCacheProvider {
    * will be evicted if the cache limit has changed.
    */
   async cleanup() {
-    await this.removeOrphans();
-    await this.evictOldestIfNecessary();
+  	await this.removeOrphans();
+  	await this.evictOldestIfNecessary();
   }
 
   private async evictOldestIfNecessary() {
-    void FileCacheProvider.evictionQueue.add(this.evictOldest.bind(this));
+  	void FileCacheProvider.evictionQueue.add(this.evictOldest.bind(this));
 
-    return FileCacheProvider.evictionQueue.onEmpty();
+  	return FileCacheProvider.evictionQueue.onEmpty();
   }
 
   private async evictOldest() {
-    debug('Evicting oldest files...');
+  	debug('Evicting oldest files...');
 
-    let totalSizeBytes = await this.getDiskUsageInBytes();
-    let numOfEvictedFiles = 0;
-    // Continue to evict until we're under the limit
-    /* eslint-disable no-await-in-loop */
-    while (totalSizeBytes > this.config.CACHE_LIMIT_IN_BYTES) {
-      const oldest = await prisma.fileCache.findFirst({
-        orderBy: {
-          accessedAt: 'asc',
-        },
+  	let totalSizeBytes = await this.getDiskUsageInBytes();
+  	let numOfEvictedFiles = 0;
+  	// Continue to evict until we're under the limit
+  	/* eslint-disable no-await-in-loop */
+  	while (totalSizeBytes > this.config.CACHE_LIMIT_IN_BYTES) {
+  		const oldest = await prisma.fileCache.findFirst({
+  			orderBy: {
+  				accessedAt: 'asc',
+  			},
 
-      });
+  		});
 
-      if (oldest) {
-        await prisma.fileCache.delete({
-          where: {
-            hash: oldest.hash,
-          },
-        });
-        await fs.unlink(path.join(this.config.CACHE_DIR, oldest.hash));
-        debug(`${oldest.hash} has been evicted`);
-        numOfEvictedFiles++;
-      }
+  		if (oldest) {
+  			await prisma.fileCache.delete({
+  				where: {
+  					hash: oldest.hash,
+  				},
+  			});
+  			await fs.unlink(path.join(this.config.CACHE_DIR, oldest.hash));
+  			debug(`${oldest.hash} has been evicted`);
+  			numOfEvictedFiles++;
+  		}
 
-      totalSizeBytes = await this.getDiskUsageInBytes();
-    }
-    /* eslint-enable no-await-in-loop */
+  		totalSizeBytes = await this.getDiskUsageInBytes();
+  	}
+  	/* eslint-enable no-await-in-loop */
 
-    if (numOfEvictedFiles > 0) {
-      debug(`${numOfEvictedFiles} files have been evicted`);
-    } else {
-      debug(`No files needed to be evicted. Total size of the cache is currently ${totalSizeBytes} bytes, and the cache limit is ${this.config.CACHE_LIMIT_IN_BYTES} bytes.`);
-    }
+  	if (numOfEvictedFiles > 0) {
+  		debug(`${numOfEvictedFiles} files have been evicted`);
+  	} else {
+  		debug(`No files needed to be evicted. Total size of the cache is currently ${totalSizeBytes} bytes, and the cache limit is ${this.config.CACHE_LIMIT_IN_BYTES} bytes.`);
+  	}
   }
 
   private async removeOrphans() {
-    // Check filesystem direction (do files exist on the disk but not in the database?)
-    for await (const dirent of await fs.opendir(this.config.CACHE_DIR)) {
-      if (dirent.isFile()) {
-        const model = await prisma.fileCache.findUnique({
-          where: {
-            hash: dirent.name,
-          },
-        });
+  	// Check filesystem direction (do files exist on the disk but not in the database?)
+  	for await (const dirent of await fs.opendir(this.config.CACHE_DIR)) {
+  		if (dirent.isFile()) {
+  			const model = await prisma.fileCache.findUnique({
+  				where: {
+  					hash: dirent.name,
+  				},
+  			});
 
-        if (!model) {
-          debug(`${dirent.name} was present on disk but was not in the database. Removing from disk.`);
-          await fs.unlink(path.join(this.config.CACHE_DIR, dirent.name));
-        }
-      }
-    }
+  			if (!model) {
+  				debug(`${dirent.name} was present on disk but was not in the database. Removing from disk.`);
+  				await fs.unlink(path.join(this.config.CACHE_DIR, dirent.name));
+  			}
+  		}
+  	}
 
-    // Check database direction (do entries exist in the database but not on the disk?)
-    for await (const model of this.getFindAllIterable()) {
-      const filePath = path.join(this.config.CACHE_DIR, model.hash);
+  	// Check database direction (do entries exist in the database but not on the disk?)
+  	for await (const model of this.getFindAllIterable()) {
+  		const filePath = path.join(this.config.CACHE_DIR, model.hash);
 
-      try {
-        await fs.access(filePath);
-      } catch {
-        debug(`${model.hash} was present in database but was not on disk. Removing from database.`);
-        await prisma.fileCache.delete({
-          where: {
-            hash: model.hash,
-          },
-        });
-      }
-    }
+  		try {
+  			await fs.access(filePath);
+  		} catch {
+  			debug(`${model.hash} was present in database but was not on disk. Removing from database.`);
+  			await prisma.fileCache.delete({
+  				where: {
+  					hash: model.hash,
+  				},
+  			});
+  		}
+  	}
   }
 
   /**
@@ -188,14 +186,14 @@ export default class FileCacheProvider {
    * @returns the total size of the cache in bytes
    */
   private async getDiskUsageInBytes() {
-    const data = await prisma.fileCache.aggregate({
-      _sum: {
-        bytes: true,
-      },
-    });
-    const totalSizeBytes = data._sum.bytes ?? 0;
+  	const data = await prisma.fileCache.aggregate({
+  		_sum: {
+  			bytes: true,
+  		},
+  	});
+  	const totalSizeBytes = data._sum.bytes ?? 0;
 
-    return totalSizeBytes;
+  	return totalSizeBytes;
   }
 
   /**
@@ -203,52 +201,52 @@ export default class FileCacheProvider {
    * @returns an iterable for the result of FileCache.findAll()
    */
   private getFindAllIterable() {
-    const limit = 50;
-    let previousCreatedAt: Date | null = null;
+  	const limit = 50;
+  	let previousCreatedAt: Date | null = null;
 
-    let models: FileCache[] = [];
+  	let models: FileCache[] = [];
 
-    const fetchNextBatch = async () => {
-      let where;
+  	const fetchNextBatch = async () => {
+  		let where;
 
-      if (previousCreatedAt) {
-        where = {
-          createdAt: {
-            gt: previousCreatedAt,
-          },
-        };
-      }
+  		if (previousCreatedAt) {
+  			where = {
+  				createdAt: {
+  					gt: previousCreatedAt,
+  				},
+  			};
+  		}
 
-      models = await prisma.fileCache.findMany({
-        where,
-        orderBy: {
-          createdAt: 'asc',
-        },
-        take: limit,
-      });
+  		models = await prisma.fileCache.findMany({
+  			where,
+  			orderBy: {
+  				createdAt: 'asc',
+  			},
+  			take: limit,
+  		});
 
-      if (models.length > 0) {
-        previousCreatedAt = models[models.length - 1].createdAt;
-      }
-    };
+  		if (models.length > 0) {
+  			previousCreatedAt = models[models.length - 1].createdAt;
+  		}
+  	};
 
-    return {
-      [Symbol.asyncIterator]() {
-        return {
-          async next() {
-            if (models.length === 0) {
-              await fetchNextBatch();
-            }
+  	return {
+  		[Symbol.asyncIterator]() {
+  			return {
+  				async next() {
+  					if (models.length === 0) {
+  						await fetchNextBatch();
+  					}
 
-            if (models.length === 0) {
-              // Must return value here for types to be inferred correctly
-              return {done: true, value: null as unknown as FileCache};
-            }
+  					if (models.length === 0) {
+  						// Must return value here for types to be inferred correctly
+  						return {done: true, value: null as unknown as FileCache};
+  					}
 
-            return {value: models.shift()!, done: false};
-          },
-        };
-      },
-    };
+  					return {value: models.shift()!, done: false};
+  				},
+  			};
+  		},
+  	};
   }
 }

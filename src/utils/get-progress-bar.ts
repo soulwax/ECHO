@@ -1,17 +1,15 @@
-// File: src/utils/get-progress-bar.ts
-
 export default (width: number, progress: number): string => {
-  const dotPosition = Math.floor(width * progress);
+	const dotPosition = Math.floor(width * progress);
 
-  let res = '';
+	let res = '';
 
-  for (let i = 0; i < width; i++) {
-    if (i === dotPosition) {
-      res += '🔘';
-    } else {
-      res += '▬';
-    }
-  }
+	for (let i = 0; i < width; i++) {
+		if (i === dotPosition) {
+			res += '🔘';
+		} else {
+			res += '▬';
+		}
+	}
 
-  return res;
+	return res;
 };

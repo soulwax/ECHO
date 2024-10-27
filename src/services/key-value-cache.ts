@@ -1,5 +1,3 @@
-// File: src/services/key-value-cache.ts
-
 import {injectable} from 'inversify';
 import {prisma} from '../utils/db.js';
 import debug from '../utils/debug.js';
@@ -15,63 +13,63 @@ const futureTimeToDate = (time: Seconds) => new Date(new Date().getTime() + (tim
 
 @injectable()
 export default class KeyValueCacheProvider {
-  async wrap<T extends [...any[], Options], F>(func: (...options: any) => Promise<F>, ...options: T): Promise<F> {
-    if (options.length === 0) {
-      throw new Error('Missing cache options');
-    }
+	async wrap<T extends [...any[], Options], F>(func: (...options: any) => Promise<F>, ...options: T): Promise<F> {
+		if (options.length === 0) {
+			throw new Error('Missing cache options');
+		}
 
-    const functionArgs = options.slice(0, options.length - 1);
+		const functionArgs = options.slice(0, options.length - 1);
 
-    const {
-      key = JSON.stringify(functionArgs),
-      expiresIn,
-    } = options[options.length - 1] as Options;
+		const {
+			key = JSON.stringify(functionArgs),
+			expiresIn,
+		} = options[options.length - 1] as Options;
 
-    if (key.length < 4) {
-      throw new Error(`Cache key ${key} is too short.`);
-    }
+		if (key.length < 4) {
+			throw new Error(`Cache key ${key} is too short.`);
+		}
 
-    const cachedResult = await prisma.keyValueCache.findUnique({
-      where: {
-        key,
-      },
-    });
+		const cachedResult = await prisma.keyValueCache.findUnique({
+			where: {
+				key,
+			},
+		});
 
-    if (cachedResult) {
-      if (new Date() < cachedResult.expiresAt) {
-        debug(`Cache hit: ${key}`);
-        return JSON.parse(cachedResult.value) as F;
-      }
+		if (cachedResult) {
+			if (new Date() < cachedResult.expiresAt) {
+				debug(`Cache hit: ${key}`);
+				return JSON.parse(cachedResult.value) as F;
+			}
 
-      await prisma.keyValueCache.delete({
-        where: {
-          key,
-        },
-      });
-    }
+			await prisma.keyValueCache.delete({
+				where: {
+					key,
+				},
+			});
+		}
 
-    debug(`Cache miss: ${key}`);
+		debug(`Cache miss: ${key}`);
 
-    const result = await func(...options as any[]);
+		const result = await func(...options as any[]);
 
-    // Save result
-    const value = JSON.stringify(result);
-    const expiresAt = futureTimeToDate(expiresIn);
-    await prisma.keyValueCache.upsert({
-      where: {
-        key,
-      },
-      update: {
-        value,
-        expiresAt,
-      },
-      create: {
-        key,
-        value,
-        expiresAt,
-      },
-    });
+		// Save result
+		const value = JSON.stringify(result);
+		const expiresAt = futureTimeToDate(expiresIn);
+		await prisma.keyValueCache.upsert({
+			where: {
+				key,
+			},
+			update: {
+				value,
+				expiresAt,
+			},
+			create: {
+				key,
+				value,
+				expiresAt,
+			},
+		});
 
-    return result;
-  }
+		return result;
+	}
 }

@@ -1,5 +1,4 @@
 // File: src/commands/download.ts
-
 import { SlashCommandBuilder } from '@discordjs/builders';
 import axios from 'axios';
 import { exec } from 'child_process';

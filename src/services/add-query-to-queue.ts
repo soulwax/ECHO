@@ -1,3 +1,4 @@
+// File: src/services/add-query-to-queue.ts
 import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import shuffle from 'array-shuffle';

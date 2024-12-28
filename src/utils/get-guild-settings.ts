@@ -1,3 +1,4 @@
+// File: src/utils/get-guild-settings.ts
 import { Setting } from '@prisma/client';
 import { prisma } from './db.js';
 import { createGuildSettings } from '../events/guild-create.js';

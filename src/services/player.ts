@@ -1,11 +1,5 @@
+// File: src/services/player.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { VoiceChannel, Snowflake } from 'discord.js';
-import { Readable } from 'stream';
-import hasha from 'hasha';
-import ytdl, { videoFormat } from '@distube/ytdl-core';
-import { WriteStream } from 'fs-capacitor';
-import ffmpeg from 'fluent-ffmpeg';
-import shuffle from 'array-shuffle';
 import {
   AudioPlayer,
   AudioPlayerState,
@@ -19,11 +13,18 @@ import {
   VoiceConnection,
   VoiceConnectionStatus,
 } from '@discordjs/voice';
-import FileCacheProvider from './file-cache.js';
-import debug from '../utils/debug.js';
-import { getGuildSettings } from '../utils/get-guild-settings.js';
-import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
 import { Setting } from '@prisma/client';
+import shuffle from 'array-shuffle';
+import { Snowflake, VoiceChannel } from 'discord.js';
+import ffmpeg from 'fluent-ffmpeg';
+import { WriteStream } from 'fs-capacitor';
+import hasha from 'hasha';
+import { Readable } from 'stream';
+import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
+import { debugPlayer } from '../utils/debug.js';
+import { getGuildSettings } from '../utils/get-guild-settings.js';
+import FileCacheProvider from './file-cache.js';
 
 export enum MediaSource {
   Youtube,
@@ -267,7 +268,7 @@ export default class {
         const channelId = currentSong.addedInChannelId;
 
         if (channelId) {
-          debug(`${currentSong.title} is unavailable`);
+          debugPlayer(`${currentSong.title} is unavailable`);
           return;
         }
       }
@@ -569,7 +570,7 @@ export default class {
         }
       }
 
-      debug('Using format', format);
+      debugPlayer('Using format', format);
 
       ffmpegInput = format.url;
 
@@ -580,7 +581,7 @@ export default class {
         parseInt(info.videoDetails.lengthSeconds, 10) < MAX_CACHE_LENGTH_SECONDS &&
         !options.seek;
 
-      debug(shouldCacheVideo ? 'Caching video' : 'Not caching video');
+      debugPlayer(shouldCacheVideo ? 'Caching video' : 'Not caching video');
 
       ffmpegInputOptions.push(...['-reconnect', '1', '-reconnect_streamed', '1', '-reconnect_delay_max', '5']);
     }
@@ -713,7 +714,7 @@ export default class {
           }
         })
         .on('start', (command) => {
-          debug(`Spawned ffmpeg with ${command as string}`);
+          debugPlayer(`Spawned ffmpeg with ${command as string}`);
         });
 
       stream.pipe(capacitor);

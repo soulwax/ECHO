@@ -1,3 +1,4 @@
+// File: src/commands/youtube.ts
 import { SlashCommandBuilder } from '@discordjs/builders';
 import ytsr from '@distube/ytsr';
 import { exec } from 'child_process';

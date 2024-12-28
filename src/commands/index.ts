@@ -1,3 +1,4 @@
+// File: src/commands/index.ts
 import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
 import { AutocompleteInteraction, ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 

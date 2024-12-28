@@ -1,18 +1,19 @@
+// File: src/bot.ts
+import { REST } from '@discordjs/rest';
+import { generateDependencyReport } from '@discordjs/voice';
+import { Routes } from 'discord-api-types/v10';
 import { Client, Collection, User } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import ora from 'ora';
-import { TYPES } from './types.js';
-import container from './inversify.config.js';
 import Command from './commands/index.js';
-import debug from './utils/debug.js';
 import handleGuildCreate from './events/guild-create.js';
 import handleVoiceStateUpdate from './events/voice-state-update.js';
-import errorMsg from './utils/error-msg.js';
-import { isUserInVoice } from './utils/channels.js';
+import container from './inversify.config.js';
 import Config from './services/config.js';
-import { generateDependencyReport } from '@discordjs/voice';
-import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v10';
+import { TYPES } from './types.js';
+import { isUserInVoice } from './utils/channels.js';
+import debug, { debugPlayer } from './utils/debug.js';
+import errorMsg from './utils/error-msg.js';
 import registerCommandsOnGuild from './utils/register-commands-on-guild.js';
 
 @injectable()
@@ -103,7 +104,7 @@ export default class {
           }
         }
       } catch (error: unknown) {
-        debug(error);
+        debugPlayer(error);
 
         // This can fail if the message was deleted, and we don't want to crash the whole bot
         try {
@@ -124,7 +125,7 @@ export default class {
     const spinner = ora('📡 connecting to Discord...').start();
 
     this.client.once('ready', async () => {
-      debug(generateDependencyReport());
+      debugPlayer(generateDependencyReport());
 
       // Update commands
       const rest = new REST({ version: '10' }).setToken(this.config.DISCORD_TOKEN);

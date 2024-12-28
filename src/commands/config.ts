@@ -1,3 +1,4 @@
+// File: src/commands/config.ts
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits } from 'discord.js';
 import { injectable } from 'inversify';

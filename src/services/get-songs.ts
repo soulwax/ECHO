@@ -1,11 +1,13 @@
-import { inject, injectable, optional } from 'inversify';
-import * as spotifyURI from 'spotify-uri';
-import { SongMetadata, QueuedPlaylist, MediaSource } from './player.js';
-import { TYPES } from '../types.js';
+// File: src/services/get-songs.ts
 import ffmpeg from 'fluent-ffmpeg';
-import YoutubeAPI from './youtube-api.js';
-import SpotifyAPI, { SpotifyTrack } from './spotify-api.js';
+import { inject, injectable, optional } from 'inversify';
 import { URL } from 'node:url';
+import * as spotifyURI from 'spotify-uri';
+import { TYPES } from '../types.js';
+import { debugSpotify } from '../utils/debug.js';
+import { MediaSource, QueuedPlaylist, SongMetadata } from './player.js';
+import SpotifyAPI, { SpotifyTrack } from './spotify-api.js';
+import YoutubeAPI from './youtube-api.js';
 
 @injectable()
 export default class {
@@ -16,6 +18,7 @@ export default class {
     @inject(TYPES.Services.YoutubeAPI) youtubeAPI: YoutubeAPI,
     @inject(TYPES.Services.SpotifyAPI) @optional() spotifyAPI?: SpotifyAPI,
   ) {
+    debugSpotify('GetSongs constructor - SpotifyAPI service:', spotifyAPI ? 'present' : 'missing');
     this.youtubeAPI = youtubeAPI;
     this.spotifyAPI = spotifyAPI;
   }
@@ -187,14 +190,24 @@ export default class {
     shouldSplitChapters: boolean,
     playlist?: QueuedPlaylist | undefined,
   ): Promise<[SongMetadata[], number, number]> {
-    const promisedResults = tracks.map(async (track) =>
-      this.youtubeAPI.search(`"${track.name}" "${track.artist}"`, shouldSplitChapters),
+    debugSpotify(
+      'Converting Spotify tracks to YouTube: %O',
+      tracks.map((t) => `${t.name} - ${t.artist}`),
     );
+
+    const promisedResults = tracks.map(async (track) => {
+      debugSpotify('Searching YouTube for: %s - %s', track.name, track.artist);
+      return this.youtubeAPI.search(`"${track.name}" "${track.artist}"`, shouldSplitChapters).catch((error) => {
+        debugSpotify('YouTube search failed for %s - %s: %O', track.name, track.artist, error);
+        throw error;
+      });
+    });
+
     const searchResults = await Promise.allSettled(promisedResults);
 
+    // Count songs that couldn't be found
     let nSongsNotFound = 0;
 
-    // Count songs that couldn't be found
     const songs: SongMetadata[] = searchResults.reduce((accum: SongMetadata[], result) => {
       if (result.status === 'fulfilled') {
         for (const v of result.value) {
@@ -204,6 +217,7 @@ export default class {
           });
         }
       } else {
+        debugSpotify('Failed to convert track: %O', result.reason);
         nSongsNotFound++;
       }
 

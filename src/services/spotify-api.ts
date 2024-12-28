@@ -1,11 +1,12 @@
-import { URL } from 'url';
+// File: src/services/spotify-api.ts
+import shuffle from 'array-shuffle';
 import { inject, injectable } from 'inversify';
 import * as spotifyURI from 'spotify-uri';
 import Spotify from 'spotify-web-api-node';
+import { URL } from 'url';
 import { TYPES } from '../types.js';
-import ThirdParty from './third-party.js';
-import shuffle from 'array-shuffle';
 import { QueuedPlaylist } from './player.js';
+import ThirdParty from './third-party.js';
 
 export interface SpotifyTrack {
   name: string;
@@ -87,4 +88,5 @@ export default class {
   private limitTracks(tracks: SpotifyApi.TrackObjectSimplified[], limit: number) {
     return tracks.length > limit ? shuffle(tracks).slice(0, limit) : tracks;
   }
+  
 }

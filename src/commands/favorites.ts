@@ -1,3 +1,4 @@
+// File: src/commands/favorites.ts
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { APIEmbedField, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable } from 'inversify';

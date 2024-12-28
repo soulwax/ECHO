@@ -1,3 +1,4 @@
+// File: src/events/voice-state-update.ts
 import { VoiceChannel, VoiceState } from 'discord.js';
 import container from '../inversify.config.js';
 import { TYPES } from '../types.js';

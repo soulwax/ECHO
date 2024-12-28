@@ -1,3 +1,4 @@
+// File: src/commands/resume.ts
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { inject, injectable } from 'inversify';
 import Command from './index.js';

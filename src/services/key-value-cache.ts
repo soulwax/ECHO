@@ -1,6 +1,7 @@
+// File: src/services/key-value-cache.ts
 import { injectable } from 'inversify';
 import { prisma } from '../utils/db.js';
-import debug from '../utils/debug.js';
+import { debugCache } from '../utils/debug.js';
 
 type Seconds = number;
 
@@ -37,7 +38,7 @@ export default class KeyValueCacheProvider {
 
     if (cachedResult) {
       if (new Date() < cachedResult.expiresAt) {
-        debug(`Cache hit: ${key}`);
+        debugCache(`Cache hit: ${key}`);
         return JSON.parse(cachedResult.value) as F;
       }
 
@@ -48,7 +49,7 @@ export default class KeyValueCacheProvider {
       });
     }
 
-    debug(`Cache miss: ${key}`);
+    debugCache(`Cache miss: ${key}`);
 
     const result = await func(...(options as unknown[]));
 

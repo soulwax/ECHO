@@ -1,5 +1,3 @@
-// File: src/types.ts
-
 export const TYPES = {
   Bot: Symbol('Bot'),
   KeyValueCache: Symbol('KeyValueCache'),
@@ -17,9 +15,8 @@ export const TYPES = {
     YoutubeAPI: Symbol('YoutubeAPI'),
     SpotifyAPI: Symbol('SpotifyAPI'),
   },
+  DownloadResult: {
+    Youtube: Symbol('YoutubeDownloadResults'),
+    Spotify: Symbol('SpotifyDownloadResults'),
+  },
 };
-
-export interface DownloadResult {
-  filePath: string;
-  videoUrl: string;
-}

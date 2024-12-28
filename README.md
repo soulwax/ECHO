@@ -25,6 +25,7 @@ Echo is a self-hosted no bs discord bot for music playback. It supports youtube 
 - **Volume**: Set the volume of the bot with a command.
 
 ## Coming Soon
+
 - **Spotify**: Play spotify playlists and albums with a command.
 - **Search**: Search for songs on youtube with a command.
 - **Video**: Play videos from youtube with a command.
@@ -39,6 +40,7 @@ Echo is a self-hosted no bs discord bot for music playback. It supports youtube 
 - pm2 (for process management)
 
 Optional:
+
 - Docker (for containerized deployment)
 
 ### Installation
@@ -111,12 +113,26 @@ Echo supports a variety of commands for music playback and bot control. Here are
 - `play`: Play a song from YouTube or Spotify.
 - `queue`: View the current music queue.
 - `skip`: Skip the currently playing song.
+- `unskip`: Unskip the last skipped song.
 - `pause`: Pause playback.
 - `resume`: Resume playback.
 - `stop`: Stop playback and clear the queue.
+- `volume`: Set the volume of the bot.
+- `loop`: Loop the current song or queue.
+- `shuffle`: Shuffle the queue.
+- `seek`: Seek to a specific position in the current song.
 - `download`: Download a song from an endpoint *you* provide at your own risk.
 - `youtube`: Pull a youtube video with a command.
-- `volume`: Set the volume of the bot.
+- `clear`: Clear the queue.
+- `remove`: Remove a song from the queue.
+- `replay`: Replay the current song.
+- `fseek`: Fast seek to a specific position in the current song.
+- `move`: Move a song to a specific position in the queue.
+- `remove`: Remove a song from the queue.
+- `seek`: Seek to a specific position in the current song.
+- `replay`: Replay the current song.
+- `favorites`: View your favorite songs.
+- etc...
 
 For a full list of commands, refer to the [Commands](https://github.com/soulwax/Echo/blob/main/src/commands) directory.
 

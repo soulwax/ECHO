@@ -15,29 +15,21 @@ import Command from './index.js';
 const outputDir = path.join('./songs/');
 
 @injectable()
-export default class DownloadCommand implements Command {
+export default class Download implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('download')
     .setDescription('Download a song from a given query')
-    .addStringOption(option =>
-      option
-        .setName('query')
-        .setDescription('The search query for the song')
-        .setRequired(true),
+    .addStringOption((option) =>
+      option.setName('query').setDescription('The search query for the song').setRequired(true),
     )
-    .addIntegerOption(option =>
-      option.setName('offset').setDescription('Song offset').setRequired(false),
-    )
-    .addStringOption(option =>
+    .addIntegerOption((option) => option.setName('offset').setDescription('Song offset').setRequired(false))
+    .addStringOption((option) =>
       option
         .setName('kbps')
         .setDescription('The bitrate of the song')
         .setRequired(false)
-        .addChoices(
-          { name: '128', value: '128' },
-          { name: '320', value: '320' },
-        ),
-    );
+        .addChoices({ name: '128', value: '128' }, { name: '320', value: '320' }),
+    ) as SlashCommandBuilder;
 
   private readonly config: Config;
 
@@ -66,12 +58,10 @@ export default class DownloadCommand implements Command {
       fs.unlinkSync(filePath); // Clean up the file after sending
     } catch (error) {
       console.error('Error occurred:', error);
-      await interaction.editReply(
-        'Failed to find results with the original backend, fallback to youtube...',
-      );
+      await interaction.editReply('Failed to find results with the original backend, fallback to youtube...');
 
       // Check if yt-dlp is installed before trying to use it
-      this.checkYtDlpInstalled().then(async isInstalled => {
+      this.checkYtDlpInstalled().then(async (isInstalled) => {
         if (isInstalled) {
           try {
             const ytFilePath = await this.downloadFromYouTube(query);
@@ -83,14 +73,10 @@ export default class DownloadCommand implements Command {
             fs.unlinkSync(ytFilePath); // Clean up the file after sending
           } catch (ytError) {
             console.error('YouTube download error:', ytError);
-            await interaction.editReply(
-              'Fallback to youtube, but... Error occurred while downloading from YouTube.',
-            );
+            await interaction.editReply('Fallback to youtube, but... Error occurred while downloading from YouTube.');
           }
         } else {
-          await interaction.editReply(
-            'yt-dlp is not installed. Unable to download from YouTube.',
-          );
+          await interaction.editReply('yt-dlp is not installed. Unable to download from YouTube.');
         }
       });
     }
@@ -118,17 +104,14 @@ export default class DownloadCommand implements Command {
   }
 
   private async checkYtDlpInstalled(): Promise<boolean> {
-    return new Promise(resolve => {
-      exec('yt-dlp --version', error => {
+    return new Promise((resolve) => {
+      exec('yt-dlp --version', (error) => {
         resolve(!error);
       });
     });
   }
 
-  private async downloadFile(
-    url: string,
-    query: string,
-  ): Promise<{ filePath: string; filename: string }> {
+  private async downloadFile(url: string, query: string): Promise<{ filePath: string; filename: string }> {
     const response = await axios({
       method: 'get',
       url,
@@ -149,17 +132,15 @@ export default class DownloadCommand implements Command {
 
     const contentDisposition = response.headers['content-disposition'];
     if (contentDisposition) {
-      const match = contentDisposition.match(
-        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
-      );
+      const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
       if (match) {
         filename = match[1].replace(/['"]/g, '');
       }
     }
 
     // Filter out special characters and ensure .mp3 extension
-    filename = filename.replace(/\.mp3+$/, '.mp3');/*.replace(/[^a-zA-Z0-9_\-\.]/g, '')*/
-      
+    filename = filename.replace(/\.mp3+$/, '.mp3'); /* .replace(/[^a-zA-Z0-9_\-\.]/g, '') */
+
     if (!filename.endsWith('.mp3')) {
       filename += '.mp3';
     }

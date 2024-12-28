@@ -1,7 +1,5 @@
-// File: src/managers/player.ts
-
-import {inject, injectable} from 'inversify';
-import {TYPES} from '../types.js';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../types.js';
 import Player from '../services/player.js';
 import FileCacheProvider from '../services/file-cache.js';
 

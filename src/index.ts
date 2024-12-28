@@ -1,12 +1,10 @@
-// File: src/index.ts
-
 import makeDir from 'make-dir';
 import path from 'path';
-import Bot from './bot.js';
 import container from './inversify.config.js';
+import { TYPES } from './types.js';
+import Bot from './bot.js';
 import Config from './services/config.js';
 import FileCacheProvider from './services/file-cache.js';
-import { TYPES } from './types.js';
 
 const bot = container.get<Bot>(TYPES.Bot);
 
@@ -24,4 +22,3 @@ const startBot = async () => {
 };
 
 export { startBot };
-

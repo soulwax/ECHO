@@ -1,12 +1,10 @@
-// File: src/commands/fseek.ts
-
-import {ChatInputCommandInteraction} from 'discord.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {TYPES} from '../types.js';
-import {inject, injectable} from 'inversify';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { TYPES } from '../types.js';
+import { inject, injectable } from 'inversify';
 import PlayerManager from '../managers/player.js';
 import Command from './index.js';
-import {prettyTime} from '../utils/time.js';
+import { prettyTime } from '../utils/time.js';
 import durationStringToSeconds from '../utils/duration-string-to-seconds.js';
 
 @injectable()
@@ -14,10 +12,12 @@ export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('fseek')
     .setDescription('seek forward in the current song')
-    .addStringOption(option => option
-      .setName('time')
-      .setDescription('an interval expression or number of seconds (1m, 30s, 100)')
-      .setRequired(true));
+    .addStringOption((option) =>
+      option
+        .setName('time')
+        .setDescription('an interval expression or number of seconds (1m, 30s, 100)')
+        .setRequired(true),
+    );
 
   public requiresVC = true;
 
@@ -37,7 +37,7 @@ export default class implements Command {
     }
 
     if (currentSong.isLive) {
-      throw new Error('can\'t seek in a livestream');
+      throw new Error("can't seek in a livestream");
     }
 
     const seekValue = interaction.options.getString('time');
@@ -49,13 +49,10 @@ export default class implements Command {
     const seekTime = durationStringToSeconds(seekValue);
 
     if (seekTime + player.getPosition() > currentSong.length) {
-      throw new Error('can\'t seek past the end of the song');
+      throw new Error("can't seek past the end of the song");
     }
 
-    await Promise.all([
-      player.forwardSeek(seekTime),
-      interaction.deferReply(),
-    ]);
+    await Promise.all([player.forwardSeek(seekTime), interaction.deferReply()]);
 
     await interaction.editReply(`👍 seeked to ${prettyTime(player.getPosition())}`);
   }

@@ -1,11 +1,9 @@
-// File: src/inversify.config.ts
-
-import { Client, GatewayIntentBits } from 'discord.js';
-import { Container } from 'inversify';
 import 'reflect-metadata';
-import Bot from './bot.js';
-import ConfigProvider from './services/config.js';
+import { Container } from 'inversify';
 import { TYPES } from './types.js';
+import Bot from './bot.js';
+import { Client, GatewayIntentBits } from 'discord.js';
+import ConfigProvider from './services/config.js';
 
 // Managers
 import PlayerManager from './managers/player.js';
@@ -13,17 +11,16 @@ import PlayerManager from './managers/player.js';
 // Services
 import AddQueryToQueue from './services/add-query-to-queue.js';
 import GetSongs from './services/get-songs.js';
-import SpotifyAPI from './services/spotify-api.js';
 import YoutubeAPI from './services/youtube-api.js';
+import SpotifyAPI from './services/spotify-api.js';
 
 // Commands
+import Command from './commands/index.js';
 import Clear from './commands/clear.js';
 import Config from './commands/config.js';
 import Disconnect from './commands/disconnect.js';
-import Download from './commands/download.js';
 import Favorites from './commands/favorites.js';
 import ForwardSeek from './commands/fseek.js';
-import Command from './commands/index.js';
 import LoopQueue from './commands/loop-queue.js';
 import Loop from './commands/loop.js';
 import Move from './commands/move.js';
@@ -41,10 +38,11 @@ import Skip from './commands/skip.js';
 import Stop from './commands/stop.js';
 import Unskip from './commands/unskip.js';
 import Volume from './commands/volume.js';
-import YoutubeDownloadCommand from './commands/youtube.js';
+import ThirdParty from './services/third-party.js';
 import FileCacheProvider from './services/file-cache.js';
 import KeyValueCacheProvider from './services/key-value-cache.js';
-import ThirdParty from './services/third-party.js';
+import Download from './commands/download.js';
+import Youtube from './commands/youtube.js';
 
 const container = new Container();
 
@@ -61,18 +59,26 @@ container.bind<Client>(TYPES.Client).toConstantValue(new Client({ intents }));
 // Managers
 container.bind<PlayerManager>(TYPES.Managers.Player).to(PlayerManager).inSingletonScope();
 
+// Config values
+container.bind(TYPES.Config).toConstantValue(new ConfigProvider());
+
 // Services
 container.bind<GetSongs>(TYPES.Services.GetSongs).to(GetSongs).inSingletonScope();
 container.bind<AddQueryToQueue>(TYPES.Services.AddQueryToQueue).to(AddQueryToQueue).inSingletonScope();
 container.bind<YoutubeAPI>(TYPES.Services.YoutubeAPI).to(YoutubeAPI).inSingletonScope();
-container.bind<SpotifyAPI>(TYPES.Services.SpotifyAPI).to(SpotifyAPI).inSingletonScope();
+
+// Only instanciate spotify dependencies if the Spotify client ID and secret are set
+const config = container.get<ConfigProvider>(TYPES.Config);
+if (config.SPOTIFY_CLIENT_ID !== '' && config.SPOTIFY_CLIENT_SECRET !== '') {
+  container.bind<SpotifyAPI>(TYPES.Services.SpotifyAPI).to(SpotifyAPI).inSingletonScope();
+  container.bind(TYPES.ThirdParty).to(ThirdParty);
+}
 
 // Commands
 [
   Clear,
   Config,
   Disconnect,
-  Download,
   Favorites,
   ForwardSeek,
   LoopQueue,
@@ -80,6 +86,8 @@ container.bind<SpotifyAPI>(TYPES.Services.SpotifyAPI).to(SpotifyAPI).inSingleton
   Move,
   Next,
   NowPlaying,
+  Youtube,
+  Download,
   Pause,
   Play,
   QueueCommand,
@@ -92,17 +100,11 @@ container.bind<SpotifyAPI>(TYPES.Services.SpotifyAPI).to(SpotifyAPI).inSingleton
   Stop,
   Unskip,
   Volume,
-  YoutubeDownloadCommand,
-].forEach(command => {
+].forEach((command) => {
   container.bind<Command>(TYPES.Command).to(command).inSingletonScope();
 });
 
-// Config values
-container.bind(TYPES.Config).toConstantValue(new ConfigProvider());
-
 // Static libraries
-container.bind(TYPES.ThirdParty).to(ThirdParty);
-
 container.bind(TYPES.FileCache).to(FileCacheProvider);
 container.bind(TYPES.KeyValueCache).to(KeyValueCacheProvider);
 

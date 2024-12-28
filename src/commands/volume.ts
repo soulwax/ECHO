@@ -1,19 +1,18 @@
-// File: src/commands/volume.ts
-
-import {ChatInputCommandInteraction} from 'discord.js';
-import {TYPES} from '../types.js';
-import {inject, injectable} from 'inversify';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { TYPES } from '../types.js';
+import { inject, injectable } from 'inversify';
 import PlayerManager from '../managers/player.js';
 import Command from './index.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 @injectable()
 export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('volume')
     .setDescription('set current player volume level')
-    .addIntegerOption(option =>
-      option.setName('level')
+    .addIntegerOption((option) =>
+      option
+        .setName('level')
         .setDescription('volume percentage (0 is muted, 100 is max & default)')
         .setMinValue(0)
         .setMaxValue(100)

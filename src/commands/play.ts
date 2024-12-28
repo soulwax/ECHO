@@ -1,51 +1,51 @@
-// File: src/commands/play.ts
-
-import {AutocompleteInteraction, ChatInputCommandInteraction} from 'discord.js';
-import {URL} from 'url';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {inject, injectable} from 'inversify';
+import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import { URL } from 'url';
+import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
+import { inject, injectable, optional } from 'inversify';
 import Spotify from 'spotify-web-api-node';
 import Command from './index.js';
-import {TYPES} from '../types.js';
+import { TYPES } from '../types.js';
 import ThirdParty from '../services/third-party.js';
 import getYouTubeAndSpotifySuggestionsFor from '../utils/get-youtube-and-spotify-suggestions-for.js';
 import KeyValueCacheProvider from '../services/key-value-cache.js';
-import {ONE_HOUR_IN_SECONDS} from '../utils/constants.js';
+import { ONE_HOUR_IN_SECONDS } from '../utils/constants.js';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
 
 @injectable()
 export default class implements Command {
-  public readonly slashCommand = new SlashCommandBuilder()
-    .setName('play')
-    .setDescription('play a song')
-    .addStringOption(option => option
-      .setName('query')
-      .setDescription('YouTube URL, Spotify URL, or search query')
-      .setAutocomplete(true)
-      .setRequired(true))
-    .addBooleanOption(option => option
-      .setName('immediate')
-      .setDescription('add track to the front of the queue'))
-    .addBooleanOption(option => option
-      .setName('shuffle')
-      .setDescription('shuffle the input if you\'re adding multiple tracks'))
-    .addBooleanOption(option => option
-      .setName('split')
-      .setDescription('if a track has chapters, split it'))
-    .addBooleanOption(option => option
-      .setName('skip')
-      .setDescription('skip the currently playing track'));
+  public readonly slashCommand: Partial<SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder> &
+    Pick<SlashCommandBuilder, 'toJSON'>;
 
   public requiresVC = true;
 
-  private readonly spotify: Spotify;
+  private readonly spotify?: Spotify;
   private readonly cache: KeyValueCacheProvider;
   private readonly addQueryToQueue: AddQueryToQueue;
 
-  constructor(@inject(TYPES.ThirdParty) thirdParty: ThirdParty, @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider, @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue) {
-    this.spotify = thirdParty.spotify;
+  constructor(
+    @inject(TYPES.ThirdParty) @optional() thirdParty: ThirdParty,
+    @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider,
+    @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue,
+  ) {
+    this.spotify = thirdParty?.spotify;
     this.cache = cache;
     this.addQueryToQueue = addQueryToQueue;
+
+    const queryDescription =
+      thirdParty === undefined ? 'YouTube URL or search query' : 'YouTube URL, Spotify URL, or search query';
+
+    this.slashCommand = new SlashCommandBuilder()
+      .setName('play')
+      .setDescription('play a song')
+      .addStringOption((option) =>
+        option.setName('query').setDescription(queryDescription).setAutocomplete(true).setRequired(true),
+      )
+      .addBooleanOption((option) => option.setName('immediate').setDescription('add track to the front of the queue'))
+      .addBooleanOption((option) =>
+        option.setName('shuffle').setDescription("shuffle the input if you're adding multiple tracks"),
+      )
+      .addBooleanOption((option) => option.setName('split').setDescription('if a track has chapters, split it'))
+      .addBooleanOption((option) => option.setName('skip').setDescription('skip the currently playing track'));
   }
 
   public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -71,21 +71,25 @@ export default class implements Command {
 
     try {
       // Don't return suggestions for URLs
-      // eslint-disable-next-line no-new
+
       new URL(query);
       await interaction.respond([]);
       return;
-    } catch {}
+    } catch {
+      // Do nothing
+    }
 
     const suggestions = await this.cache.wrap(
-      getYouTubeAndSpotifySuggestionsFor,
+      async (...args: unknown[]) =>
+        getYouTubeAndSpotifySuggestionsFor(args[0] as string, args[1] as Spotify | undefined, args[2] as number),
       query,
       this.spotify,
       10,
       {
         expiresIn: ONE_HOUR_IN_SECONDS,
         key: `autocomplete:${query}`,
-      });
+      },
+    );
 
     await interaction.respond(suggestions);
   }

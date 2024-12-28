@@ -1,3 +1,4 @@
+// File: .eslintrc.js
 export const plugins = ['@typescript-eslint', 'prettier'];
 export const rules = {
   // Optional: You can turn off conflicting ESLint rules if necessary

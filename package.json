@@ -31,7 +31,9 @@
     "release": "release-it",
     "build": "tsc",
     "postinstall": "patch-package",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "test:spotify": "tsx src/scripts/tests/spotify-test.ts",
+    "test:spotify:play": "tsx src/scripts/tests/spotify-play-test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

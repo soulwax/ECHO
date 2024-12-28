@@ -1,3 +1,4 @@
+<!-- File: RELEASING.md
 # Releasing
 
 1. Confirm that CHANGELOG.md is updated (any new changes should go under "Unreleased" at the top).

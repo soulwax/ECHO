@@ -1,34 +1,59 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import ytsr from '@distube/ytsr';
 import { exec } from 'child_process';
-import { AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
+import {
+  AttachmentBuilder,
+  AutocompleteInteraction,
+  ButtonInteraction,
+  ChatInputCommandInteraction,
+} from 'discord.js';
 import fs from 'fs';
 import { inject, injectable } from 'inversify';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Config from '../services/config.js';
-import { DownloadResult, TYPES } from '../types.js';
+import { TYPES } from '../types.js';
 import Command from './index.js';
+
+interface DownloadResult {
+  filePath: string;
+  videoUrl: string;
+}
 
 const MAX_FILE_SIZE_MB_FOR_UNBOOSTED_SERVER = 8;
 const MAX_FILE_SIZE_MB_FOR_BOOSTED_SERVER = 50;
-// Convert the URL of the current module to a file path
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const outputDir = path.join(__dirname, 'videos');
 
 @injectable()
 export default class YoutubeDownloadCommand implements Command {
+  handledButtonIds?: readonly string[] | undefined;
+
+  requiresVC?:
+    | boolean
+    | ((interaction: ChatInputCommandInteraction) => boolean)
+    | undefined;
+
+  handleButtonInteraction?:
+    | ((interaction: ButtonInteraction) => Promise<void>)
+    | undefined;
+
+  handleAutocompleteInteraction?:
+    | ((interaction: AutocompleteInteraction) => Promise<void>)
+    | undefined;
+
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('youtube')
     .setDescription('Download a video from a given query')
-    .addStringOption(option =>
+    .addStringOption((option) =>
       option
         .setName('query')
         .setDescription('The search query for the video')
         .setRequired(true),
     )
-    .addStringOption(option =>
+    .addStringOption((option) =>
       option
         .setName('quality')
         .setDescription('The quality of the video')
@@ -37,7 +62,7 @@ export default class YoutubeDownloadCommand implements Command {
           { name: 'Best', value: 'bestvideo+bestaudio/best' },
           { name: 'Normal', value: 'worstvideo+worstaudio/worst' },
         ),
-    );
+    ) as SlashCommandBuilder;
 
   private readonly config: Config;
 
@@ -48,7 +73,7 @@ export default class YoutubeDownloadCommand implements Command {
       fs.mkdirSync(outputDir);
     }
 
-    this.checkYtDlpInstalled().then(installed => {
+    this.checkYtDlpInstalled().then((installed) => {
       if (!installed) {
         console.error(
           'yt-dlp is not installed. Please install it from a package or trustworthy source.',
@@ -57,10 +82,11 @@ export default class YoutubeDownloadCommand implements Command {
     });
   }
 
-  async execute(interaction: ChatInputCommandInteraction) {
-    const query = interaction.options.getString('query')!;
-    const quality
-      = interaction.options.getString('quality') || 'worstvideo+worstaudio/worst';
+  // Rest of the implementation remains the same...
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    const query = interaction.options.getString('query', true);
+    const quality =
+      interaction.options.getString('quality') ?? 'worstvideo+worstaudio/worst';
 
     await interaction.deferReply();
 
@@ -69,11 +95,11 @@ export default class YoutubeDownloadCommand implements Command {
         query,
         quality,
       );
-
-      const qualityValue
-        = quality === 'bestvideo+bestaudio/best'
+      const qualityValue =
+        quality === 'bestvideo+bestaudio/best'
           ? MAX_FILE_SIZE_MB_FOR_BOOSTED_SERVER
           : MAX_FILE_SIZE_MB_FOR_UNBOOSTED_SERVER;
+
       await this.compressVideo(filePath, qualityValue);
 
       if (this.isFileSizeAcceptable(filePath, qualityValue)) {
@@ -97,8 +123,8 @@ export default class YoutubeDownloadCommand implements Command {
   }
 
   private async checkYtDlpInstalled(): Promise<boolean> {
-    return new Promise(resolve => {
-      exec('yt-dlp --version', error => {
+    return new Promise<boolean>((resolve) => {
+      exec('yt-dlp --version', (error) => {
         resolve(!error);
       });
     });
@@ -150,9 +176,9 @@ export default class YoutubeDownloadCommand implements Command {
               } else {
                 reject(new Error('Downloaded file not found.'));
               }
-            }
+            },
           );
-        }
+        },
       );
     });
   }
@@ -173,8 +199,16 @@ export default class YoutubeDownloadCommand implements Command {
 
           const durationInSeconds = parseFloat(stdout);
 
-          const scale = targetSizeMB > 25 ? 'iw/2:ih/2' : targetSizeMB < 12 ? 'iw/4:ih/4' : 'iw:ih';
-          const compressedFilePath = filePath.replace('.mp4', '_compressed.mp4');
+          const scale =
+            targetSizeMB > 25
+              ? 'iw/2:ih/2'
+              : targetSizeMB < 12
+              ? 'iw/4:ih/4'
+              : 'iw:ih';
+          const compressedFilePath = filePath.replace(
+            '.mp4',
+            '_compressed.mp4',
+          );
           const crfValue = targetSizeMB > 25 ? '23' : '28';
           const preset = 'slow';
 
@@ -190,7 +224,7 @@ export default class YoutubeDownloadCommand implements Command {
               resolve();
             }
           });
-        }
+        },
       );
     });
   }
@@ -216,7 +250,11 @@ export default class YoutubeDownloadCommand implements Command {
     query: string,
   ): Promise<string> {
     const searchResults = await ytsr(query, { limit: 1 });
-    if (!searchResults || !Array.isArray(searchResults.items) || searchResults.items.length === 0) {
+    if (
+      !searchResults ||
+      !Array.isArray(searchResults.items) ||
+      searchResults.items.length === 0
+    ) {
       throw new Error('No video found.');
     }
     const firstResult = searchResults.items[0];

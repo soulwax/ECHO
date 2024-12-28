@@ -1,5 +1,3 @@
-// File: src/commands/remove.ts
-
 import {ChatInputCommandInteraction} from 'discord.js';
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../types.js';

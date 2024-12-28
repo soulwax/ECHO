@@ -1,5 +1,3 @@
-// File: src/services/file-cache.ts
-
 import {promises as fs, createWriteStream} from 'fs';
 import path from 'path';
 import {inject, injectable} from 'inversify';

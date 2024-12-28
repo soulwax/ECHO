@@ -1,21 +1,19 @@
-// File: src/services/config.ts
-
-import { ActivityType, PresenceStatusData } from 'discord.js';
 import dotenv from 'dotenv';
-import { injectable } from 'inversify';
-import path from 'path';
 import 'reflect-metadata';
-import { ConditionalKeys } from 'type-fest';
+import {injectable} from 'inversify';
+import path from 'path';
 import xbytes from 'xbytes';
-dotenv.config();
+import {ConditionalKeys} from 'type-fest';
+import {ActivityType, PresenceStatusData} from 'discord.js';
+dotenv.config({path: process.env.ENV_FILE ?? path.resolve(process.cwd(), '.env')});
 
 export const DATA_DIR = path.resolve(process.env.DATA_DIR ? process.env.DATA_DIR : './data');
 
 const CONFIG_MAP = {
   DISCORD_TOKEN: process.env.DISCORD_TOKEN,
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
-  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
-  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID ?? '',
+  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET ?? '',
   REGISTER_COMMANDS_ON_BOT: process.env.REGISTER_COMMANDS_ON_BOT === 'true',
   DATA_DIR,
   CACHE_DIR: path.join(DATA_DIR, 'cache'),
@@ -26,8 +24,6 @@ const CONFIG_MAP = {
   BOT_ACTIVITY: process.env.BOT_ACTIVITY ?? 'music',
   ENABLE_SPONSORBLOCK: process.env.ENABLE_SPONSORBLOCK === 'true',
   SPONSORBLOCK_TIMEOUT: process.env.ENABLE_SPONSORBLOCK ?? 5,
-  DOWNLOAD_URL: process.env.DOWNLOAD_URL ?? '',
-  DOWNLOAD_KEY: process.env.DOWNLOAD_KEY ?? '',
 } as const;
 
 const BOT_ACTIVITY_TYPE_MAP = {
@@ -53,8 +49,6 @@ export default class Config {
   readonly BOT_ACTIVITY!: string;
   readonly ENABLE_SPONSORBLOCK!: boolean;
   readonly SPONSORBLOCK_TIMEOUT!: number;
-  readonly DOWNLOAD_URL!: string;
-  readonly DOWNLOAD_KEY!: string;
 
   constructor() {
     for (const [key, value] of Object.entries(CONFIG_MAP)) {

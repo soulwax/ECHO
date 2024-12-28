@@ -1,5 +1,3 @@
-// File: src/services/third-party.ts
-
 import {inject, injectable} from 'inversify';
 import SpotifyWebApi from 'spotify-web-api-node';
 import pRetry from 'p-retry';

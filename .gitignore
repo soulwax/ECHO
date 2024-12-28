@@ -1,3 +1,4 @@
+# File: .gitignore
 data
 .DS_Store
 dist
@@ -107,3 +108,5 @@ dist
 
 # TernJS port file
 .tern-port
+tree.txt
+.github-tree.txt

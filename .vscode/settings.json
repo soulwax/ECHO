@@ -1,0 +1,26 @@
+// File: .vscode/settings.json
+{
+  "peacock.remoteColor": "#5a0041",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#f13b4b",
+    "activityBar.background": "#f13b4b",
+    "sash.hoverBorder": "#f13b4b",
+    "statusBar.background": "#e81123",
+    "statusBarItem.hoverBackground": "#f13b4b",
+    "statusBarItem.remoteBackground": "#e81123",
+    "titleBar.activeBackground": "#e81123",
+    "titleBar.inactiveBackground": "#e8112399",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#0e5906",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveForeground": "#e7e7e799",
+    "statusBar.debuggingBackground": "#11e8d6",
+    "statusBar.debuggingForeground": "#15202b"
+  },
+  "peacock.color": "#e81123"
+}

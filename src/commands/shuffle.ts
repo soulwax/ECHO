@@ -1,5 +1,3 @@
-// File: src/commands/shuffle.ts
-
 import {ChatInputCommandInteraction} from 'discord.js';
 import {TYPES} from '../types.js';
 import {inject, injectable} from 'inversify';

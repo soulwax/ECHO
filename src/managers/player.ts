@@ -1,5 +1,3 @@
-// File: src/managers/player.ts
-
 import {inject, injectable} from 'inversify';
 import {TYPES} from '../types.js';
 import Player from '../services/player.js';

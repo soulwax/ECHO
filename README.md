@@ -1,129 +1,149 @@
 <p align="center">
-    <img src="https://images-ext-1.discordapp.net/external/9fBpStwTU0ikNqtsmlZv_BB8PLnv9bOe28vnfmYGuH0/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/1165196820117458954/672d50c24ec7998d00e03ee25ec1f93f.webp?format=webp&width=747&height=747" alt="Echo Bot" width="400"/>
-      <h3 align="center">ECHO</h3>
-    <br />
-     <p align="center">
-      <a href="https://github.com/soulwax/ECHO/issues">Report Bug</a>
-        <br />
-      <a href="https://github.com/soulwax/ECHO/issues">Request Feature</a>
-      <br />
-      Made with ❤️ by <a href="https://github.com/soulwax">soul</a>
-      </p>
-  </p>
+  <img width="250" height="250" src="https://raw.githubusercontent.com/museofficial/muse/master/.github/logo.png">
+</p>
 
-Echo is a self-hosted no bs discord bot for music playback. It supports youtube **AND** spotify playback *in channel* and has a queue system. It also supports saving favorites, setting the volume by command, and many more music related (and even video) features and, if you have a **legal** download backend, you can /download embed songs from purely a query.
+> [!WARNING]
+> I ([@codetheweb](https://github.com/codetheweb)) am no longer the primary maintainer of Muse. **If you use the Docker image, update your image source to `ghcr.io/museofficial/muse`.** We are currently publishing new releases to both `ghcr.io/museofficial/muse` and `codetheweb/muse`, but this may change in the future.
+> Thank you to all the people who stepped up to help maintain Muse!
+
+------
+
+Muse is a **highly-opinionated midwestern self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).
+
+![Hero graphic](.github/hero.png)
 
 ## Features
 
-- **Music Playback**: Play music from various sources including YouTube and Spotify.
-- **Queue Management**: Easily manage the playback queue with commands to play, pause, skip, and stop.
-- **Favorites**: Save your favorite tracks for quick access.
-- **Advanced Controls**: Control playback with commands like seek, loop, and shuffle.
-- **Docker Support**: Easily deploy and run Echo in Docker containers for consistent and isolated environments.
-- **Download**: Download songs from an endpoint you provide at your own risk.
-- **Youtube**: Pull youtube videos with a command.
-- **Volume**: Set the volume of the bot with a command.
+- 🎥 Livestreams
+- ⏩ Seeking within a song/video
+- 💾 Local caching for better performance
+- 📋 No vote-to-skip - this is anarchy, not a democracy
+- ↔️ Autoconverts playlists / artists / albums / songs from Spotify
+- ↗️ Users can add custom shortcuts (aliases)
+- 1️⃣ Muse instance supports multiple guilds
+- 🔊 Normalizes volume across tracks
+- ✍️ Written in TypeScript, easily extendable
+- ❤️ Loyal Packers fan
 
-## Coming Soon
-- **Spotify**: Play spotify playlists and albums with a command.
-- **Search**: Search for songs on youtube with a command.
-- **Video**: Play videos from youtube with a command.
-- **Playlist**: Play playlists from youtube with a command.
+## Running
 
-## Getting Started
+Muse is written in TypeScript. You can either run Muse with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables:
 
-### Prerequisites
+- `DISCORD_TOKEN` can be acquired [here](https://discordapp.com/developers/applications) by creating a 'New Application', then going to 'Bot'.
+- `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` can be acquired [here](https://developer.spotify.com/dashboard/applications) with 'Create a Client ID' (Optional).
+- `YOUTUBE_API_KEY` can be acquired by [creating a new project](https://console.developers.google.com) in Google's Developer Console, enabling the YouTube API, and creating an API key under credentials.
 
-- Node.js (version >= 18.0.0)
-- Yarn (for package management)
-- pm2 (for process management)
+Muse will log a URL when run. Open this URL in a browser to invite Muse to your server. Muse will DM the server owner after it's added with setup instructions.
 
-Optional:
-- Docker (for containerized deployment)
+A 64-bit OS is required to run Muse.
 
-### Installation
+### Versioning
 
-1. Clone the repository:
+The `master` branch acts as the developing / bleeding edge branch and is not guaranteed to be stable.
 
-   ```bash
-   git clone https://github.com/soulwax/Echo.git
-   ```
+When running a production instance, I recommend that you use the [latest release](https://github.com/museofficial/muse/releases/).
 
-2. Navigate to the project directory:
 
-   ```bash
-   cd Echo
-   ```
+### 🐳 Docker
 
-3. Install dependencies:
+There are a variety of image tags available:
+- `:2`: versions >= 2.0.0
+- `:2.1`: versions >= 2.1.0 and < 2.2.0
+- `:2.1.1`: an exact version specifier
+- `:latest`: whatever the latest version is
 
-   ```bash
-   yarn
-   ```
+(Replace empty config strings with correct values.)
 
-4. Build the project:
+```bash
+docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/museofficial/muse:latest
+```
 
-   ```bash
-    yarn build
-    ```
-  
-5. Create a `.env` file in the project root and set the following environment variables (see `.env.example` for reference):
+This starts Muse and creates a data directory in your current directory.
 
-   ```bash
-   BOT_TOKEN=your_bot_token
-   YOUTUBE_API_KEY=your_youtube_api_key
-   SPOTIFY_CLIENT_ID=your_spotify_client_id
-   SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-   ...
-   ```
+You can also store your tokens in an environment file and make it available to your container. By default, the container will look for a `/config` environment file. You can customize this path with the `ENV_FILE` environment variable to use with, for example, [docker secrets](https://docs.docker.com/engine/swarm/secrets/). 
 
-6. Start the bot via pm2:
+**Docker Compose**:
 
-   ```bash
-   yarn start
-   ```
+```yaml
+services:
+  muse:
+    image: ghcr.io/museofficial/muse:latest
+    restart: always
+    volumes:
+      - ./muse:/data
+    environment:
+      - DISCORD_TOKEN=
+      - YOUTUBE_API_KEY=
+      - SPOTIFY_CLIENT_ID=
+      - SPOTIFY_CLIENT_SECRET=
+```
 
-### Configuration
+### Node.js
 
-1. Set up your `.env` file based on the provided `.env.example`.
-2. Configure the bot token and music service API keys.
+**Prerequisites**:
+* Node.js (18.17.0 or later is required and latest 18.x.x LTS is recommended)
+* ffmpeg (4.1 or later)
 
-### Running the Bot
+1. `git clone https://github.com/museofficial/muse.git && cd muse`
+2. Copy `.env.example` to `.env` and populate with values
+3. I recommend checking out a tagged release with `git checkout v[latest release]`
+4. `yarn install` (or `npm i`)
+5. `yarn start` (or `npm run start`)
 
-- To run the bot directly:
+**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/museofficial/muse/issues/345) for details.
 
-  ```bash
-  npm start
-  ```
+## ⚙️ Additional configuration (advanced)
 
-- To run using Docker:
+### Cache
 
-  ```bash
-  docker-compose up
-  ```
+By default, Muse limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
 
-This will start the Echo bot in a Docker container with the specified configurations.
+### SponsorBlock
 
-## Commands (not all of them)
+Muse can skip non-music segments at the beginning or end of a Youtube music video (Using [SponsorBlock](https://sponsor.ajay.app/)). It is disabled by default. If you want to enable it, set the environment variable `ENABLE_SPONSORBLOCK=true` or uncomment it in your .env.
+Being a community project, the server may be down or overloaded. When it happen, Muse will skip requests to SponsorBlock for a few minutes. You can change the skip duration by setting the value of `SPONSORBLOCK_TIMEOUT`.
 
-Echo supports a variety of commands for music playback and bot control. Here are some key commands:
+### Custom Bot Status
 
-- `play`: Play a song from YouTube or Spotify.
-- `queue`: View the current music queue.
-- `skip`: Skip the currently playing song.
-- `pause`: Pause playback.
-- `resume`: Resume playback.
-- `stop`: Stop playback and clear the queue.
-- `download`: Download a song from an endpoint *you* provide at your own risk.
-- `youtube`: Pull a youtube video with a command.
-- `volume`: Set the volume of the bot.
+In the default state, Muse has the status "Online" and the text "Listening to Music". You can change the status through environment variables:
 
-For a full list of commands, refer to the [Commands](https://github.com/soulwax/Echo/blob/main/src/commands) directory.
+- `BOT_STATUS`:
+  - `online` (Online)
+  - `idle` (Away)
+  - `dnd` (Do not Disturb)
 
-## Contributing
+- `BOT_ACTIVITY_TYPE`:
+  - `PLAYING` (Playing XYZ)
+  - `LISTENING` (Listening to XYZ)
+  - `WATCHING` (Watching XYZ)
+  - `STREAMING` (Streaming XYZ)
 
-Contributions to Echo are welcome! Please refer to the [Contributing Guidelines](CONTRIBUTING.md) for more information.
+- `BOT_ACTIVITY`: the text that follows the activity type
 
-## License
+- `BOT_ACTIVITY_URL` If you use `STREAMING` you MUST set this variable, otherwise it will not work! Here you write a regular YouTube or Twitch Stream URL.
 
-Echo is licensed under the LGPL-3.0-or-later. See the [LICENSE](LICENSE) file for more details.
+#### Examples
+
+**Muse is watching a movie and is DND**:
+- `BOT_STATUS=dnd`
+- `BOT_ACTIVITY_TYPE=WATCHING`
+- `BOT_ACTIVITY=a movie`
+
+**Muse is streaming Monstercat**:
+- `BOT_STATUS=online`
+- `BOT_ACTIVITY_TYPE=STREAMING`
+- `BOT_ACTIVITY_URL=https://www.twitch.tv/monstercat`
+- `BOT_ACTIVITY=Monstercat`
+
+### Bot-wide commands
+
+If you have Muse running in a lot of guilds (10+) you may want to switch to registering commands bot-wide rather than for each guild. (The downside to this is that command updates can take up to an hour to propagate.) To do this, set the environment variable `REGISTER_COMMANDS_ON_BOT` to `true`.
+
+### Automatically turn down volume when people speak
+
+You can configure the bot to automatically turn down the volume when people are speaking in the channel using the following commands:
+
+- `/config set-reduce-vol-when-voice true` - Enable automatic volume reduction
+- `/config set-reduce-vol-when-voice false` - Disable automatic volume reduction
+- `/config set-reduce-vol-when-voice-target <volume>` - Set the target volume percentage when people speak (0-100, default is 70)
+

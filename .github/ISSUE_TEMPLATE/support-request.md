@@ -1,4 +1,3 @@
-<!-- File: .github/ISSUE_TEMPLATE/support-request.md
 ---
 name: Support request
 about: Something's not working like it should be

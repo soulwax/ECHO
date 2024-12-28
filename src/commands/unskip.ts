@@ -1,12 +1,10 @@
-// File: src/commands/unskip.ts
-
-import {ChatInputCommandInteraction} from 'discord.js';
-import {TYPES} from '../types.js';
-import {inject, injectable} from 'inversify';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { TYPES } from '../types.js';
+import { inject, injectable } from 'inversify';
 import PlayerManager from '../managers/player.js';
 import Command from './index.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {buildPlayingMessageEmbed} from '../utils/build-embed.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
 
 @injectable()
 export default class implements Command {
@@ -28,9 +26,10 @@ export default class implements Command {
     try {
       await player.back();
       await interaction.reply({
-        content: 'back \'er up\'',
+        content: "back 'er up'",
         embeds: player.getCurrent() ? [buildPlayingMessageEmbed(player)] : [],
       });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_: unknown) {
       throw new Error('no song to go back to');
     }

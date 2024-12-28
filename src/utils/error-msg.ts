@@ -1,5 +1,3 @@
-// File: src/utils/error-msg.ts
-
 export default (error?: string | Error): string => {
   let str = 'unknown error';
 

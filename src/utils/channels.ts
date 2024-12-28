@@ -1,34 +1,32 @@
-// File: src/utils/channels.ts
-
-import {ChannelType, Guild, GuildMember, User, VoiceChannel} from 'discord.js';
+import { ChannelType, Guild, GuildMember, User, VoiceChannel } from 'discord.js';
 
 export const isUserInVoice = (guild: Guild, user: User): boolean => {
   let inVoice = false;
 
-  guild.channels.cache.filter(channel => channel.type === ChannelType.GuildVoice).forEach(channel => {
-    if ((channel as VoiceChannel).members.find(member => member.id === user.id)) {
-      inVoice = true;
-    }
-  });
+  guild.channels.cache
+    .filter((channel) => channel.type === ChannelType.GuildVoice)
+    .forEach((channel) => {
+      if ((channel as VoiceChannel).members.find((member) => member.id === user.id)) {
+        inVoice = true;
+      }
+    });
 
   return inVoice;
 };
 
-export const getSizeWithoutBots = (channel: VoiceChannel): number => channel.members.reduce((s, member) => {
-  if (!member.user.bot) {
-    s++;
-  }
+export const getSizeWithoutBots = (channel: VoiceChannel): number =>
+  channel.members.reduce((s, member) => {
+    if (!member.user.bot) {
+      s++;
+    }
 
-  return s;
-}, 0);
+    return s;
+  }, 0);
 
 export const getMemberVoiceChannel = (member?: GuildMember): [VoiceChannel, number] | null => {
   const channel = member?.voice?.channel;
   if (channel && channel.type === ChannelType.GuildVoice) {
-    return [
-      channel,
-      getSizeWithoutBots(channel),
-    ];
+    return [channel, getSizeWithoutBots(channel)];
   }
 
   return null;
@@ -42,6 +40,7 @@ export const getMostPopularVoiceChannel = (guild: Guild): [VoiceChannel, number]
 
   const voiceChannels: PopularResult[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const [_, channel] of guild.channels.cache) {
     if (channel.type === ChannelType.GuildVoice) {
       const size = getSizeWithoutBots(channel);
@@ -54,13 +53,16 @@ export const getMostPopularVoiceChannel = (guild: Guild): [VoiceChannel, number]
   }
 
   // Find most popular channel
-  const popularChannel = voiceChannels.reduce((popular: PopularResult, elem: PopularResult) => {
-    if (elem.n > popular.n) {
-      return elem;
-    }
+  const popularChannel = voiceChannels.reduce(
+    (popular: PopularResult, elem: PopularResult) => {
+      if (elem.n > popular.n) {
+        return elem;
+      }
 
-    return popular;
-  }, {n: -1, channel: null});
+      return popular;
+    },
+    { n: -1, channel: null },
+  );
 
   if (popularChannel.channel) {
     return [popularChannel.channel, popularChannel.n];

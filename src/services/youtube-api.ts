@@ -1,20 +1,15 @@
-// File: src/services/youtube-api.ts
-
-import ytsr from '@distube/ytsr';
-import getYouTubeID from 'get-youtube-id';
-import got, { Got } from 'got';
 import { inject, injectable } from 'inversify';
-import { parse, toSeconds } from 'iso8601-duration';
+import { toSeconds, parse } from 'iso8601-duration';
+import got, { Got } from 'got';
+import ytsr, { Video } from '@distube/ytsr';
 import PQueue from 'p-queue';
+import { SongMetadata, QueuedPlaylist, MediaSource } from './player.js';
 import { TYPES } from '../types.js';
-import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../utils/constants.js';
-import { parseTime } from '../utils/time.js';
 import Config from './config.js';
 import KeyValueCacheProvider from './key-value-cache.js';
-import { MediaSource, QueuedPlaylist, SongMetadata } from './player.js';
-
-
-
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../utils/constants.js';
+import { parseTime } from '../utils/time.js';
+import getYouTubeID from 'get-youtube-id';
 
 interface VideoDetailsResponse {
   id: string;
@@ -79,34 +74,33 @@ export default class {
   }
 
   async search(query: string, shouldSplitChapters: boolean): Promise<SongMetadata[]> {
-    const result = await this.ytsrQueue.add(async () => this.cache.wrap(
-      ytsr,
-      query,
-      {
-        limit: 10,
-      },
-      {
-        expiresIn: ONE_HOUR_IN_SECONDS,
-      },
-    )) as VideoDetailsResponse | void; // Assuming VideoDetailsResponse is the correct type
+    const { items } = await this.ytsrQueue.add(async () =>
+      this.cache.wrap(
+        async (...args: unknown[]) => ytsr(args[0] as string, args[1] as { limit: number }),
+        query,
+        {
+          limit: 10,
+        },
+        {
+          expiresIn: ONE_HOUR_IN_SECONDS,
+        },
+      ),
+    );
 
-    if (!result || !('items' in result)) {
-      throw new Error('No search results found');
+    let firstVideo: Video | undefined;
+
+    for (const item of items) {
+      if (item.type === 'video') {
+        firstVideo = item;
+        break;
+      }
     }
 
-    const { items } = result as { items: VideoDetailsResponse[] };
-
-    if (!items.length) {
-      throw new Error('No search results found');
+    if (!firstVideo) {
+      return [];
     }
 
-    const songs: SongMetadata[] = [];
-
-    for (const video of items) {
-      songs.push(...this.getMetadataFromVideo({ video, shouldSplitChapters }));
-    }
-
-    return songs;
+    return this.getVideo(firstVideo.url, shouldSplitChapters);
   }
 
   async getVideo(url: string, shouldSplitChapters: boolean): Promise<SongMetadata[]> {
@@ -157,7 +151,6 @@ export default class {
         },
       };
 
-      // eslint-disable-next-line no-await-in-loop
       const { items, nextPageToken } = await this.cache.wrap(
         async () => this.got('playlistItems', playlistItemsParams).json() as Promise<PlaylistItemsResponse>,
         playlistItemsParams,
@@ -171,10 +164,12 @@ export default class {
 
       // Start fetching extra details about videos
       // PlaylistItem misses some details, eg. if the video is a livestream
-      videoDetailsPromises.push((async () => {
-        const videoDetailItems = await this.getVideosByID(items.map(item => item.contentDetails.videoId));
-        videoDetails.push(...videoDetailItems);
-      })());
+      videoDetailsPromises.push(
+        (async () => {
+          const videoDetailItems = await this.getVideosByID(items.map((item) => item.contentDetails.videoId));
+          videoDetails.push(...videoDetailItems);
+        })(),
+      );
     }
 
     await Promise.all(videoDetailsPromises);
@@ -185,11 +180,14 @@ export default class {
 
     for (const video of playlistVideos) {
       try {
-        songsToReturn.push(...this.getMetadataFromVideo({
-          video: videoDetails.find((i: { id: string }) => i.id === video.contentDetails.videoId)!,
-          queuedPlaylist,
-          shouldSplitChapters,
-        }));
+        songsToReturn.push(
+          ...this.getMetadataFromVideo({
+            video: videoDetails.find((i: { id: string }) => i.id === video.contentDetails.videoId)!,
+            queuedPlaylist,
+            shouldSplitChapters,
+          }),
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_: unknown) {
         // Private and deleted videos are sometimes in playlists, duration of these
         // is not returned and they should not be added to the queue.
@@ -273,9 +271,8 @@ export default class {
     for (const [i, { name, offset }] of foundTimestamps.entries()) {
       map.set(name, {
         offset,
-        length: i === foundTimestamps.length - 1
-          ? videoDurationSeconds - offset
-          : foundTimestamps[i + 1].offset - offset,
+        length:
+          i === foundTimestamps.length - 1 ? videoDurationSeconds - offset : foundTimestamps[i + 1].offset - offset,
       });
     }
 

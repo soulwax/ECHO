@@ -1,67 +1,53 @@
-// File: src/commands/favorites.ts
-
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {APIEmbedField, AutocompleteInteraction, ChatInputCommandInteraction} from 'discord.js';
-import {inject, injectable} from 'inversify';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { APIEmbedField, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
 import Command from './index.js';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
-import {TYPES} from '../types.js';
-import {prisma} from '../utils/db.js';
-import {Pagination} from 'pagination.djs';
+import { TYPES } from '../types.js';
+import { prisma } from '../utils/db.js';
+import { Pagination } from 'pagination.djs';
 
 @injectable()
 export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('favorites')
     .setDescription('add a song to your favorites')
-    .addSubcommand(subcommand => subcommand
-      .setName('use')
-      .setDescription('use a favorite')
-      .addStringOption(option => option
-        .setName('name')
-        .setDescription('name of favorite')
-        .setRequired(true)
-        .setAutocomplete(true))
-      .addBooleanOption(option => option
-        .setName('immediate')
-        .setDescription('add track to the front of the queue'))
-      .addBooleanOption(option => option
-        .setName('shuffle')
-        .setDescription('shuffle the input if you\'re adding multiple tracks'))
-      .addBooleanOption(option => option
-        .setName('split')
-        .setDescription('if a track has chapters, split it'))
-      .addBooleanOption(option => option
-        .setName('skip')
-        .setDescription('skip the currently playing track')))
-    .addSubcommand(subcommand => subcommand
-      .setName('list')
-      .setDescription('list all favorites'))
-    .addSubcommand(subcommand => subcommand
-      .setName('create')
-      .setDescription('create a new favorite')
-      .addStringOption(option => option
-        .setName('name')
-        .setDescription('you\'ll type this when using this favorite')
-        .setRequired(true))
-      .addStringOption(option => option
-        .setName('query')
-        .setDescription('any input you\'d normally give to the play command')
-        .setRequired(true),
-      ))
-    .addSubcommand(subcommand => subcommand
-      .setName('remove')
-      .setDescription('remove a favorite')
-      .addStringOption(option => option
-        .setName('name')
-        .setDescription('name of favorite')
-        .setAutocomplete(true)
-        .setRequired(true),
-      ),
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('use')
+        .setDescription('use a favorite')
+        .addStringOption((option) =>
+          option.setName('name').setDescription('name of favorite').setRequired(true).setAutocomplete(true),
+        )
+        .addBooleanOption((option) => option.setName('immediate').setDescription('add track to the front of the queue'))
+        .addBooleanOption((option) =>
+          option.setName('shuffle').setDescription("shuffle the input if you're adding multiple tracks"),
+        )
+        .addBooleanOption((option) => option.setName('split').setDescription('if a track has chapters, split it'))
+        .addBooleanOption((option) => option.setName('skip').setDescription('skip the currently playing track')),
+    )
+    .addSubcommand((subcommand) => subcommand.setName('list').setDescription('list all favorites'))
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('create')
+        .setDescription('create a new favorite')
+        .addStringOption((option) =>
+          option.setName('name').setDescription("you'll type this when using this favorite").setRequired(true),
+        )
+        .addStringOption((option) =>
+          option.setName('query').setDescription("any input you'd normally give to the play command").setRequired(true),
+        ),
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('remove')
+        .setDescription('remove a favorite')
+        .addStringOption((option) =>
+          option.setName('name').setDescription('name of favorite').setAutocomplete(true).setRequired(true),
+        ),
     );
 
-  constructor(@inject(TYPES.Services.AddQueryToQueue) private readonly addQueryToQueue: AddQueryToQueue) {
-  }
+  constructor(@inject(TYPES.Services.AddQueryToQueue) private readonly addQueryToQueue: AddQueryToQueue) {}
 
   requiresVC = (interaction: ChatInputCommandInteraction) => interaction.options.getSubcommand() === 'use';
 
@@ -94,19 +80,25 @@ export default class implements Command {
       },
     });
 
-    let results = query === '' ? favorites : favorites.filter(f => f.name.toLowerCase().startsWith(query.toLowerCase()));
+    let results =
+      query === '' ? favorites : favorites.filter((f) => f.name.toLowerCase().startsWith(query.toLowerCase()));
 
     if (subcommand === 'remove') {
       // Only show favorites that user is allowed to remove
-      results = interaction.member?.user.id === interaction.guild?.ownerId ? results : results.filter(r => r.authorId === interaction.member!.user.id);
+      results =
+        interaction.member?.user.id === interaction.guild?.ownerId
+          ? results
+          : results.filter((r) => r.authorId === interaction.member!.user.id);
     }
 
     // Limit results to 25 maximum per Discord limits
     const trimmed = results.length > 25 ? results.slice(0, 25) : results;
-    await interaction.respond(trimmed.map(r => ({
-      name: r.name,
-      value: r.name,
-    })));
+    await interaction.respond(
+      trimmed.map((r) => ({
+        name: r.name,
+        value: r.name,
+      })),
+    );
   }
 
   private async use(interaction: ChatInputCommandInteraction) {
@@ -141,7 +133,7 @@ export default class implements Command {
     });
 
     if (favorites.length === 0) {
-      await interaction.reply('there aren\'t any favorites yet');
+      await interaction.reply("there aren't any favorites yet");
       return;
     }
 
@@ -155,9 +147,7 @@ export default class implements Command {
       };
     }
 
-    await new Pagination(
-      interaction as ChatInputCommandInteraction<'cached'>,
-      {ephemeral: true, limit: 25})
+    await new Pagination(interaction as ChatInputCommandInteraction<'cached'>, { ephemeral: true, limit: 25 })
       .setFields(fields)
       .paginateFields(true)
       .render();
@@ -167,10 +157,12 @@ export default class implements Command {
     const name = interaction.options.getString('name')!.trim();
     const query = interaction.options.getString('query')!.trim();
 
-    const existingFavorite = await prisma.favoriteQuery.findFirst({where: {
-      guildId: interaction.guild!.id,
-      name,
-    }});
+    const existingFavorite = await prisma.favoriteQuery.findFirst({
+      where: {
+        guildId: interaction.guild!.id,
+        name,
+      },
+    });
 
     if (existingFavorite) {
       throw new Error('a favorite with that name already exists');
@@ -191,10 +183,12 @@ export default class implements Command {
   private async remove(interaction: ChatInputCommandInteraction) {
     const name = interaction.options.getString('name')!.trim();
 
-    const favorite = await prisma.favoriteQuery.findFirst({where: {
-      name,
-      guildId: interaction.guild!.id,
-    }});
+    const favorite = await prisma.favoriteQuery.findFirst({
+      where: {
+        name,
+        guildId: interaction.guild!.id,
+      },
+    });
 
     if (!favorite) {
       throw new Error('no favorite with that name exists');
@@ -206,7 +200,7 @@ export default class implements Command {
       throw new Error('you can only remove your own favorites');
     }
 
-    await prisma.favoriteQuery.delete({where: {id: favorite.id}});
+    await prisma.favoriteQuery.delete({ where: { id: favorite.id } });
 
     await interaction.reply('👍 favorite removed');
   }

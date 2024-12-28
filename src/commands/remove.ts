@@ -1,26 +1,21 @@
-// File: src/commands/remove.ts
-
-import {ChatInputCommandInteraction} from 'discord.js';
-import {inject, injectable} from 'inversify';
-import {TYPES} from '../types.js';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../types.js';
 import PlayerManager from '../managers/player.js';
 import Command from './index.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 @injectable()
 export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('remove')
     .setDescription('remove songs from the queue')
-    .addIntegerOption(option =>
-      option.setName('position')
-        .setDescription('position of the song to remove [default: 1]')
-        .setRequired(false),
+    .addIntegerOption((option) =>
+      option.setName('position').setDescription('position of the song to remove [default: 1]').setRequired(false),
     )
-    .addIntegerOption(option =>
-      option.setName('range')
-        .setDescription('number of songs to remove [default: 1]')
-        .setRequired(false));
+    .addIntegerOption((option) =>
+      option.setName('range').setDescription('number of songs to remove [default: 1]').setRequired(false),
+    );
 
   private readonly playerManager: PlayerManager;
 

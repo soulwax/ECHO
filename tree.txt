@@ -1,24 +1,16 @@
-This is the basic project structure of the project. The project is a discord bot that plays music in voice channels. The project is written in TypeScript and uses Prisma as the ORM.
-
-root
 ├───.dockerignore
-├───.editorconfig
 ├───.env.example
-├───.eslintrc.json
+├───.eslintrc.js
 ├───.gitignore
 ├───.prettierrc
 ├───.release-it.json
-├───1722804071519-base.js
-├───1722804140697-base.js
 ├───CHANGELOG.md
 ├───Dockerfile
+├───eslint.config.js
 ├───LICENSE
-├───nodemon.json
 ├───package.json
-├───pm2.config.json
 ├───README.md
 ├───RELEASING.md
-├───requirements.txt
 ├───schema.prisma
 ├───tsconfig.json
 ├───yarn.lock
@@ -34,7 +26,6 @@ root
 │       ├───lint.yml
 │       ├───pr-release.yml
 │       ├───pr-snapshot.yml
-│       ├───pr.yml
 │       ├───publish.yml
 │       ├───release-comment.yml
 │       └───type-check.yml
@@ -42,7 +33,6 @@ root
 │   ├───db.sqlite
 │   └───cache
 │       └───tmp
-│           └───feb648ae5733d6ef4031fd4a490e7bb175c3097f0e1cb903097a99dbd9c771bb5ae676bf53979b0c1a36b11cd5f7c2a8ba1ae8aa32c259db130e023b0096a927
 ├───migrations
 │   ├───migration_lock.toml
 │   ├───20220101155430_migrate_from_sequelize
@@ -79,11 +69,10 @@ root
 │   │   └───migration.sql
 │   ├───20240419211843_add_queue_add_response_for_requester_only
 │   │   └───migration.sql
-│   └───20240824215313_add_default_queue_page_size
+│   ├───20240824215313_add_default_queue_page_size
+│   │   └───migration.sql
+│   └───20241031084730_add_turn_down_volume_when_people_speak
 │       └───migration.sql
-├───scripts
-│   └───file_paths_relative-gen.py
-├───songs
 └───src
     ├───bot.ts
     ├───index.ts
@@ -114,8 +103,7 @@ root
     │   ├───stop.ts
     │   ├───unskip.ts
     │   ├───volume.ts
-    │   ├───youtube.ts
-    │   └───videos
+    │   └───youtube.ts
     ├───events
     │   ├───guild-create.ts
     │   └───voice-state-update.ts

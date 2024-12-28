@@ -49,36 +49,20 @@ export default class Youtube implements Command {
         ),
     ) as SlashCommandBuilder;
 
-  private readonly config: Config
+  private readonly config: Config;
 
   constructor(@inject(TYPES.Config) config: Config) {
-    this.config = config
-    this.slashCommand
-      .setName('youtube')
-      .setDescription('Download a video from a given query')
-      .addStringOption((option) =>
-        option.setName('query').setDescription('The search query for the video').setRequired(true),
-      )
-      .addStringOption((option) =>
-        option
-          .setName('quality')
-          .setDescription('The quality of the video')
-          .setRequired(false)
-          .addChoices(
-            { name: 'Best', value: 'bestvideo+bestaudio/best' },
-            { name: 'Normal', value: 'worstvideo+worstaudio/worst' },
-            { name: 'Normal', value: 'worstvideo+worstaudio/worst' },
-          ),
-      ) as SlashCommandBuilder
+    this.config = config;
+    // Create the output directory if it doesn't exist
     if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir)
+      fs.mkdirSync(outputDir);
     }
 
     this.checkYtDlpInstalled().then((installed) => {
       if (!installed) {
         console.error('yt-dlp is not installed. Please install it from a package or trustworthy source.');
       }
-    })
+    });
   }
 
   // Rest of the implementation remains the same...
@@ -86,7 +70,7 @@ export default class Youtube implements Command {
     const query = interaction.options.getString('query', true);
     const quality = interaction.options.getString('quality') ?? 'worstvideo+worstaudio/worst';
 
-    await interaction.deferReply()
+    await interaction.deferReply();
 
     try {
       const { videoUrl, filePath } = await this.downloadFileWithYtDlp(query, quality);
@@ -98,22 +82,22 @@ export default class Youtube implements Command {
       await this.compressVideo(filePath, qualityValue);
 
       if (this.isFileSizeAcceptable(filePath, qualityValue)) {
-        const fileAttachment = new AttachmentBuilder(filePath)
+        const fileAttachment = new AttachmentBuilder(filePath);
         await interaction.editReply({
           content: 'Download completed.',
           files: [fileAttachment],
-        })
+        });
       } else {
         await interaction.editReply({
           content: `The video file is too large for this Discord server. Here's the direct YouTube link: ${videoUrl}`,
-        })
+        });
       }
     } catch (error) {
-      console.error(error)
-      const videoUrl = await this.getFallbackYoutubeLink(query)
+      console.error(error);
+      const videoUrl = await this.getFallbackYoutubeLink(query);
       await interaction.editReply({
         content: `Server probably not fit for meaningful compression sizes. Here's a direct link instead: ${videoUrl}`,
-      })
+      });
     }
   }
 
@@ -134,10 +118,10 @@ export default class Youtube implements Command {
       .replace(/[^a-zA-Z0-9_\-.]/g, '_')
       .replace(/_{2,}/g, '_')
       .replace(/^_|_$/g, '')
-      .substring(0, 200)
+      .substring(0, 200);
 
-    const ytFilePath = path.join(outputDir, safeQuery)
-    const outputTemplate = `${ytFilePath}.%(ext)s`
+    const ytFilePath = path.join(outputDir, safeQuery);
+    const outputTemplate = `${ytFilePath}.%(ext)s`;
 
     return new Promise((resolve, reject) => {
       // First, get the video URL
@@ -215,31 +199,31 @@ export default class Youtube implements Command {
   }
 
   private isFileSizeAcceptable(filePath: string, maxSizeMB: number): boolean {
-    const stats = fs.statSync(filePath)
-    const fileSizeInBytes = stats.size
-    const maxSizeInBytes = maxSizeMB * 1024 * 1024
-    return fileSizeInBytes <= maxSizeInBytes
+    const stats = fs.statSync(filePath);
+    const fileSizeInBytes = stats.size;
+    const maxSizeInBytes = maxSizeMB * 1024 * 1024;
+    return fileSizeInBytes <= maxSizeInBytes;
   }
 
   private async getFallbackYoutubeLink(query: string): Promise<string> {
     try {
-      const ytidFromQuery = await this.extractFirstYoutubeIdFromSearch(query)
-      return `https://www.youtube.com/watch?v=${ytidFromQuery}`
+      const ytidFromQuery = await this.extractFirstYoutubeIdFromSearch(query);
+      return `https://www.youtube.com/watch?v=${ytidFromQuery}`;
     } catch (e) {
-      console.error('Error extracting YouTube ID:', e)
-      return 'Error: Unable to retrieve YouTube link.'
+      console.error('Error extracting YouTube ID:', e);
+      return 'Error: Unable to retrieve YouTube link.';
     }
   }
 
   private async extractFirstYoutubeIdFromSearch(query: string): Promise<string> {
     const searchResults = await ytsr(query, { limit: 1 });
     if (!searchResults || !Array.isArray(searchResults.items) || searchResults.items.length === 0) {
-      throw new Error('No video found.')
+      throw new Error('No video found.');
     }
-    const firstResult = searchResults.items[0]
+    const firstResult = searchResults.items[0];
     if (firstResult.type !== 'video' || !firstResult.id) {
-      throw new Error('No video found.')
+      throw new Error('No video found.');
     }
-    return firstResult.id
+    return firstResult.id;
   }
 }

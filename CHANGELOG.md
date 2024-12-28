@@ -33,9 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Muse has new maintainers! I ([@codetheweb](https://github.com/codetheweb)) am stepping aside as I haven't used Muse myself for a few years and haven't been able to spend as much time on Muse as I'd like. See [this issue](https://github.com/museofficial/muse/issues/1063) for details. Welcome @museofficial/maintainers!
-- This repository has been moved to museofficial/muse.
-- Docker images are now published to `ghcr.io/museofficial/muse`. **Please update your image source if you use Docker**.
+- Muse has new maintainers! I ([@codetheweb](https://github.com/codetheweb)) am stepping aside as I haven't used Muse myself for a few years and haven't been able to spend as much time on Muse as I'd like. See [this issue](https://github.com/soulwax/ECHO/issues/1063) for details. Welcome @soulwax/maintainers!
+- This repository has been moved to soulwax/ECHO.
+- Docker images are now published to `ghcr.io/soulwax/ECHO`. **Please update your image source if you use Docker**.
 
 ## [2.9.1] - 2024-08-04
 
@@ -354,9 +354,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[unreleased]: https://github.com/museofficial/muse/compare/v2.10.0...HEAD
-[2.10.0]: https://github.com/museofficial/muse/compare/v2.9.5...v2.10.0
-[2.9.5]: https://github.com/museofficial/muse/compare/v2.9.4...v2.9.5
+[unreleased]: https://github.com/soulwax/ECHO/compare/v2.10.0...HEAD
+[2.10.0]: https://github.com/soulwax/ECHO/compare/v2.9.5...v2.10.0
+[2.9.5]: https://github.com/soulwax/ECHO/compare/v2.9.4...v2.9.5
 [2.9.4]: https://github.com/codetheweb/muse/compare/v2.9.3...v2.9.4
 [2.9.3]: https://github.com/codetheweb/muse/compare/v2.9.2...v2.9.3
 [2.9.2]: https://github.com/codetheweb/muse/compare/v2.9.1...v2.9.2

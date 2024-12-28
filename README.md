@@ -1,9 +1,9 @@
 <p align="center">
-  <img width="250" height="250" src="https://raw.githubusercontent.com/museofficial/muse/master/.github/logo.png">
+  <img width="250" height="250" src="https://raw.githubusercontent.com/soulwax/ECHO/master/.github/logo.png">
 </p>
 
 > [!WARNING]
-> I ([@codetheweb](https://github.com/codetheweb)) am no longer the primary maintainer of Muse. **If you use the Docker image, update your image source to `ghcr.io/museofficial/muse`.** We are currently publishing new releases to both `ghcr.io/museofficial/muse` and `codetheweb/muse`, but this may change in the future.
+> I ([@codetheweb](https://github.com/codetheweb)) am no longer the primary maintainer of Muse. **If you use the Docker image, update your image source to `ghcr.io/soulwax/ECHO`.** We are currently publishing new releases to both `ghcr.io/soulwax/ECHO` and `codetheweb/muse`, but this may change in the future.
 > Thank you to all the people who stepped up to help maintain Muse!
 
 ------
@@ -41,12 +41,12 @@ A 64-bit OS is required to run Muse.
 
 The `master` branch acts as the developing / bleeding edge branch and is not guaranteed to be stable.
 
-When running a production instance, I recommend that you use the [latest release](https://github.com/museofficial/muse/releases/).
-
+When running a production instance, I recommend that you use the [latest release](https://github.com/soulwax/ECHO/releases/).
 
 ### 🐳 Docker
 
 There are a variety of image tags available:
+
 - `:2`: versions >= 2.0.0
 - `:2.1`: versions >= 2.1.0 and < 2.2.0
 - `:2.1.1`: an exact version specifier
@@ -55,19 +55,19 @@ There are a variety of image tags available:
 (Replace empty config strings with correct values.)
 
 ```bash
-docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/museofficial/muse:latest
+docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/soulwax/ECHO:latest
 ```
 
 This starts Muse and creates a data directory in your current directory.
 
-You can also store your tokens in an environment file and make it available to your container. By default, the container will look for a `/config` environment file. You can customize this path with the `ENV_FILE` environment variable to use with, for example, [docker secrets](https://docs.docker.com/engine/swarm/secrets/). 
+You can also store your tokens in an environment file and make it available to your container. By default, the container will look for a `/config` environment file. You can customize this path with the `ENV_FILE` environment variable to use with, for example, [docker secrets](https://docs.docker.com/engine/swarm/secrets/).
 
 **Docker Compose**:
 
 ```yaml
 services:
   muse:
-    image: ghcr.io/museofficial/muse:latest
+    image: ghcr.io/soulwax/ECHO:latest
     restart: always
     volumes:
       - ./muse:/data
@@ -81,16 +81,17 @@ services:
 ### Node.js
 
 **Prerequisites**:
-* Node.js (18.17.0 or later is required and latest 18.x.x LTS is recommended)
-* ffmpeg (4.1 or later)
 
-1. `git clone https://github.com/museofficial/muse.git && cd muse`
+- Node.js (18.17.0 or later is required and latest 18.x.x LTS is recommended)
+- ffmpeg (4.1 or later)
+
+1. `git clone https://github.com/soulwax/ECHO.git && cd muse`
 2. Copy `.env.example` to `.env` and populate with values
 3. I recommend checking out a tagged release with `git checkout v[latest release]`
 4. `yarn install` (or `npm i`)
 5. `yarn start` (or `npm run start`)
 
-**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/museofficial/muse/issues/345) for details.
+**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/soulwax/ECHO/issues/345) for details.
 
 ## ⚙️ Additional configuration (advanced)
 
@@ -125,11 +126,13 @@ In the default state, Muse has the status "Online" and the text "Listening to Mu
 #### Examples
 
 **Muse is watching a movie and is DND**:
+
 - `BOT_STATUS=dnd`
 - `BOT_ACTIVITY_TYPE=WATCHING`
 - `BOT_ACTIVITY=a movie`
 
 **Muse is streaming Monstercat**:
+
 - `BOT_STATUS=online`
 - `BOT_ACTIVITY_TYPE=STREAMING`
 - `BOT_ACTIVITY_URL=https://www.twitch.tv/monstercat`
@@ -147,3 +150,6 @@ You can configure the bot to automatically turn down the volume when people are 
 - `/config set-reduce-vol-when-voice false` - Disable automatic volume reduction
 - `/config set-reduce-vol-when-voice-target <volume>` - Set the target volume percentage when people speak (0-100, default is 70)
 
+### License
+
+Muse is licensed under the GPLv3 License. See the [LICENSE](LICENSE) file for details.

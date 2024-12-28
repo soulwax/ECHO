@@ -1,4 +1,3 @@
-<!-- File: README.md
 <p align="center">
    <img src=".github/ECHO.png" alt="Echo Bot" width="400"/>
    <h3 align="center">ECHO</h3>
@@ -19,7 +18,7 @@
    </p>
 </p>
 
----
+------
 
 Echo is a self-hosted no bs discord bot for music playback. It supports youtube **AND** spotify playback *in channel* and has a queue system. It also supports saving favorites, setting the volume by command, and many more music related (and even video) features and, if you have a **legal** download backend, you can /download embed songs from purely a query.
 

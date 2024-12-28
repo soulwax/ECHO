@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  muse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: muse:latest
+    container_name: muse_bot
+    restart: unless-stopped
+    init: true
+    environment:
+      - NODE_ENV=production
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      # Optional configurations
+      - CACHE_LIMIT=2GB
+      - BOT_STATUS=online
+      - BOT_ACTIVITY_TYPE=LISTENING
+      - BOT_ACTIVITY=music
+      - PREFER_ECHOELYSIUM=true
+      - FALLBACK_YOUTUBE=true
+      - ENABLE_SPONSORBLOCK=true
+      - SPONSORBLOCK_TIMEOUT=5
+    volumes:
+      - ./data:/data
+      - ./config:/config
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ['CMD', 'node', '-e', 'process.exit(process.uptime() < 5 ? 1 : 0)']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50m'
+        max-file: '3'

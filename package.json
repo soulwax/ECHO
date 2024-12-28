@@ -1,12 +1,12 @@
 {
-  "name": "muse",
+  "name": "echo",
   "version": "2.10.0",
-  "description": "🎧 a self-hosted Discord music bot that doesn't suck ",
+  "description": "🎧 a self-hosted Discord music bot that doesn't suck. Thank you Max Isom!",
   "repository": "git@github.com:soulwax/ECHO.git",
   "author": "soulwax <soulwax@nandcore.com",
-  "license": "GPL-3.0-only",
+  "license": "GPL-3.0",
   "private": true,
-  "types": "dts/types",
+  "types": "src/types",
   "type": "module",
   "engines": {
     "node": ">=18.17.0"

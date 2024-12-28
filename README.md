@@ -1,15 +1,24 @@
 <p align="center">
-    <img src="https://images-ext-1.discordapp.net/external/9fBpStwTU0ikNqtsmlZv_BB8PLnv9bOe28vnfmYGuH0/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/1165196820117458954/672d50c24ec7998d00e03ee25ec1f93f.webp?format=webp&width=747&height=747" alt="Echo Bot" width="400"/>
-      <h3 align="center">ECHO</h3>
-    <br />
-     <p align="center">
-      <a href="https://github.com/soulwax/ECHO/issues">Report Bug</a>
-        <br />
-      <a href="https://github.com/soulwax/ECHO/issues">Request Feature</a>
-      <br />
-      Made with ❤️ by <a href="https://github.com/soulwax">soul</a>
-      </p>
-  </p>
+   <img src=".github/ECHO.png" alt="Echo Bot" width="400"/>
+   <h3 align="center">ECHO</h3>
+   <p align="center">
+      <a href="https://github.com/soulwax/Echo/issues">
+         <img src="https://img.shields.io/badge/Report-Bug-red.svg" alt="Report Bug"/>
+      </a>
+      <a href="https://github.com/soulwax/Echo/issues">
+         <img src="https://img.shields.io/badge/Request-Feature-blue.svg" alt="Request Feature"/>
+      </a>
+      <img src="https://img.shields.io/badge/Node.js-18.0%2B-green.svg" alt="Node.js Version"/>
+      <img src="https://img.shields.io/badge/License-LGPL--3.0-yellow.svg" alt="License"/>
+      <img src="https://img.shields.io/badge/Discord-Bot-7289DA.svg" alt="Discord Bot"/>
+      <img src="https://img.shields.io/badge/TypeScript-Ready-3178C6.svg" alt="TypeScript Ready"/>
+   </p>
+   <p align="center">
+      Made with ❤️ by <a href="https://github.com/soulwax">soulwax</a>
+   </p>
+</p>
+
+---
 
 Echo is a self-hosted no bs discord bot for music playback. It supports youtube **AND** spotify playback *in channel* and has a queue system. It also supports saving favorites, setting the volume by command, and many more music related (and even video) features and, if you have a **legal** download backend, you can /download embed songs from purely a query.
 
@@ -24,7 +33,7 @@ Echo is a self-hosted no bs discord bot for music playback. It supports youtube 
 - **Youtube**: Pull youtube videos with a command.
 - **Volume**: Set the volume of the bot with a command.
 
-**DATA SAFETY NOTE: The database is being used to store a user's favourite songs and the queue. It takes for that only a discord user ID, hashes it, only then stores it. This is to ensure that the bot is GDPR compliant and that the user's data is safe. The bot does not store any other data whatsoever, not even implied or inferred.**
+**DATA SAFETY NOTE: The database is being used to store a user's favourite songs and the queue. It takes for that only a discord user ID, hashes it, only then stores it. This is to ensure that the bot is GDPR compliant and that the user's data is safe. The bot does not store any other data whatsoever, not even implied.**
 
 ## Commands
 

@@ -1,18 +1,18 @@
 /* eslint-disable complexity */
 import shuffle from 'array-shuffle';
-import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
-import { inject, injectable } from 'inversify';
-import { SponsorBlock } from 'sponsorblock-api';
+import {ChatInputCommandInteraction, GuildMember} from 'discord.js';
+import {inject, injectable} from 'inversify';
+import {SponsorBlock} from 'sponsorblock-api';
 import PlayerManager from '../managers/player.js';
 import GetSongs from '../services/get-songs.js';
-import { TYPES } from '../types.js';
-import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
-import { getMemberVoiceChannel, getMostPopularVoiceChannel } from '../utils/channels.js';
-import { ONE_HOUR_IN_SECONDS } from '../utils/constants.js';
-import { getGuildSettings } from '../utils/get-guild-settings.js';
+import {TYPES} from '../types.js';
+import {buildPlayingMessageEmbed} from '../utils/build-embed.js';
+import {getMemberVoiceChannel, getMostPopularVoiceChannel} from '../utils/channels.js';
+import {ONE_HOUR_IN_SECONDS} from '../utils/constants.js';
+import {getGuildSettings} from '../utils/get-guild-settings.js';
 import Config from './config.js';
 import KeyValueCacheProvider from './key-value-cache.js';
-import { MediaSource, STATUS, SongMetadata } from './player.js';
+import {MediaSource, STATUS, SongMetadata} from './player.js';
 
 @injectable()
 export default class AddQueryToQueue {

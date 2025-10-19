@@ -347,9 +347,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- ECHO will now allow the member who invited ECHO to set config options. For this to work, the View Audit Logs permission must be given when inviting Muse. If it isn't given, ECHO still works and will contact the owner instead for initial setup.
+- ECHO will now allow the member who invited ECHO to set config options. For this to work, the View Audit Logs permission must be given when inviting ECHO. If it isn't given, ECHO still works and will contact the owner instead for initial setup.
 
-## [1.4.1] - 2022-03-12
+## [1.4.1] - 2022-03-12s
 
 ### Changed
 
@@ -491,12 +491,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/museofficial/muse/compare/v2.11.1...HEAD
-[2.11.1]: https://github.com/museofficial/muse/compare/v2.11.0...v2.11.1
-[2.11.0]: https://github.com/museofficial/muse/compare/v2.10.1...v2.11.0
-[2.10.1]: https://github.com/museofficial/muse/compare/v2.10.0...v2.10.1
-[2.10.0]: https://github.com/museofficial/muse/compare/v2.9.5...v2.10.0
-[2.9.5]: https://github.com/museofficial/muse/compare/v2.9.4...v2.9.5
+[unreleased]: https://github.com/ECHO official/ECHO /compare/v2.11.1...HEAD
+[2.11.1]: https://github.com/ECHO official/ECHO /compare/v2.11.0...v2.11.1
+[2.11.0]: https://github.com/ECHO official/ECHO /compare/v2.10.1...v2.11.0
+[2.10.1]: https://github.com/ECHO official/ECHO /compare/v2.10.0...v2.10.1
+[2.10.0]: https://github.com/ECHO official/ECHO /compare/v2.9.5...v2.10.0
+[2.9.5]: https://github.com/ECHO official/ECHO /compare/v2.9.4...v2.9.5
 [2.9.4]: https://github.com/soulwax/ECHO/compare/v2.9.3...v2.9.4
 [2.9.3]: https://github.com/soulwax/ECHO/compare/v2.9.2...v2.9.3
 [2.9.1]: https://github.com/soulwax/ECHO/compare/v2.9.0...v2.9.1

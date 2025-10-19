@@ -30,7 +30,7 @@ Add any other context about the problem here.
 
 ## Runtime
 
-I'm running Muse:
+I'm running ECHO:
 
 - [ ] Directly from the cloned repository
 - [ ] Inside a Docker container

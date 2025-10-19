@@ -33,7 +33,7 @@ A 64-bit OS is required to run ECHO.
 
 The `master` branch acts as the developing / bleeding edge branch and is not guaranteed to be stable.
 
-When running a production instance, I recommend that you use the [latest release](https://github.com/ECHOofficial/ECHO/releases/).
+When running a production instance, I recommend that you use the [latest release](https://github.com/soulwax/ECHO/releases/).
 
 
 ### 🐳 Docker
@@ -47,7 +47,7 @@ There are a variety of image tags available:
 (Replace empty config strings with correct values.)
 
 ```bash
-docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/ECHOofficial/ECHO:latest
+docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/soulwax/ECHO:latest
 ```
 
 This starts ECHO and creates a data directory in your current directory.
@@ -59,7 +59,7 @@ You can also store your tokens in an environment file and make it available to y
 ```yaml
 services:
   ECHO:
-    image: ghcr.io/ECHOofficial/ECHO:latest
+    image: ghcr.io/soulwax/ECHO:latest
     restart: always
     volumes:
       - ./ECHO:/data
@@ -76,13 +76,13 @@ services:
 * Node.js (18.17.0 or latest 18.xx.xx is required and latest 18.x.x LTS is recommended) (Version 18 due to opus dependency)
 * ffmpeg (4.1 or later)
 
-1. `git clone https://github.com/ECHOofficial/ECHO.git && cd ECHO`
+1. `git clone https://github.com/soulwax/ECHO.git && cd ECHO`
 2. Copy `.env.example` to `.env` and populate with values
 3. I recommend checking out a tagged release with `git checkout v[latest release]`
 4. `yarn install` (or `npm i`)
 5. `yarn start` (or `npm run start`)
 
-**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/ECHOofficial/ECHO/issues/345) for details.
+**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/soulwax/ECHO/issues/345) for details.
 
 ## ⚙️ Additional configuration (advanced)
 

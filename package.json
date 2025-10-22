@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "types": "dts/types",
-  "type": "module",
+  "type": "nodenext",
   "engines": {
     "node": ">=18.17.0"
   },

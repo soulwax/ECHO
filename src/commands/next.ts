@@ -1,3 +1,5 @@
+// File: src/commands/next.ts
+
 import {injectable} from 'inversify';
 import Skip from './skip.js';
 import {SlashCommandBuilder} from '@discordjs/builders';

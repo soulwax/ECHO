@@ -1,3 +1,5 @@
+// File: src/utils/log-banner.ts
+
 import {makeLines} from 'nodesplash';
 import {readPackageSync} from 'read-pkg';
 

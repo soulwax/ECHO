@@ -1,3 +1,5 @@
+-- File: migrations/20220514002538_remove_invited_by_user_id/migration.sql
+
 /*
   Warnings:
 

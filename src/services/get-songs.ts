@@ -1,3 +1,5 @@
+// File: src/services/get-songs.ts
+
 import {inject, injectable, optional} from 'inversify';
 import * as spotifyURI from 'spotify-uri';
 import {SongMetadata, QueuedPlaylist, MediaSource} from './player.js';

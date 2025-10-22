@@ -1,3 +1,5 @@
+// File: src/utils/arrays.ts
+
 export const chunk = <T>(arr: T[], len: number) => {
   const chunks = [];
 

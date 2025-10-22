@@ -1,3 +1,5 @@
+// File: src/services/player.ts
+
 import {
   AudioPlayer,
   AudioPlayerState,

@@ -1,3 +1,5 @@
+// File: src/services/add-query-to-queue.ts
+
 /* eslint-disable complexity */
 import shuffle from 'array-shuffle';
 import {ChatInputCommandInteraction, GuildMember} from 'discord.js';

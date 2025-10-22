@@ -1,3 +1,5 @@
+-- File: migrations/20240824215313_add_default_queue_page_size/migration.sql
+
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (

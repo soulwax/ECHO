@@ -1,3 +1,5 @@
+// File: src/utils/create-database-url.ts
+
 import {join} from 'path';
 
 export const createDatabasePath = (directory: string) => join(directory, 'db.sqlite');

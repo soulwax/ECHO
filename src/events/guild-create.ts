@@ -1,3 +1,5 @@
+// File: src/events/guild-create.ts
+
 import {REST} from '@discordjs/rest';
 import {Setting} from '@prisma/client';
 import {Client, Guild} from 'discord.js';

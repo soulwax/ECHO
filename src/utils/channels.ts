@@ -1,3 +1,5 @@
+// File: src/utils/channels.ts
+
 import {ChannelType, Guild, GuildMember, User, VoiceChannel} from 'discord.js';
 
 export const isUserInVoice = (guild: Guild, user: User): boolean => {

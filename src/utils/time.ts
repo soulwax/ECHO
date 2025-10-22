@@ -1,3 +1,5 @@
+// File: src/utils/time.ts
+
 export const prettyTime = (seconds: number): string => {
   const nSeconds = seconds % 60;
   let nMinutes = Math.floor(seconds / 60);

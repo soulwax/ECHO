@@ -1,3 +1,5 @@
+// File: src/commands/clear.ts
+
 import {inject, injectable} from 'inversify';
 import {ChatInputCommandInteraction} from 'discord.js';
 import {SlashCommandBuilder} from '@discordjs/builders';

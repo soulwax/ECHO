@@ -1,3 +1,5 @@
+// File: src/commands/disconnect.ts
+
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {ChatInputCommandInteraction} from 'discord.js';
 import {inject, injectable} from 'inversify';

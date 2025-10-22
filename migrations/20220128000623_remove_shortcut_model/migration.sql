@@ -1,3 +1,5 @@
+-- File: migrations/20220128000623_remove_shortcut_model/migration.sql
+
 /*
   Warnings:
 

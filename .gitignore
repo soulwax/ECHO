@@ -1,3 +1,5 @@
+# File: .gitignore
+
 data
 .DS_Store
 dist

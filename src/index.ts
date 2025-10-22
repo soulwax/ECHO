@@ -1,3 +1,5 @@
+// File: src/index.ts
+
 import makeDir from 'make-dir';
 import path from 'path';
 import container from './inversify.config.js';

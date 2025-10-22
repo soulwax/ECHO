@@ -1,3 +1,5 @@
+// File: src/scripts/migrate-and-start.ts
+
 // This script applies Prisma migrations
 // and then starts Muse.
 import dotenv from 'dotenv';

@@ -1,11 +1,13 @@
-import {inject, injectable, optional} from 'inversify';
-import * as spotifyURI from 'spotify-uri';
-import {SongMetadata, QueuedPlaylist, MediaSource} from './player.js';
-import {TYPES} from '../types.js';
+// File: src/services/get-songs.ts
+
 import ffmpeg from 'fluent-ffmpeg';
+import { inject, injectable, optional } from 'inversify';
+import { URL } from 'node:url';
+import * as spotifyURI from 'spotify-uri';
+import { TYPES } from '../types.js';
+import { MediaSource, QueuedPlaylist, SongMetadata } from './player.js';
+import SpotifyAPI, { SpotifyTrack } from './spotify-api.js';
 import YoutubeAPI from './youtube-api.js';
-import SpotifyAPI, {SpotifyTrack} from './spotify-api.js';
-import {URL} from 'node:url';
 
 @injectable()
 export default class {

@@ -1,8 +1,8 @@
 {
-  "name": "muse",
+  "name": "echo",
   "version": "2.11.1",
   "description": "🎧 a self-hosted Discord music bot that doesn't suck ",
-  "repository": "git@github.com:museofficial/muse.git",
+  "repository": "git@github.com:soulwax/ECHO.git",
   "author": "Max Isom <hi@maxisom.me>",
   "license": "MIT",
   "private": true,

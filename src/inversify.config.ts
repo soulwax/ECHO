@@ -1,9 +1,11 @@
+// File: src/inversify.config.ts
+
+import { Client, GatewayIntentBits } from 'discord.js';
+import { Container } from 'inversify';
 import 'reflect-metadata';
-import {Container} from 'inversify';
-import {TYPES} from './types.js';
 import Bot from './bot.js';
-import {Client, GatewayIntentBits} from 'discord.js';
 import ConfigProvider from './services/config.js';
+import { TYPES } from './types.js';
 
 // Managers
 import PlayerManager from './managers/player.js';
@@ -11,16 +13,16 @@ import PlayerManager from './managers/player.js';
 // Services
 import AddQueryToQueue from './services/add-query-to-queue.js';
 import GetSongs from './services/get-songs.js';
-import YoutubeAPI from './services/youtube-api.js';
 import SpotifyAPI from './services/spotify-api.js';
+import YoutubeAPI from './services/youtube-api.js';
 
 // Commands
-import Command from './commands/index.js';
 import Clear from './commands/clear.js';
 import Config from './commands/config.js';
 import Disconnect from './commands/disconnect.js';
 import Favorites from './commands/favorites.js';
 import ForwardSeek from './commands/fseek.js';
+import Command from './commands/index.js';
 import LoopQueue from './commands/loop-queue.js';
 import Loop from './commands/loop.js';
 import Move from './commands/move.js';
@@ -38,9 +40,9 @@ import Skip from './commands/skip.js';
 import Stop from './commands/stop.js';
 import Unskip from './commands/unskip.js';
 import Volume from './commands/volume.js';
-import ThirdParty from './services/third-party.js';
 import FileCacheProvider from './services/file-cache.js';
 import KeyValueCacheProvider from './services/key-value-cache.js';
+import ThirdParty from './services/third-party.js';
 
 const container = new Container();
 

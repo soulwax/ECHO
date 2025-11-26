@@ -1,3 +1,5 @@
+-- File: migrations/20241031084730_add_turn_down_volume_when_people_speak/migration.sql
+
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (

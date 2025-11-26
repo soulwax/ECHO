@@ -1,5 +1,7 @@
-import {REST} from '@discordjs/rest';
-import {Routes} from 'discord-api-types/v10';
+// File: src/utils/register-commands-on-guild.ts
+
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v10';
 import Command from '../commands/index.js';
 
 interface RegisterCommandsOnGuildOptions {

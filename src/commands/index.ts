@@ -1,5 +1,7 @@
-import {SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder} from '@discordjs/builders';
-import {AutocompleteInteraction, ButtonInteraction, ChatInputCommandInteraction} from 'discord.js';
+// File: src/commands/index.ts
+
+import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
+import { AutocompleteInteraction, ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 
 export default interface Command {
   readonly slashCommand: Partial<SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder> & Pick<SlashCommandBuilder, 'toJSON'>;

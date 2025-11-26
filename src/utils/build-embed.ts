@@ -1,9 +1,11 @@
+// File: src/utils/build-embed.ts
+
+import { EmbedBuilder } from 'discord.js';
 import getYouTubeID from 'get-youtube-id';
-import {EmbedBuilder} from 'discord.js';
-import Player, {MediaSource, QueuedSong, STATUS} from '../services/player.js';
+import Player, { MediaSource, QueuedSong, STATUS } from '../services/player.js';
 import getProgressBar from './get-progress-bar.js';
-import {prettyTime} from './time.js';
-import {truncate} from './string.js';
+import { truncate } from './string.js';
+import { prettyTime } from './time.js';
 
 const getMaxSongTitleLength = (title: string) => {
   // eslint-disable-next-line no-control-regex
@@ -132,4 +134,3 @@ export const buildQueueEmbed = (player: Player, page: number, pageSize: number):
 
   return message;
 };
-

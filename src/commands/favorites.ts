@@ -1,11 +1,13 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {APIEmbedField, AutocompleteInteraction, ChatInputCommandInteraction} from 'discord.js';
-import {inject, injectable} from 'inversify';
-import Command from './index.js';
+// File: src/commands/favorites.ts
+
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { APIEmbedField, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import { Pagination } from 'pagination.djs';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
-import {TYPES} from '../types.js';
-import {prisma} from '../utils/db.js';
-import {Pagination} from 'pagination.djs';
+import { TYPES } from '../types.js';
+import { prisma } from '../utils/db.js';
+import Command from './index.js';
 
 @injectable()
 export default class implements Command {

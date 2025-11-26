@@ -1,11 +1,13 @@
-import {Client, Guild} from 'discord.js';
-import container from '../inversify.config.js';
+// File: src/events/guild-create.ts
+
+import { REST } from '@discordjs/rest';
+import { Setting } from '@prisma/client';
+import { Client, Guild } from 'discord.js';
 import Command from '../commands/index.js';
-import {TYPES} from '../types.js';
+import container from '../inversify.config.js';
 import Config from '../services/config.js';
-import {prisma} from '../utils/db.js';
-import {REST} from '@discordjs/rest';
-import {Setting} from '@prisma/client';
+import { TYPES } from '../types.js';
+import { prisma } from '../utils/db.js';
 import registerCommandsOnGuild from '../utils/register-commands-on-guild.js';
 
 export async function createGuildSettings(guildId: string): Promise<Setting> {
@@ -40,5 +42,5 @@ export default async (guild: Guild): Promise<void> => {
   }
 
   const owner = await guild.fetchOwner();
-  await owner.send('👋 Hi! Someone (probably you) just invited me to a server you own. By default, I\'m usable by all guild member in all guild channels. To change this, check out the wiki page on permissions: https://github.com/museofficial/muse/wiki/Configuring-Bot-Permissions.');
+  await owner.send('👋 Hi! Someone (probably you) just invited me to a server you own. By default, I\'m usable by all guild member in all guild channels. To change this, check out the wiki page on permissions: https://github.com/soulwax/ECHO/wiki/Configuring-Bot-Permissions.');
 };

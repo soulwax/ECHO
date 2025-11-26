@@ -1,3 +1,5 @@
+// File: src/utils/debug.ts
+
 import debug from 'debug';
 
-export default debug('muse');
+export default debug('ECHO');

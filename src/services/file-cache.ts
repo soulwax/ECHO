@@ -1,12 +1,14 @@
-import {promises as fs, createWriteStream} from 'fs';
-import path from 'path';
-import {inject, injectable} from 'inversify';
-import {TYPES} from '../types.js';
-import Config from './config.js';
+// File: src/services/file-cache.ts
+
+import { FileCache } from '@prisma/client';
+import { createWriteStream, promises as fs } from 'fs';
+import { inject, injectable } from 'inversify';
 import PQueue from 'p-queue';
+import path from 'path';
+import { TYPES } from '../types.js';
+import { prisma } from '../utils/db.js';
 import debug from '../utils/debug.js';
-import {prisma} from '../utils/db.js';
-import {FileCache} from '@prisma/client';
+import Config from './config.js';
 
 @injectable()
 export default class FileCacheProvider {

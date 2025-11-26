@@ -1,11 +1,13 @@
-import {ChatInputCommandInteraction} from 'discord.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {TYPES} from '../types.js';
-import {inject, injectable} from 'inversify';
+// File: src/commands/fseek.ts
+
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
 import PlayerManager from '../managers/player.js';
-import Command from './index.js';
-import {prettyTime} from '../utils/time.js';
+import { TYPES } from '../types.js';
 import durationStringToSeconds from '../utils/duration-string-to-seconds.js';
+import { prettyTime } from '../utils/time.js';
+import Command from './index.js';
 
 @injectable()
 export default class implements Command {

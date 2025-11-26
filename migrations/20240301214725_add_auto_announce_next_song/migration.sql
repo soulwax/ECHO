@@ -1,3 +1,5 @@
+-- File: migrations/20240301214725_add_auto_announce_next_song/migration.sql
+
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (
@@ -14,4 +16,3 @@ DROP TABLE "Setting";
 ALTER TABLE "new_Setting" RENAME TO "Setting";
 PRAGMA foreign_key_check;
 PRAGMA foreign_keys=ON;
-

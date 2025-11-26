@@ -1,3 +1,5 @@
+-- File: migrations/20240312135407_add_default_volume/migration.sql
+
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (

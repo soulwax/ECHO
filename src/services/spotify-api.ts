@@ -1,11 +1,13 @@
-import {URL} from 'url';
-import {inject, injectable} from 'inversify';
+// File: src/services/spotify-api.ts
+
+import shuffle from 'array-shuffle';
+import { inject, injectable } from 'inversify';
 import * as spotifyURI from 'spotify-uri';
 import Spotify from 'spotify-web-api-node';
-import {TYPES} from '../types.js';
+import { URL } from 'url';
+import { TYPES } from '../types.js';
+import { QueuedPlaylist } from './player.js';
 import ThirdParty from './third-party.js';
-import shuffle from 'array-shuffle';
-import {QueuedPlaylist} from './player.js';
 
 export interface SpotifyTrack {
   name: string;

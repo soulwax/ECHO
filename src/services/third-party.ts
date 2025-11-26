@@ -1,7 +1,9 @@
-import {inject, injectable} from 'inversify';
-import SpotifyWebApi from 'spotify-web-api-node';
+// File: src/services/third-party.ts
+
+import { inject, injectable } from 'inversify';
 import pRetry from 'p-retry';
-import {TYPES} from '../types.js';
+import SpotifyWebApi from 'spotify-web-api-node';
+import { TYPES } from '../types.js';
 import Config from './config.js';
 
 @injectable()

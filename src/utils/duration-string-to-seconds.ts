@@ -1,3 +1,5 @@
+// File: src/utils/duration-string-to-seconds.ts
+
 import parse from 'parse-duration';
 
 /**

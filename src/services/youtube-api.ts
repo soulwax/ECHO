@@ -1,15 +1,17 @@
-import {inject, injectable} from 'inversify';
-import {toSeconds, parse} from 'iso8601-duration';
-import got, {Got} from 'got';
-import ytsr, {Video} from '@distube/ytsr';
+// File: src/services/youtube-api.ts
+
+import ytsr, { Video } from '@distube/ytsr';
+import getYouTubeID from 'get-youtube-id';
+import got, { Got } from 'got';
+import { inject, injectable } from 'inversify';
+import { parse, toSeconds } from 'iso8601-duration';
 import PQueue from 'p-queue';
-import {SongMetadata, QueuedPlaylist, MediaSource} from './player.js';
-import {TYPES} from '../types.js';
+import { TYPES } from '../types.js';
+import { ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS } from '../utils/constants.js';
+import { parseTime } from '../utils/time.js';
 import Config from './config.js';
 import KeyValueCacheProvider from './key-value-cache.js';
-import {ONE_HOUR_IN_SECONDS, ONE_MINUTE_IN_SECONDS} from '../utils/constants.js';
-import {parseTime} from '../utils/time.js';
-import getYouTubeID from 'get-youtube-id';
+import { MediaSource, QueuedPlaylist, SongMetadata } from './player.js';
 
 interface VideoDetailsResponse {
   id: string;

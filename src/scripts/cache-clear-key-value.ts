@@ -1,5 +1,7 @@
+// File: src/scripts/cache-clear-key-value.ts
+
 import ora from 'ora';
-import {prisma} from '../utils/db.js';
+import { prisma } from '../utils/db.js';
 
 (async () => {
   const spinner = ora('Clearing key value cache...').start();

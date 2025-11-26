@@ -1,3 +1,5 @@
+-- File: migrations/20220128003935_make_favorite_query_name_unqiue/migration.sql
+
 /*
   Warnings:
 

@@ -1,26 +1,28 @@
-import {VoiceChannel, Snowflake} from 'discord.js';
-import {Readable} from 'stream';
-import hasha from 'hasha';
-import ytdl, {videoFormat} from '@distube/ytdl-core';
-import {WriteStream} from 'fs-capacitor';
-import ffmpeg from 'fluent-ffmpeg';
-import shuffle from 'array-shuffle';
+// File: src/services/player.ts
+
 import {
-  AudioPlayer,
-  AudioPlayerState,
-  AudioPlayerStatus, AudioResource,
-  createAudioPlayer,
-  createAudioResource, DiscordGatewayAdapterCreator,
-  joinVoiceChannel,
-  StreamType,
-  VoiceConnection,
-  VoiceConnectionStatus,
+    AudioPlayer,
+    AudioPlayerState,
+    AudioPlayerStatus, AudioResource,
+    createAudioPlayer,
+    createAudioResource, DiscordGatewayAdapterCreator,
+    joinVoiceChannel,
+    StreamType,
+    VoiceConnection,
+    VoiceConnectionStatus,
 } from '@discordjs/voice';
-import FileCacheProvider from './file-cache.js';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
+import type { Setting } from '@prisma/client';
+import shuffle from 'array-shuffle';
+import { Snowflake, VoiceChannel } from 'discord.js';
+import ffmpeg from 'fluent-ffmpeg';
+import { WriteStream } from 'fs-capacitor';
+import hasha from 'hasha';
+import { Readable } from 'stream';
+import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
 import debug from '../utils/debug.js';
-import {getGuildSettings} from '../utils/get-guild-settings.js';
-import {buildPlayingMessageEmbed} from '../utils/build-embed.js';
-import {Setting} from '@prisma/client';
+import { getGuildSettings } from '../utils/get-guild-settings.js';
+import FileCacheProvider from './file-cache.js';
 
 export enum MediaSource {
   Youtube,
@@ -617,7 +619,7 @@ export default class {
       return;
     }
 
-    if (this.voiceConnection.listeners(VoiceConnectionStatus.Disconnected).length === 0) {
+    if (this.voiceConnection.listenerCount(VoiceConnectionStatus.Disconnected) === 0) {
       this.voiceConnection.on(VoiceConnectionStatus.Disconnected, this.onVoiceConnectionDisconnect.bind(this));
     }
 
@@ -625,9 +627,9 @@ export default class {
       return;
     }
 
-    if (this.audioPlayer.listeners('stateChange').length === 0) {
-      this.audioPlayer.on(AudioPlayerStatus.Idle, this.onAudioPlayerIdle.bind(this));
-    }
+    // Remove any existing listeners before adding new ones to prevent duplicates
+    this.audioPlayer.removeListener(AudioPlayerStatus.Idle, this.onAudioPlayerIdle.bind(this));
+    this.audioPlayer.on(AudioPlayerStatus.Idle, this.onAudioPlayerIdle.bind(this));
   }
 
   private onVoiceConnectionDisconnect(): void {
@@ -671,7 +673,7 @@ export default class {
 
       if (options?.cache) {
         const cacheStream = this.fileCache.createWriteStream(this.getHashForCache(options.cacheKey));
-        capacitor.createReadStream().pipe(cacheStream);
+        capacitor.createReadStream().pipe(cacheStream as unknown as NodeJS.WritableStream);
       }
 
       const returnedStream = capacitor.createReadStream();

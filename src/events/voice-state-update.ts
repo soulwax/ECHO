@@ -1,9 +1,11 @@
-import {VoiceChannel, VoiceState} from 'discord.js';
+// File: src/events/voice-state-update.ts
+
+import { VoiceChannel, VoiceState } from 'discord.js';
 import container from '../inversify.config.js';
-import {TYPES} from '../types.js';
 import PlayerManager from '../managers/player.js';
-import {getSizeWithoutBots} from '../utils/channels.js';
-import {getGuildSettings} from '../utils/get-guild-settings.js';
+import { TYPES } from '../types.js';
+import { getSizeWithoutBots } from '../utils/channels.js';
+import { getGuildSettings } from '../utils/get-guild-settings.js';
 
 export default async (oldState: VoiceState, _: VoiceState): Promise<void> => {
   const playerManager = container.get<PlayerManager>(TYPES.Managers.Player);

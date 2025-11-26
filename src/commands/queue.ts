@@ -1,11 +1,13 @@
-import {ChatInputCommandInteraction} from 'discord.js';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {inject, injectable} from 'inversify';
-import {TYPES} from '../types.js';
+// File: src/commands/queue.ts
+
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
 import PlayerManager from '../managers/player.js';
+import { TYPES } from '../types.js';
+import { buildQueueEmbed } from '../utils/build-embed.js';
+import { getGuildSettings } from '../utils/get-guild-settings.js';
 import Command from './index.js';
-import {buildQueueEmbed} from '../utils/build-embed.js';
-import {getGuildSettings} from '../utils/get-guild-settings.js';
 
 @injectable()
 export default class implements Command {

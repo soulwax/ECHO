@@ -1,3 +1,5 @@
+-- File: migrations/20220128020826_remove_prefix_from_setting/migration.sql
+
 /*
   Warnings:
 

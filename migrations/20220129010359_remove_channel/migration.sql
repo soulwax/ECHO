@@ -1,3 +1,5 @@
+-- File: migrations/20220129010359_remove_channel/migration.sql
+
 /*
   Warnings:
 

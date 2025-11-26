@@ -1,3 +1,5 @@
+// File: src/utils/get-progress-bar.ts
+
 export default (width: number, progress: number): string => {
   const dotPosition = Math.floor(width * progress);
 

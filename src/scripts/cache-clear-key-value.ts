@@ -1,3 +1,5 @@
+// File: src/scripts/cache-clear-key-value.ts
+
 import ora from 'ora';
 import {prisma} from '../utils/db.js';
 

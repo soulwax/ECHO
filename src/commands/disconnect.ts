@@ -1,15 +1,17 @@
-import {ChatInputCommandInteraction} from 'discord.js';
+// File: src/commands/disconnect.ts
+
 import {SlashCommandBuilder} from '@discordjs/builders';
-import {TYPES} from '../types.js';
+import {ChatInputCommandInteraction} from 'discord.js';
 import {inject, injectable} from 'inversify';
 import PlayerManager from '../managers/player.js';
+import {TYPES} from '../types.js';
 import Command from './index.js';
 
 @injectable()
 export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('disconnect')
-    .setDescription('pause and disconnect Muse');
+    .setDescription('pause and disconnect ECHO');
 
   public requiresVC = true;
 

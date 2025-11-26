@@ -1,3 +1,5 @@
+// File: src/commands/volume.ts
+
 import {ChatInputCommandInteraction} from 'discord.js';
 import {TYPES} from '../types.js';
 import {inject, injectable} from 'inversify';

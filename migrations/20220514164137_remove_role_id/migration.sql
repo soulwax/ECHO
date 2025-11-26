@@ -1,3 +1,5 @@
+-- File: migrations/20220514164137_remove_role_id/migration.sql
+
 /*
   Warnings:
 

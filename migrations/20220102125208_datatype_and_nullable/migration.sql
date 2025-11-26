@@ -1,3 +1,5 @@
+-- File: migrations/20220102125208_datatype_and_nullable/migration.sql
+
 /*
   Warnings:
 

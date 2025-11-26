@@ -1,18 +1,20 @@
+// File: src/services/add-query-to-queue.ts
+
 /* eslint-disable complexity */
+import shuffle from 'array-shuffle';
 import {ChatInputCommandInteraction, GuildMember} from 'discord.js';
 import {inject, injectable} from 'inversify';
-import shuffle from 'array-shuffle';
-import {TYPES} from '../types.js';
-import GetSongs from '../services/get-songs.js';
-import {MediaSource, SongMetadata, STATUS} from './player.js';
+import {SponsorBlock} from 'sponsorblock-api';
 import PlayerManager from '../managers/player.js';
+import GetSongs from '../services/get-songs.js';
+import {TYPES} from '../types.js';
 import {buildPlayingMessageEmbed} from '../utils/build-embed.js';
 import {getMemberVoiceChannel, getMostPopularVoiceChannel} from '../utils/channels.js';
+import {ONE_HOUR_IN_SECONDS} from '../utils/constants.js';
 import {getGuildSettings} from '../utils/get-guild-settings.js';
-import {SponsorBlock} from 'sponsorblock-api';
 import Config from './config.js';
 import KeyValueCacheProvider from './key-value-cache.js';
-import {ONE_HOUR_IN_SECONDS} from '../utils/constants.js';
+import {MediaSource, STATUS, SongMetadata} from './player.js';
 
 @injectable()
 export default class AddQueryToQueue {
@@ -27,7 +29,7 @@ export default class AddQueryToQueue {
     @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider) {
     this.sponsorBlockTimeoutDelay = config.SPONSORBLOCK_TIMEOUT;
     this.sponsorBlock = config.ENABLE_SPONSORBLOCK
-      ? new SponsorBlock('muse-sb-integration') // UserID matters only for submissions
+      ? new SponsorBlock('echo-sb-integration') // UserID matters only for submissions
       : undefined;
     this.cache = cache;
   }

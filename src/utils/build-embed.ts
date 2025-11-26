@@ -1,3 +1,5 @@
+// File: src/utils/build-embed.ts
+
 import getYouTubeID from 'get-youtube-id';
 import {EmbedBuilder} from 'discord.js';
 import Player, {MediaSource, QueuedSong, STATUS} from '../services/player.js';
@@ -132,4 +134,3 @@ export const buildQueueEmbed = (player: Player, page: number, pageSize: number):
 
   return message;
 };
-

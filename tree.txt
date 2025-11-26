@@ -1,0 +1,136 @@
+ECHO
+├───.dockerignore
+├───.env.example
+├───.gitignore
+├───.release-it.json
+├───CHANGELOG.md
+├───Dockerfile
+├───LICENSE
+├───package-lock.json
+├───package.json
+├───README.md
+├───RELEASING.md
+├───schema.prisma
+├───tsconfig.json
+├───yarn.lock
+├───.github/
+│   ├───dependabot.yml
+│   ├───emily.png
+│   ├───pull_request_template.md
+│   ├───ISSUE_TEMPLATE/
+│   │   └───support-request.md
+│   └───workflows/
+│       ├───lint.yml
+│       ├───pr-release.yml
+│       ├───pr-snapshot.yml
+│       ├───publish.yml
+│       ├───release-comment.yml
+│       └───type-check.yml
+├───migrations/
+│   ├───migration_lock.toml
+│   ├───20220101155430_migrate_from_sequelize/
+│   │   └───migration.sql
+│   ├───20220102125208_datatype_and_nullable/
+│   │   └───migration.sql
+│   ├───20220102176527_datetime_casting/
+│   │   └───migration.sql
+│   ├───20220128000207_add_favorite_query_model/
+│   │   └───migration.sql
+│   ├───20220128000623_remove_shortcut_model/
+│   │   └───migration.sql
+│   ├───20220128003935_make_favorite_query_name_unqiue/
+│   │   └───migration.sql
+│   ├───20220128012347_fix_unique_constraint/
+│   │   └───migration.sql
+│   ├───20220128020826_remove_prefix_from_setting/
+│   │   └───migration.sql
+│   ├───20220129010359_remove_channel/
+│   │   └───migration.sql
+│   ├───20220129012310_add_role_id_column/
+│   │   └───migration.sql
+│   ├───20220212014052_add_seconds_to_wait_after_queue_empties_and_leave_if_no_listeners/
+│   │   └───migration.sql
+│   ├───20220312230720_add_invited_by_user_id/
+│   │   └───migration.sql
+│   ├───20220514002538_remove_invited_by_user_id/
+│   │   └───migration.sql
+│   ├───20220514164137_remove_role_id/
+│   │   └───migration.sql
+│   ├───20240301214725_add_auto_announce_next_song/
+│   │   └───migration.sql
+│   ├───20240312135407_add_default_volume/
+│   │   └───migration.sql
+│   ├───20240419211843_add_queue_add_response_for_requester_only/
+│   │   └───migration.sql
+│   ├───20240824215313_add_default_queue_page_size/
+│   │   └───migration.sql
+│   └───20241031084730_add_turn_down_volume_when_people_speak/
+│       └───migration.sql
+└───src/
+    ├───bot.ts
+    ├───index.ts
+    ├───inversify.config.ts
+    ├───types.ts
+    ├───commands/
+    │   ├───clear.ts
+    │   ├───config.ts
+    │   ├───disconnect.ts
+    │   ├───favorites.ts
+    │   ├───fseek.ts
+    │   ├───index.ts
+    │   ├───loop-queue.ts
+    │   ├───loop.ts
+    │   ├───move.ts
+    │   ├───next.ts
+    │   ├───now-playing.ts
+    │   ├───pause.ts
+    │   ├───play.ts
+    │   ├───queue.ts
+    │   ├───remove.ts
+    │   ├───replay.ts
+    │   ├───resume.ts
+    │   ├───seek.ts
+    │   ├───shuffle.ts
+    │   ├───skip.ts
+    │   ├───stop.ts
+    │   ├───unskip.ts
+    │   └───volume.ts
+    ├───events/
+    │   ├───guild-create.ts
+    │   └───voice-state-update.ts
+    ├───managers/
+    │   └───player.ts
+    ├───scripts/
+    │   ├───cache-clear-key-value.ts
+    │   ├───migrate-and-start.ts
+    │   ├───run-with-database-url.ts
+    │   └───start.ts
+    ├───services/
+    │   ├───add-query-to-queue.ts
+    │   ├───config.ts
+    │   ├───file-cache.ts
+    │   ├───get-songs.ts
+    │   ├───key-value-cache.ts
+    │   ├───player.ts
+    │   ├───spotify-api.ts
+    │   ├───third-party.ts
+    │   └───youtube-api.ts
+    └───utils/
+        ├───arrays.ts
+        ├───build-embed.ts
+        ├───channels.ts
+        ├───constants.ts
+        ├───create-database-url.ts
+        ├───db.ts
+        ├───debug.ts
+        ├───duration-string-to-seconds.ts
+        ├───error-msg.ts
+        ├───get-guild-settings.ts
+        ├───get-progress-bar.ts
+        ├───get-youtube-and-spotify-suggestions-for.ts
+        ├───get-youtube-suggestions-for.ts
+        ├───log-banner.ts
+        ├───register-commands-on-guild.ts
+        ├───string.ts
+        ├───time.ts
+        └───url.ts

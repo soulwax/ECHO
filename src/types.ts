@@ -1,3 +1,5 @@
+// File: src/types.ts
+
 export const TYPES = {
   Bot: Symbol('Bot'),
   KeyValueCache: Symbol('KeyValueCache'),

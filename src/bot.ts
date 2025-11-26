@@ -1,3 +1,5 @@
+// File: src/bot.ts
+
 import {Client, Collection, User} from 'discord.js';
 import {inject, injectable} from 'inversify';
 import ora from 'ora';

@@ -1,3 +1,5 @@
+// File: src/commands/queue.ts
+
 import {ChatInputCommandInteraction} from 'discord.js';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {inject, injectable} from 'inversify';

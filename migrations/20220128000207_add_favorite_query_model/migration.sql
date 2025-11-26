@@ -1,3 +1,5 @@
+-- File: migrations/20220128000207_add_favorite_query_model/migration.sql
+
 -- CreateTable
 CREATE TABLE "FavoriteQuery" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

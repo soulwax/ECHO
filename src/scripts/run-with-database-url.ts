@@ -1,3 +1,5 @@
+// File: src/scripts/run-with-database-url.ts
+
 import {DATA_DIR} from '../services/config.js';
 import createDatabaseUrl from '../utils/create-database-url.js';
 import {execa} from 'execa';

@@ -11,11 +11,18 @@ dotenv.config({path: process.env.ENV_FILE ?? path.resolve(process.cwd(), '.env')
 
 export const DATA_DIR = path.resolve(process.env.DATA_DIR ? process.env.DATA_DIR : './data');
 
+const ensureTrailingSlash = (value: string | undefined) => {
+  if (!value) {
+    return value;
+  }
+
+  return value.endsWith('/') ? value : `${value}/`;
+};
+
 const CONFIG_MAP = {
   DISCORD_TOKEN: process.env.DISCORD_TOKEN,
-  YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
-  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID ?? '',
-  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET ?? '',
+  API_URL: ensureTrailingSlash(process.env.API_URL),
+  STREAMING_KEY: process.env.STREAMING_KEY,
   REGISTER_COMMANDS_ON_BOT: process.env.REGISTER_COMMANDS_ON_BOT === 'true',
   DATA_DIR,
   CACHE_DIR: path.join(DATA_DIR, 'cache'),
@@ -24,8 +31,6 @@ const CONFIG_MAP = {
   BOT_ACTIVITY_TYPE: process.env.BOT_ACTIVITY_TYPE ?? 'LISTENING',
   BOT_ACTIVITY_URL: process.env.BOT_ACTIVITY_URL ?? '',
   BOT_ACTIVITY: process.env.BOT_ACTIVITY ?? 'music',
-  ENABLE_SPONSORBLOCK: process.env.ENABLE_SPONSORBLOCK === 'true',
-  SPONSORBLOCK_TIMEOUT: process.env.ENABLE_SPONSORBLOCK ?? 5,
 } as const;
 
 const BOT_ACTIVITY_TYPE_MAP = {
@@ -38,9 +43,8 @@ const BOT_ACTIVITY_TYPE_MAP = {
 @injectable()
 export default class Config {
   readonly DISCORD_TOKEN!: string;
-  readonly YOUTUBE_API_KEY!: string;
-  readonly SPOTIFY_CLIENT_ID!: string;
-  readonly SPOTIFY_CLIENT_SECRET!: string;
+  readonly API_URL!: string;
+  readonly STREAMING_KEY!: string;
   readonly REGISTER_COMMANDS_ON_BOT!: boolean;
   readonly DATA_DIR!: string;
   readonly CACHE_DIR!: string;
@@ -49,8 +53,6 @@ export default class Config {
   readonly BOT_ACTIVITY_TYPE!: Exclude<ActivityType, ActivityType.Custom>;
   readonly BOT_ACTIVITY_URL!: string;
   readonly BOT_ACTIVITY!: string;
-  readonly ENABLE_SPONSORBLOCK!: boolean;
-  readonly SPONSORBLOCK_TIMEOUT!: number;
 
   constructor() {
     for (const [key, value] of Object.entries(CONFIG_MAP)) {

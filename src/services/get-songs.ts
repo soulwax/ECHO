@@ -1,161 +1,75 @@
 // File: src/services/get-songs.ts
 
-import {inject, injectable, optional} from 'inversify';
-import * as spotifyURI from 'spotify-uri';
-import {SongMetadata, QueuedPlaylist, MediaSource} from './player.js';
-import {TYPES} from '../types.js';
+import {inject, injectable} from 'inversify';
 import ffmpeg from 'fluent-ffmpeg';
-import YoutubeAPI from './youtube-api.js';
-import SpotifyAPI, {SpotifyTrack} from './spotify-api.js';
 import {URL} from 'node:url';
+import {SongMetadata, MediaSource} from './player.js';
+import {TYPES} from '../types.js';
+import StarchildAPI, {StarchildTrack} from './starchild-api.js';
 
 @injectable()
 export default class {
-  private readonly youtubeAPI: YoutubeAPI;
-  private readonly spotifyAPI?: SpotifyAPI;
+  constructor(@inject(TYPES.Services.StarchildAPI) private readonly starchildAPI: StarchildAPI) {}
 
-  constructor(@inject(TYPES.Services.YoutubeAPI) youtubeAPI: YoutubeAPI, @inject(TYPES.Services.SpotifyAPI) @optional() spotifyAPI?: SpotifyAPI) {
-    this.youtubeAPI = youtubeAPI;
-    this.spotifyAPI = spotifyAPI;
-  }
-
-  async getSongs(query: string, playlistLimit: number, shouldSplitChapters: boolean): Promise<[SongMetadata[], string]> {
-    const newSongs: SongMetadata[] = [];
+  async getSongs(query: string, playlistLimit: number, _shouldSplitChapters?: boolean): Promise<[SongMetadata[], string]> {
+    const trimmedQuery = query.trim();
     let extraMsg = '';
 
-    // Test if it's a complete URL
-    try {
-      const url = new URL(query);
+    const directTrackId = this.extractTrackId(trimmedQuery);
 
-      const YOUTUBE_HOSTS = [
-        'www.youtube.com',
-        'youtu.be',
-        'youtube.com',
-        'music.youtube.com',
-        'www.music.youtube.com',
-      ];
+    if (directTrackId) {
+      const tracks = await this.starchildAPI.getTracksByIds([directTrackId]);
 
-      if (YOUTUBE_HOSTS.includes(url.host)) {
-        // YouTube source
-        if (url.searchParams.get('list')) {
-          // YouTube playlist
-          newSongs.push(...await this.youtubePlaylist(url.searchParams.get('list')!, shouldSplitChapters));
-        } else {
-          const songs = await this.youtubeVideo(url.href, shouldSplitChapters);
-
-          if (songs) {
-            newSongs.push(...songs);
-          } else {
-            throw new Error('that doesn\'t exist');
-          }
-        }
-      } else if (url.protocol === 'spotify:' || url.host === 'open.spotify.com') {
-        if (this.spotifyAPI === undefined) {
-          throw new Error('Spotify is not enabled!');
-        }
-
-        const [convertedSongs, nSongsNotFound, totalSongs] = await this.spotifySource(query, playlistLimit, shouldSplitChapters);
-
-        if (totalSongs > playlistLimit) {
-          extraMsg = `a random sample of ${playlistLimit} songs was taken`;
-        }
-
-        if (totalSongs > playlistLimit && nSongsNotFound !== 0) {
-          extraMsg += ' and ';
-        }
-
-        if (nSongsNotFound !== 0) {
-          if (nSongsNotFound === 1) {
-            extraMsg += '1 song was not found';
-          } else {
-            extraMsg += `${nSongsNotFound.toString()} songs were not found`;
-          }
-        }
-
-        newSongs.push(...convertedSongs);
-      } else {
-        const song = await this.httpLiveStream(query);
-
-        if (song) {
-          newSongs.push(song);
-        } else {
-          throw new Error('that doesn\'t exist');
-        }
-      }
-    } catch (err: any) {
-      if (err instanceof Error && err.message === 'Spotify is not enabled!') {
-        throw err;
-      }
-
-      // Not a URL, must search YouTube
-      const songs = await this.youtubeVideoSearch(query, shouldSplitChapters);
-
-      if (songs) {
-        newSongs.push(...songs);
-      } else {
+      if (tracks.length === 0) {
         throw new Error('that doesn\'t exist');
       }
+
+      return [[this.toSongMetadata(tracks[0])], extraMsg];
     }
 
-    return [newSongs, extraMsg];
-  }
+    // See if it's a URL pointing to a stream
+    try {
+      const url = new URL(trimmedQuery);
+      const deezerId = this.extractTrackIdFromUrl(url);
 
-  private async youtubeVideoSearch(query: string, shouldSplitChapters: boolean): Promise<SongMetadata[]> {
-    return this.youtubeAPI.search(query, shouldSplitChapters);
-  }
+      if (deezerId) {
+        const tracks = await this.starchildAPI.getTracksByIds([deezerId]);
 
-  private async youtubeVideo(url: string, shouldSplitChapters: boolean): Promise<SongMetadata[]> {
-    return this.youtubeAPI.getVideo(url, shouldSplitChapters);
-  }
+        if (tracks.length === 0) {
+          throw new Error('that doesn\'t exist');
+        }
 
-  private async youtubePlaylist(listId: string, shouldSplitChapters: boolean): Promise<SongMetadata[]> {
-    return this.youtubeAPI.getPlaylist(listId, shouldSplitChapters);
-  }
+        return [[this.toSongMetadata(tracks[0])], extraMsg];
+      }
 
-  private async spotifySource(url: string, playlistLimit: number, shouldSplitChapters: boolean): Promise<[SongMetadata[], number, number]> {
-    if (this.spotifyAPI === undefined) {
-      return [[], 0, 0];
+      const stream = await this.httpLiveStream(trimmedQuery);
+      return [[stream], extraMsg];
+    } catch {
+      // fall through to search
     }
 
-    const parsed = spotifyURI.parse(url);
+    const searchResults = await this.starchildAPI.searchTracks(trimmedQuery, playlistLimit);
 
-    switch (parsed.type) {
-      case 'album': {
-        const [tracks, playlist] = await this.spotifyAPI.getAlbum(url, playlistLimit);
-        return this.spotifyToYouTube(tracks, shouldSplitChapters, playlist);
-      }
-
-      case 'playlist': {
-        const [tracks, playlist] = await this.spotifyAPI.getPlaylist(url, playlistLimit);
-        return this.spotifyToYouTube(tracks, shouldSplitChapters, playlist);
-      }
-
-      case 'track': {
-        const tracks = [await this.spotifyAPI.getTrack(url)];
-        return this.spotifyToYouTube(tracks, shouldSplitChapters);
-      }
-
-      case 'artist': {
-        const tracks = await this.spotifyAPI.getArtist(url, playlistLimit);
-        return this.spotifyToYouTube(tracks, shouldSplitChapters);
-      }
-
-      default: {
-        return [[], 0, 0];
-      }
+    if (searchResults.length === 0) {
+      throw new Error('that doesn\'t exist');
     }
+
+    return [searchResults.map(track => this.toSongMetadata(track)), extraMsg];
   }
 
   private async httpLiveStream(url: string): Promise<SongMetadata> {
     return new Promise((resolve, reject) => {
-      ffmpeg(url).ffprobe((err, _) => {
+      ffmpeg(url).ffprobe(err => {
         if (err) {
-          reject();
+          reject(err);
+          return;
         }
 
         resolve({
           url,
           source: MediaSource.HLS,
+          streamUrl: url,
+          externalUrl: url,
           isLive: true,
           title: url,
           artist: url,
@@ -168,28 +82,45 @@ export default class {
     });
   }
 
-  private async spotifyToYouTube(tracks: SpotifyTrack[], shouldSplitChapters: boolean, playlist?: QueuedPlaylist | undefined): Promise<[SongMetadata[], number, number]> {
-    const promisedResults = tracks.map(async track => this.youtubeAPI.search(`"${track.name}" "${track.artist}"`, shouldSplitChapters));
-    const searchResults = await Promise.allSettled(promisedResults);
+  private toSongMetadata(track: StarchildTrack): SongMetadata {
+    return {
+      title: track.title,
+      artist: track.artist,
+      url: track.id,
+      streamUrl: this.starchildAPI.buildStreamUrl(track.id),
+      externalUrl: track.link ?? null,
+      length: track.duration,
+      offset: 0,
+      playlist: null,
+      isLive: false,
+      thumbnailUrl: track.coverUrl ?? null,
+      source: MediaSource.Starchild,
+    };
+  }
 
-    let nSongsNotFound = 0;
+  private extractTrackId(query: string): string | null {
+    if (/^\d+$/.test(query)) {
+      return query;
+    }
 
-    // Count songs that couldn't be found
-    const songs: SongMetadata[] = searchResults.reduce((accum: SongMetadata[], result) => {
-      if (result.status === 'fulfilled') {
-        for (const v of result.value) {
-          accum.push({
-            ...v,
-            ...(playlist ? {playlist} : {}),
-          });
-        }
-      } else {
-        nSongsNotFound++;
+    return null;
+  }
+
+  private extractTrackIdFromUrl(url: URL): string | null {
+    if (url.hostname.includes('deezer.com')) {
+      const segments = url.pathname.split('/').filter(Boolean);
+      const trackIndex = segments.findIndex(segment => segment === 'track');
+
+      if (trackIndex !== -1 && segments[trackIndex + 1]) {
+        return segments[trackIndex + 1];
       }
+    }
 
-      return accum;
-    }, []);
+    const streamId = url.searchParams.get('id');
+    if (streamId && /^\d+$/.test(streamId)) {
+      return streamId;
+    }
 
-    return [songs, nSongsNotFound, tracks.length];
+    return null;
   }
 }

@@ -10,7 +10,7 @@ Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot
 - ⏩ Seeking within a song/video
 - 💾 Local caching for better performance
 - 📋 No vote-to-skip - this is anarchy, not a democracy
-- ↔️ Autoconverts playlists / artists / albums / songs from Spotify
+- 🎶 Streams directly from the Starchild Music API
 - ↗️ Users can add custom shortcuts (aliases)
 - 1️⃣ ECHO instance supports multiple guilds
 - 🔊 Normalizes volume across tracks
@@ -22,8 +22,8 @@ Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot
 ECHO is written in TypeScript. You can either run ECHO with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables:
 
 - `DISCORD_TOKEN` can be acquired [here](https://discordapp.com/developers/applications) by creating a 'New Application', then going to 'Bot'.
-- `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` can be acquired [here](https://developer.spotify.com/dashboard/applications) with 'Create a Client ID' (Optional).
-- `YOUTUBE_API_KEY` can be acquired by [creating a new project](https://console.developers.google.com) in Google's Developer Console, enabling the YouTube API, and creating an API key under credentials.
+- `API_URL` should point to your Starchild Music API instance (defaults to `https://api.starchildmusic.com/`).
+- `STREAMING_KEY` unlocks streaming on the Starchild Music API. Create this key in your Starchild dashboard.
 
 ECHO will log a URL when run. Open this URL in a browser to invite ECHO to your server. ECHO will DM the server owner after it's added with setup instructions.
 
@@ -47,7 +47,7 @@ There are a variety of image tags available:
 (Replace empty config strings with correct values.)
 
 ```bash
-docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e SPOTIFY_CLIENT_ID='' -e SPOTIFY_CLIENT_SECRET='' -e YOUTUBE_API_KEY='' ghcr.io/soulwax/ECHO:latest
+docker run -it -v "$(pwd)/data":/data -e DISCORD_TOKEN='' -e API_URL='https://api.starchildmusic.com/' -e STREAMING_KEY='' ghcr.io/soulwax/ECHO:latest
 ```
 
 This starts ECHO and creates a data directory in your current directory.
@@ -65,9 +65,8 @@ services:
       - ./ECHO:/data
     environment:
       - DISCORD_TOKEN=
-      - YOUTUBE_API_KEY=
-      - SPOTIFY_CLIENT_ID=
-      - SPOTIFY_CLIENT_SECRET=
+      - API_URL=https://api.starchildmusic.com/
+      - STREAMING_KEY=
 ```
 
 ### Node.js
@@ -89,11 +88,6 @@ services:
 ### Cache
 
 By default, ECHO limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
-
-### SponsorBlock
-
-ECHO can skip non-music segments at the beginning or end of a Youtube music video (Using [SponsorBlock](https://sponsor.ajay.app/)). It is disabled by default. If you want to enable it, set the environment variable `ENABLE_SPONSORBLOCK=true` or uncomment it in your .env.
-Being a community project, the server may be down or overloaded. When it happen, ECHO will skip requests to SponsorBlock for a few minutes. You can change the skip duration by setting the value of `SPONSORBLOCK_TIMEOUT`.
 
 ### Custom Bot Status
 

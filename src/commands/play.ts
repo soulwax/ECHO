@@ -3,15 +3,14 @@
 import {AutocompleteInteraction, ChatInputCommandInteraction} from 'discord.js';
 import {URL} from 'url';
 import {SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder} from '@discordjs/builders';
-import {inject, injectable, optional} from 'inversify';
-import Spotify from 'spotify-web-api-node';
+import {inject, injectable} from 'inversify';
 import Command from './index.js';
 import {TYPES} from '../types.js';
-import ThirdParty from '../services/third-party.js';
-import getYouTubeAndSpotifySuggestionsFor from '../utils/get-youtube-and-spotify-suggestions-for.js';
 import KeyValueCacheProvider from '../services/key-value-cache.js';
 import {ONE_HOUR_IN_SECONDS} from '../utils/constants.js';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
+import StarchildAPI, {StarchildTrack} from '../services/starchild-api.js';
+import {truncate} from '../utils/string.js';
 
 @injectable()
 export default class implements Command {
@@ -19,18 +18,16 @@ export default class implements Command {
 
   public requiresVC = true;
 
-  private readonly spotify?: Spotify;
+  private readonly starchildAPI: StarchildAPI;
   private readonly cache: KeyValueCacheProvider;
   private readonly addQueryToQueue: AddQueryToQueue;
 
-  constructor(@inject(TYPES.ThirdParty) @optional() thirdParty: ThirdParty, @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider, @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue) {
-    this.spotify = thirdParty?.spotify;
+  constructor(@inject(TYPES.Services.StarchildAPI) starchildAPI: StarchildAPI, @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider, @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue) {
+    this.starchildAPI = starchildAPI;
     this.cache = cache;
     this.addQueryToQueue = addQueryToQueue;
 
-    const queryDescription = thirdParty === undefined
-      ? 'YouTube URL or search query'
-      : 'YouTube URL, Spotify URL, or search query';
+    const queryDescription = 'Track ID, Deezer URL, or search query';
 
     this.slashCommand = new SlashCommandBuilder()
       .setName('play')
@@ -83,16 +80,29 @@ export default class implements Command {
       return;
     } catch {}
 
-    const suggestions = await this.cache.wrap(
-      getYouTubeAndSpotifySuggestionsFor,
+    const suggestionChoices = await this.cache.wrap(
+      async (searchQuery: string, limit: number) => this.buildSuggestions(searchQuery, limit),
       query,
-      this.spotify,
       10,
       {
         expiresIn: ONE_HOUR_IN_SECONDS,
         key: `autocomplete:${query}`,
       });
 
-    await interaction.respond(suggestions);
+    await interaction.respond(suggestionChoices);
+  }
+
+  private async buildSuggestions(query: string, limit: number) {
+    const tracks = await this.starchildAPI.searchTracks(query, limit);
+
+    return tracks.map(track => ({
+      name: this.formatSuggestion(track),
+      value: track.id,
+    }));
+  }
+
+  private formatSuggestion(track: StarchildTrack) {
+    const base = `${track.title} — ${track.artist}`;
+    return truncate(base, 100);
   }
 }

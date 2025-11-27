@@ -1,6 +1,5 @@
 // File: src/utils/build-embed.ts
 
-import getYouTubeID from 'get-youtube-id';
 import {EmbedBuilder} from 'discord.js';
 import Player, {MediaSource, QueuedSong, STATUS} from '../services/player.js';
 import getProgressBar from './get-progress-bar.js';
@@ -13,17 +12,17 @@ const getMaxSongTitleLength = (title: string) => {
   return nonASCII.test(title) ? 28 : 48;
 };
 
-const getSongTitle = ({title, url, offset, source}: QueuedSong, shouldTruncate = false) => {
-  if (source === MediaSource.HLS) {
-    return `[${title}](${url})`;
-  }
-
+const getSongTitle = ({title, url, offset, source, externalUrl}: QueuedSong, shouldTruncate = false) => {
   const cleanSongTitle = title.replace(/\[.*\]/, '').trim();
 
   const songTitle = shouldTruncate ? truncate(cleanSongTitle, getMaxSongTitleLength(cleanSongTitle)) : cleanSongTitle;
-  const youtubeId = url.length === 11 ? url : getYouTubeID(url) ?? '';
+  const linkTarget = source === MediaSource.HLS ? url : externalUrl;
 
-  return `[${songTitle}](https://www.youtube.com/watch?v=${youtubeId}${offset === 0 ? '' : '&t=' + String(offset)})`;
+  if (!linkTarget) {
+    return songTitle;
+  }
+
+  return `[${songTitle}](${linkTarget})`;
 };
 
 const getQueueInfo = (player: Player) => {

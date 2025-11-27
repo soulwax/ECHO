@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim AS base
+FROM node:20-bookworm-slim AS base
 
 # openssl will be a required package if base is updated to 18.16+ due to node:*-slim base distro change
 # https://github.com/prisma/prisma/issues/19729#issuecomment-1591270599

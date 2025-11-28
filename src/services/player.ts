@@ -1,31 +1,33 @@
 // File: src/services/player.ts
 
 import {
-    AudioPlayer,
-    AudioPlayerState,
-    AudioPlayerStatus, AudioResource,
-    createAudioPlayer,
-    createAudioResource, DiscordGatewayAdapterCreator,
-    joinVoiceChannel,
-    StreamType,
-    VoiceConnection,
-    VoiceConnectionStatus,
+  AudioPlayer,
+  AudioPlayerState,
+  AudioPlayerStatus, AudioResource,
+  createAudioPlayer,
+  createAudioResource, DiscordGatewayAdapterCreator,
+  joinVoiceChannel,
+  StreamType,
+  VoiceConnection,
+  VoiceConnectionStatus,
 } from '@discordjs/voice';
-import ytdl, { videoFormat } from '@distube/ytdl-core';
 import type { Setting } from '@prisma/client';
 import shuffle from 'array-shuffle';
 import { Snowflake, VoiceChannel } from 'discord.js';
 import ffmpeg from 'fluent-ffmpeg';
 import { WriteStream } from 'fs-capacitor';
 import hasha from 'hasha';
+import { inject } from 'inversify';
 import { Readable } from 'stream';
+import { TYPES } from '../types.js';
 import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
 import debug from '../utils/debug.js';
 import { getGuildSettings } from '../utils/get-guild-settings.js';
 import FileCacheProvider from './file-cache.js';
+import StarchildAPI from './starchild-api.js';
 
 export enum MediaSource {
-  Youtube,
+  Starchild,
   HLS,
 }
 
@@ -60,7 +62,6 @@ export interface PlayerEvents {
   statusChange: (oldStatus: STATUS, newStatus: STATUS) => void;
 }
 
-type YTDLVideoFormat = videoFormat & {loudnessDb?: number};
 
 export const DEFAULT_VOLUME = 100;
 
@@ -83,13 +84,15 @@ export default class {
 
   private positionInSeconds = 0;
   private readonly fileCache: FileCacheProvider;
+  private readonly starchildAPI: StarchildAPI;
   private disconnectTimer: NodeJS.Timeout | null = null;
 
   private readonly channelToSpeakingUsers: Map<string, Set<string>> = new Map();
 
-  constructor(fileCache: FileCacheProvider, guildId: string) {
+  constructor(fileCache: FileCacheProvider, guildId: string, @inject(TYPES.Services.StarchildAPI) starchildAPI: StarchildAPI) {
     this.fileCache = fileCache;
     this.guildId = guildId;
+    this.starchildAPI = starchildAPI;
   }
 
   async connect(channel: VoiceChannel): Promise<void> {
@@ -507,75 +510,20 @@ export default class {
       return this.createReadStream({url: song.url, cacheKey: song.url});
     }
 
-    let ffmpegInput: string | null;
-    const ffmpegInputOptions: string[] = [];
-    let shouldCacheVideo = false;
+    // Use Starchild API for streaming
+    const streamUrl = this.starchildAPI.getStreamUrl(song.url, {
+      kbps: 128, // Default bitrate
+      offset: options.seek,
+    });
 
-    let format: YTDLVideoFormat | undefined;
-
-    ffmpegInput = await this.fileCache.getPathFor(this.getHashForCache(song.url));
-
-    if (!ffmpegInput) {
-      // Not yet cached, must download
-      const info = await ytdl.getInfo(song.url);
-
-      const formats = info.formats as YTDLVideoFormat[];
-
-      const filter = (format: ytdl.videoFormat): boolean => format.codecs === 'opus' && format.container === 'webm' && format.audioSampleRate !== undefined && parseInt(format.audioSampleRate, 10) === 48000;
-
-      format = formats.find(filter);
-
-      const nextBestFormat = (formats: ytdl.videoFormat[]): ytdl.videoFormat | undefined => {
-        if (formats.length < 1) {
-          return undefined;
-        }
-
-        if (formats[0].isLive) {
-          formats = formats.sort((a, b) => (b as unknown as {audioBitrate: number}).audioBitrate - (a as unknown as {audioBitrate: number}).audioBitrate); // Bad typings
-
-          return formats.find(format => [128, 127, 120, 96, 95, 94, 93].includes(parseInt(format.itag as unknown as string, 10))); // Bad typings
-        }
-
-        formats = formats
-          .filter(format => format.averageBitrate)
-          .sort((a, b) => {
-            if (a && b) {
-              return b.averageBitrate! - a.averageBitrate!;
-            }
-
-            return 0;
-          });
-        return formats.find(format => !format.bitrate) ?? formats[0];
-      };
-
-      if (!format) {
-        format = nextBestFormat(info.formats);
-
-        if (!format) {
-          // If still no format is found, throw
-          throw new Error('Can\'t find suitable format.');
-        }
-      }
-
-      debug('Using format', format);
-
-      ffmpegInput = format.url;
-
-      // Don't cache livestreams or long videos
-      const MAX_CACHE_LENGTH_SECONDS = 30 * 60; // 30 minutes
-      shouldCacheVideo = !info.player_response.videoDetails.isLiveContent && parseInt(info.videoDetails.lengthSeconds, 10) < MAX_CACHE_LENGTH_SECONDS && !options.seek;
-
-      debug(shouldCacheVideo ? 'Caching video' : 'Not caching video');
-
-      ffmpegInputOptions.push(...[
-        '-reconnect',
-        '1',
-        '-reconnect_streamed',
-        '1',
-        '-reconnect_delay_max',
-        '5',
-      ]);
-    }
+    const ffmpegInputOptions: string[] = [
+      '-reconnect',
+      '1',
+      '-reconnect_streamed',
+      '1',
+      '-reconnect_delay_max',
+      '5',
+    ];
 
     if (options.seek) {
       ffmpegInputOptions.push('-ss', options.seek.toString());
@@ -586,11 +534,10 @@ export default class {
     }
 
     return this.createReadStream({
-      url: ffmpegInput,
+      url: streamUrl,
       cacheKey: song.url,
       ffmpegInputOptions,
-      cache: shouldCacheVideo,
-      volumeAdjustment: format?.loudnessDb ? `${-format.loudnessDb}dB` : undefined,
+      cache: false, // Don't cache Starchild streams
     });
   }
 

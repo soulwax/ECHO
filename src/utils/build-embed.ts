@@ -1,12 +1,10 @@
 // File: src/utils/build-embed.ts
 
 import { EmbedBuilder } from 'discord.js';
-import getYouTubeIDModule from 'get-youtube-id';
 import Player, { MediaSource, QueuedSong, STATUS } from '../services/player.js';
 import getProgressBar from './get-progress-bar.js';
 import { truncate } from './string.js';
 import { prettyTime } from './time.js';
-const getYouTubeID = getYouTubeIDModule as unknown as (url: string) => string | null;
 
 const getMaxSongTitleLength = (title: string) => {
   // eslint-disable-next-line no-control-regex
@@ -22,9 +20,11 @@ const getSongTitle = ({title, url, offset, source}: QueuedSong, shouldTruncate =
   const cleanSongTitle = title.replace(/\[.*\]/, '').trim();
 
   const songTitle = shouldTruncate ? truncate(cleanSongTitle, getMaxSongTitleLength(cleanSongTitle)) : cleanSongTitle;
-  const youtubeId = url.length === 11 ? url : getYouTubeID(url) ?? '';
+  
+  // For Starchild, url is the Deezer track ID
+  const deezerUrl = `https://www.deezer.com/track/${url}`;
 
-  return `[${songTitle}](https://www.youtube.com/watch?v=${youtubeId}${offset === 0 ? '' : '&t=' + String(offset)})`;
+  return `[${songTitle}](${deezerUrl})`;
 };
 
 const getQueueInfo = (player: Player) => {

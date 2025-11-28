@@ -2,15 +2,14 @@
 
 import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
 import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
-import { inject, injectable, optional } from 'inversify';
-import Spotify from 'spotify-web-api-node';
+import { inject, injectable } from 'inversify';
 import { URL } from 'url';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
 import KeyValueCacheProvider from '../services/key-value-cache.js';
-import ThirdParty from '../services/third-party.js';
+import StarchildAPI from '../services/starchild-api.js';
 import { TYPES } from '../types.js';
 import { ONE_HOUR_IN_SECONDS } from '../utils/constants.js';
-import getYouTubeAndSpotifySuggestionsFor from '../utils/get-youtube-and-spotify-suggestions-for.js';
+import getStarchildSuggestionsFor from '../utils/get-starchild-suggestions-for.js';
 import Command from './index.js';
 
 @injectable()
@@ -19,25 +18,21 @@ export default class implements Command {
 
   public requiresVC = true;
 
-  private readonly spotify?: Spotify;
   private readonly cache: KeyValueCacheProvider;
   private readonly addQueryToQueue: AddQueryToQueue;
+  private readonly starchildAPI: StarchildAPI;
 
-  constructor(@inject(TYPES.ThirdParty) @optional() thirdParty: ThirdParty, @inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider, @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue) {
-    this.spotify = thirdParty?.spotify;
+  constructor(@inject(TYPES.KeyValueCache) cache: KeyValueCacheProvider, @inject(TYPES.Services.AddQueryToQueue) addQueryToQueue: AddQueryToQueue, @inject(TYPES.Services.StarchildAPI) starchildAPI: StarchildAPI) {
     this.cache = cache;
     this.addQueryToQueue = addQueryToQueue;
-
-    const queryDescription = thirdParty === undefined
-      ? 'YouTube URL or search query'
-      : 'YouTube URL, Spotify URL, or search query';
+    this.starchildAPI = starchildAPI;
 
     this.slashCommand = new SlashCommandBuilder()
       .setName('play')
       .setDescription('play a song')
       .addStringOption(option => option
         .setName('query')
-        .setDescription(queryDescription)
+        .setDescription('search query or HLS stream URL')
         .setAutocomplete(true)
         .setRequired(true))
       .addBooleanOption(option => option
@@ -84,9 +79,9 @@ export default class implements Command {
     } catch {}
 
     const suggestions = await this.cache.wrap(
-      getYouTubeAndSpotifySuggestionsFor,
+      getStarchildSuggestionsFor,
       query,
-      this.spotify,
+      this.starchildAPI,
       10,
       {
         expiresIn: ONE_HOUR_IN_SECONDS,

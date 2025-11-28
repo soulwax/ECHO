@@ -13,8 +13,7 @@ import PlayerManager from './managers/player.js';
 // Services
 import AddQueryToQueue from './services/add-query-to-queue.js';
 import GetSongs from './services/get-songs.js';
-import SpotifyAPI from './services/spotify-api.js';
-import YoutubeAPI from './services/youtube-api.js';
+import StarchildAPI from './services/starchild-api.js';
 
 // Commands
 import Clear from './commands/clear.js';
@@ -42,7 +41,6 @@ import Unskip from './commands/unskip.js';
 import Volume from './commands/volume.js';
 import FileCacheProvider from './services/file-cache.js';
 import KeyValueCacheProvider from './services/key-value-cache.js';
-import ThirdParty from './services/third-party.js';
 
 const container = new Container();
 
@@ -65,14 +63,7 @@ container.bind(TYPES.Config).toConstantValue(new ConfigProvider());
 // Services
 container.bind<GetSongs>(TYPES.Services.GetSongs).to(GetSongs).inSingletonScope();
 container.bind<AddQueryToQueue>(TYPES.Services.AddQueryToQueue).to(AddQueryToQueue).inSingletonScope();
-container.bind<YoutubeAPI>(TYPES.Services.YoutubeAPI).to(YoutubeAPI).inSingletonScope();
-
-// Only instanciate spotify dependencies if the Spotify client ID and secret are set
-const config = container.get<ConfigProvider>(TYPES.Config);
-if (config.SPOTIFY_CLIENT_ID !== '' && config.SPOTIFY_CLIENT_SECRET !== '') {
-  container.bind<SpotifyAPI>(TYPES.Services.SpotifyAPI).to(SpotifyAPI).inSingletonScope();
-  container.bind(TYPES.ThirdParty).to(ThirdParty);
-}
+container.bind<StarchildAPI>(TYPES.Services.StarchildAPI).to(StarchildAPI).inSingletonScope();
 
 // Commands
 [

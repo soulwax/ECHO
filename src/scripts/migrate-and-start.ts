@@ -5,7 +5,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import Prisma from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { execa, ExecaError } from 'execa';
 import { promises as fs } from 'fs';
 import ora from 'ora';
@@ -14,7 +14,7 @@ import { DATA_DIR } from '../services/config.js';
 import createDatabaseUrl, { createDatabasePath } from '../utils/create-database-url.js';
 import logBanner from '../utils/log-banner.js';
 
-const client = new Prisma.PrismaClient();
+const client = new PrismaClient();
 
 process.env.DATABASE_URL = process.env.DATABASE_URL ?? createDatabaseUrl(DATA_DIR);
 
@@ -36,7 +36,7 @@ const hasDatabaseBeenMigratedToPrisma = async () => {
   try {
     await client.$queryRaw`SELECT COUNT(id) FROM _prisma_migrations`;
   } catch (error: unknown) {
-    if (error instanceof Prisma.Prisma.PrismaClientKnownRequestError && error.code === 'P2010') {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (error as Prisma.PrismaClientKnownRequestError).code === 'P2010') {
       // Table doesn't exist
       return false;
     }

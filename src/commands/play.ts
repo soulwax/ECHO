@@ -1,6 +1,6 @@
 // File: src/commands/play.ts
 
-import { SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from '@discordjs/builders';
 import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import { inject, injectable, optional } from 'inversify';
 import Spotify from 'spotify-web-api-node';
@@ -15,7 +15,7 @@ import Command from './index.js';
 
 @injectable()
 export default class implements Command {
-  public readonly slashCommand: Partial<SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder> & Pick<SlashCommandBuilder, 'toJSON'>;
+  public readonly slashCommand: (SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder) & Pick<SlashCommandBuilder, 'toJSON'>;
 
   public requiresVC = true;
 

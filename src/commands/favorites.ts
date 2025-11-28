@@ -94,16 +94,16 @@ export default class implements Command {
       },
     });
 
-    let results = query === '' ? favorites : favorites.filter(f => f.name.toLowerCase().startsWith(query.toLowerCase()));
+    let results = query === '' ? favorites : favorites.filter((f: { name: string }) => f.name.toLowerCase().startsWith(query.toLowerCase()));
 
     if (subcommand === 'remove') {
       // Only show favorites that user is allowed to remove
-      results = interaction.member?.user.id === interaction.guild?.ownerId ? results : results.filter(r => r.authorId === interaction.member!.user.id);
+      results = interaction.member?.user.id === interaction.guild?.ownerId ? results : results.filter((r: { authorId: string }) => r.authorId === interaction.member!.user.id);
     }
 
     // Limit results to 25 maximum per Discord limits
     const trimmed = results.length > 25 ? results.slice(0, 25) : results;
-    await interaction.respond(trimmed.map(r => ({
+    await interaction.respond(trimmed.map((r: { name: string }) => ({
       name: r.name,
       value: r.name,
     })));
@@ -156,7 +156,7 @@ export default class implements Command {
     }
 
     await new Pagination(
-      interaction as ChatInputCommandInteraction<'cached'>,
+      interaction,
       {ephemeral: true, limit: 25})
       .setFields(fields)
       .paginateFields(true)

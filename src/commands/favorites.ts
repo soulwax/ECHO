@@ -155,8 +155,9 @@ export default class implements Command {
       };
     }
 
+    // Type assertion needed due to discord.js type resolution mismatch between pagination.djs and our imports
     await new Pagination(
-      interaction,
+      interaction as any,
       {ephemeral: true, limit: 25})
       .setFields(fields)
       .paginateFields(true)

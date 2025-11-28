@@ -1,7 +1,7 @@
 // File: src/services/youtube-api.ts
 
 import ytsr, { Video } from '@distube/ytsr';
-import getYouTubeID from 'get-youtube-id';
+import getYouTubeIDModule from 'get-youtube-id';
 import got, { Got } from 'got';
 import { inject, injectable } from 'inversify';
 import { parse, toSeconds } from 'iso8601-duration';
@@ -12,6 +12,7 @@ import { parseTime } from '../utils/time.js';
 import Config from './config.js';
 import KeyValueCacheProvider from './key-value-cache.js';
 import { MediaSource, QueuedPlaylist, SongMetadata } from './player.js';
+const getYouTubeID = getYouTubeIDModule as unknown as (url: string) => string | null;
 
 interface VideoDetailsResponse {
   id: string;

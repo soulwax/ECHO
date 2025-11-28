@@ -1,11 +1,12 @@
 // File: src/utils/build-embed.ts
 
 import { EmbedBuilder } from 'discord.js';
-import getYouTubeID from 'get-youtube-id';
+import getYouTubeIDModule from 'get-youtube-id';
 import Player, { MediaSource, QueuedSong, STATUS } from '../services/player.js';
 import getProgressBar from './get-progress-bar.js';
 import { truncate } from './string.js';
 import { prettyTime } from './time.js';
+const getYouTubeID = getYouTubeIDModule as unknown as (url: string) => string | null;
 
 const getMaxSongTitleLength = (title: string) => {
   // eslint-disable-next-line no-control-regex

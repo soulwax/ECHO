@@ -29,14 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix linting and formatting, overhaul husky, apply dependabot suggestions, fix breaking changes coming with those
 - Fix build errors, and improve build process massively
 
-
 ### Changed
 
+- The changes made with 2.12.1 are massive and should be considered a complete rewrite of the bot
 - Complete overhaul of the entire codebase, moving away from the youtube and spotify api
 - Update dependencies and fix breaking changes caused by them
 - Use a self-written api for music streaming and searching called starchild-api
 - Remove all dependencies on youtube and spotify, now only using starchild-api for music streaming and searching
-- The changes made with 2.12.1 are massive and should be considered a complete rewrite of the bot
+- Massively improve music suggestion speed and accuracy
+- Massively improve music streaming and audio quality
 
 ## [2.11.1] - 2025-04-07
 

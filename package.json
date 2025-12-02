@@ -76,6 +76,7 @@
     "@distube/ytdl-core": "^4.16.12",
     "@distube/ytsr": "^2.0.4",
     "@prisma/client": "^5.22.0",
+    "@snazzah/davey": "^0.1.8",
     "@types/libsodium-wrappers": "^0.7.14",
     "array-shuffle": "^3.0.0",
     "debug": "^4.4.3",

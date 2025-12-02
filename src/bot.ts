@@ -3,7 +3,7 @@
 import { REST } from '@discordjs/rest';
 import { generateDependencyReport } from '@discordjs/voice';
 import { Routes } from 'discord-api-types/v10';
-import { Client, Collection, User } from 'discord.js';
+import { Client, Collection, MessageFlags, User } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import ora from 'ora';
 import Command from './commands/index.js';
@@ -73,7 +73,7 @@ export default class {
 
           const requiresVC = command.requiresVC instanceof Function ? command.requiresVC(interaction) : command.requiresVC;
           if (requiresVC && interaction.member && !isUserInVoice(interaction.guild, interaction.member.user as User)) {
-            await interaction.reply({content: errorMsg('gotta be in a voice channel'), ephemeral: true});
+            await interaction.reply({content: errorMsg('gotta be in a voice channel'), flags: MessageFlags.Ephemeral});
             return;
           }
 
@@ -109,7 +109,7 @@ export default class {
           if ((interaction.isCommand() || interaction.isButton()) && (interaction.replied || interaction.deferred)) {
             await interaction.editReply(errorMsg(error as Error));
           } else if (interaction.isCommand() || interaction.isButton()) {
-            await interaction.reply({content: errorMsg(error as Error), ephemeral: true});
+            await interaction.reply({content: errorMsg(error as Error), flags: MessageFlags.Ephemeral});
           }
         } catch {}
       }

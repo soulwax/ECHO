@@ -2,7 +2,7 @@
 
 /* eslint-disable complexity */
 import shuffle from 'array-shuffle';
-import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, MessageFlags } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import { SponsorBlock } from 'sponsorblock-api';
 import PlayerManager from '../managers/player.js';
@@ -59,7 +59,7 @@ export default class AddQueryToQueue {
 
     const {playlistLimit, queueAddResponseEphemeral} = settings;
 
-    await interaction.deferReply({ephemeral: queueAddResponseEphemeral});
+    await interaction.deferReply({flags: queueAddResponseEphemeral ? MessageFlags.Ephemeral : undefined});
 
     let [newSongs, extraMsg] = await this.getSongs.getSongs(query, playlistLimit, shouldSplitChapters);
 

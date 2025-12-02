@@ -251,11 +251,15 @@ export default class {
       this.status = STATUS.PLAYING;
       this.nowPlaying = currentSong;
 
+      // Always reset position when starting a new song
+      // If it's the same URL, we're seeking/resuming, so preserve position
+      // Otherwise, start from the beginning (or offset)
       if (currentSong.url === this.lastSongURL) {
-        this.startTrackingPosition();
+        // Same song - preserve position (for seeking/resuming)
+        this.startTrackingPosition(this.positionInSeconds);
       } else {
-        // Reset position counter
-        this.startTrackingPosition(0);
+        // New song - reset position to start (or offset)
+        this.startTrackingPosition(positionSeconds ?? 0);
         this.lastSongURL = currentSong.url;
       }
     } catch (error: unknown) {
@@ -542,17 +546,24 @@ export default class {
     });
   }
 
-  private startTrackingPosition(initalPosition?: number): void {
-    if (initalPosition !== undefined) {
-      this.positionInSeconds = initalPosition;
+  private startTrackingPosition(initialPosition?: number): void {
+    // Always set position explicitly to ensure it's initialized
+    // If no initial position provided, use current position (for resuming)
+    if (initialPosition !== undefined) {
+      this.positionInSeconds = initialPosition;
     }
+    // If position is 0 and no initial position provided, ensure we start tracking from 0
+    // This handles the case where we're starting a new song
 
     if (this.playPositionInterval) {
       clearInterval(this.playPositionInterval);
     }
 
+    // Start interval to increment position every second
     this.playPositionInterval = setInterval(() => {
-      this.positionInSeconds++;
+      if (this.status === STATUS.PLAYING) {
+        this.positionInSeconds++;
+      }
     }, 1000);
   }
 

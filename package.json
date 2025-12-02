@@ -84,7 +84,7 @@
     "husky": "^9.1.7",
     "pm2": "^6.0.14",
     "prisma": "^5.22.0",
-    "release-it": "^14.14.3",
+    "release-it": "^19.0.6",
     "type-fest": "^2.19.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1"

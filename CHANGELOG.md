@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved Dockerfile structure to properly include Prisma CLI and migrations for runtime
 - Modernized Dockerfile build process with better multi-stage optimization
 
-## [2.12.1] - 2025-04-07
+## [2.12.1] - 2025-11-27
 
 ### Fixed
 

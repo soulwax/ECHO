@@ -38,8 +38,8 @@ function App() {
                 <span className="highlight"> That Doesn't Suck</span>
               </h1>
               <p className="hero-subtitle">
-                High-quality audio streaming, smart caching, and a seamless experience 
-                for your Discord server. Made for small to medium-sized communities.
+                High-quality audio streaming, smart caching, overall imo, a good experience 10/10. 
+                Better than the majority of the other discord music bots but with fewer features yet. Made with love and a trade secret streaming and searching api.
               </p>
               <div className="hero-buttons">
                 <a 
@@ -108,14 +108,14 @@ function App() {
                 <div className="feature-icon">⏹️</div>
                 <h3 className="feature-title">Animated Progress Bar</h3>
                 <p className="feature-description">
-                  Real-time updating progress bars in Discord embeds
+                  Real-time updating progress bar in discord embed lmao
                 </p>
               </div>
               <div className="feature-card">
                 <div className="feature-icon">🎥</div>
                 <h3 className="feature-title">Livestream Support</h3>
                 <p className="feature-description">
-                  Stream HLS live audio feeds seamlessly
+                  Stream HLS live audio feeds
                 </p>
               </div>
               <div className="feature-card">

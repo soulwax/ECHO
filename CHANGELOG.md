@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.14.0] - 2025-12-02
+
+### Added
+
+- **Web Interface**: New React-based web interface and landing page for ECHO
+  - Modern, professional react application for now just flexing bot features
+  - Fully responsive design with Discord-inspired color scheme
+  - Built with React 19, TypeScript, and Vite
+  - Section highlighting all bot capabilities
+  - Hero section with Discord mockup visualization
+  - About section with statistics and information
+  - Available as of this version at https://echo.soulwax.dev
+
 ## [2.13.0] - 2025-12-02
 
 ### Changed

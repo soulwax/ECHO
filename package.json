@@ -124,7 +124,7 @@
     "nodesplash": "^0.1.1",
     "ora": "^8.2.0",
     "p-event": "^7.0.1",
-    "p-limit": "^6.2.0",
+    "p-limit": "^7.2.0",
     "p-queue": "^9.0.1",
     "p-retry": "6.2.0",
     "pagination.djs": "^4.0.18",

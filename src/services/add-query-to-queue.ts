@@ -61,7 +61,8 @@ export default class AddQueryToQueue {
 
     await interaction.deferReply({flags: queueAddResponseEphemeral ? MessageFlags.Ephemeral : undefined});
 
-    let [newSongs, extraMsg] = await this.getSongs.getSongs(query, playlistLimit, shouldSplitChapters);
+    // For play command, only add one song regardless of playlist limit
+    let [newSongs, extraMsg] = await this.getSongs.getSongs(query, 1, shouldSplitChapters);
 
     if (newSongs.length === 0) {
       throw new Error('no songs found');
@@ -113,9 +114,10 @@ export default class AddQueryToQueue {
     }
 
     if (skipCurrentTrack) {
-      try {
+      // Only skip if there are more songs in the queue
+      if (player.canGoForward(1)) {
         await player.forward(1);
-      } catch (_: unknown) {
+      } else {
         throw new Error('no song to skip to');
       }
     }

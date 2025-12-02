@@ -524,7 +524,7 @@ export default class {
   private async downloadAndCacheMP3(song: QueuedSong): Promise<string> {
     const cacheKey = `mp3:${song.url}:${AUDIO_BITRATE_KBPS}`;
     const hash = this.getHashForCache(cacheKey);
-    
+
     // Check if already cached
     const cachedPath = await this.fileCache.getPathFor(hash);
     if (cachedPath) {
@@ -538,49 +538,66 @@ export default class {
       kbps: AUDIO_BITRATE_KBPS as number,
     });
 
-    const writeStream = this.fileCache.createWriteStream(hash);
-    const downloadStream = got.stream(streamUrl);
+    try {
+      const writeStream = this.fileCache.createWriteStream(hash);
+      const downloadStream = got.stream(streamUrl);
 
-    // Wait for pipeline to complete
-    await pipeline(downloadStream, writeStream);
-    
-    // Wait for the file cache write stream's async close handler to complete
-    // The close handler moves the file and creates the DB entry asynchronously
-    await new Promise<void>((resolve, reject) => {
-      const checkCache = async () => {
-        let finalPath = await this.fileCache.getPathFor(hash);
-        let retries = 5;
-        while (!finalPath && retries > 0) {
-          await new Promise(r => setTimeout(r, 200));
-          finalPath = await this.fileCache.getPathFor(hash);
-          retries--;
-        }
-        if (finalPath) {
-          resolve();
-        } else {
-          reject(new Error('Failed to cache MP3 file - file may not have been written correctly'));
-        }
-      };
+      // Wait for pipeline to complete
+      await pipeline(downloadStream, writeStream);
 
-      if (writeStream.closed) {
-        // Stream already closed, wait for async handler
-        void checkCache();
-      } else {
-        writeStream.once('close', () => {
-          // Wait for async close handler to complete
+      // In production, the async close handler might take longer
+      // Wait for the file cache write stream's async close handler to complete
+      await new Promise<void>((resolve, reject) => {
+        const checkCache = async () => {
+          try {
+            let finalPath = await this.fileCache.getPathFor(hash);
+            let retries = 10; // Increased retries for production
+            while (!finalPath && retries > 0) {
+              debug(`Waiting for MP3 cache to complete for ${song.title}... (${retries} retries left)`);
+              await new Promise(r => setTimeout(r, 500)); // Increased delay
+              finalPath = await this.fileCache.getPathFor(hash);
+              retries--;
+            }
+            if (finalPath) {
+              debug(`MP3 cache completed for ${song.title}`);
+              resolve();
+            } else {
+              debug(`MP3 cache failed for ${song.title} - no path found after retries`);
+              reject(new Error(`Failed to cache MP3 file - file may not have been written correctly for ${song.title}`));
+            }
+          } catch (error: unknown) {
+            debug(`Error checking MP3 cache for ${song.title}: ${String(error)}`);
+            reject(error instanceof Error ? error : new Error(String(error)));
+          }
+        };
+
+        if (writeStream.closed) {
+          // Stream already closed, wait for async handler
+          debug(`Write stream already closed for ${String(song.title)}, checking cache...`);
           void checkCache();
-        });
-        writeStream.once('error', reject);
-      }
-    });
-    
-    const finalPath = await this.fileCache.getPathFor(hash);
-    if (!finalPath) {
-      throw new Error('Failed to cache MP3 file - file may not have been written correctly');
-    }
+        } else {
+          writeStream.once('close', () => {
+            debug(`Write stream closed for ${String(song.title)}, checking cache...`);
+            void checkCache();
+          });
+          writeStream.once('error', (error) => {
+            debug(`Write stream error for ${song.title}: ${error}`);
+            reject(error);
+          });
+        }
+      });
 
-    debug(`Cached MP3 for ${song.title}`);
-    return finalPath;
+      const finalPath = await this.fileCache.getPathFor(hash);
+      if (!finalPath) {
+        throw new Error(`Failed to cache MP3 file - final path not found for ${song.title}`);
+      }
+
+      debug(`Cached MP3 for ${song.title}`);
+      return finalPath;
+    } catch (error) {
+      debug(`Error downloading/caching MP3 for ${String(song.title)}: ${error}`);
+      throw error;
+    }
   }
 
   private async getStream(song: QueuedSong, options: {seek?: number; to?: number} = {}): Promise<Readable> {
@@ -632,7 +649,7 @@ export default class {
     // Start interval to increment position every second
     this.playPositionInterval = setInterval(() => {
       if (this.status === STATUS.PLAYING) {
-        this.positionInSeconds++;
+      this.positionInSeconds++;
       }
     }, 1000);
   }
@@ -763,7 +780,7 @@ export default class {
       // Determine if input is a file path or URL
       const isFile = !options.url.startsWith('http://') && !options.url.startsWith('https://');
       const inputOptions = options?.ffmpegInputOptions ?? (isFile ? [] : ['-re']);
-      
+
       const stream = ffmpeg(options.url)
         .inputOptions(inputOptions)
         .noVideo()

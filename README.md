@@ -1,19 +1,24 @@
-# ECHO 
+# ECHO
+
+<div align="center">
+  <img src=".github/emily.png" width="600" alt="ECHO - A Discord Music Bot">
+</div>
 
 Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).
 
-![Hero graphic](.github/emily.png)
-
 ## Features
 
+- 🎵 **High-Quality Audio**: 320kbps MP3 source with 192kbps Opus output for crystal-clear sound
+- ⏹️ **Animated Progress Bar**: Real-time updating progress bars in Discord embeds
 - 🎥 Livestreams
 - ⏩ Seeking within a song/video
-- 💾 Local caching for better performance
+- 💾 Advanced local MP3 caching for instant playback and better performance
 - 📋 No vote-to-skip - this is anarchy, not a democracy
 - 🎶 Streams directly from the Starchild Music API
 - ↗️ Users can add custom shortcuts (aliases)
-- 1️⃣ ECHO instance supports multiple guilds
-- 🔊 Normalizes volume across tracks
+- 1️⃣ One song per `/play` command - predictable queue management
+- 🔄 Skip only works when more songs are queued - no errors at end of queue
+- 🔊 Normalizes volume across tracks with automatic ducking when people speak
 - ✍️ Written in TypeScript, easily extendable
 - ❤️ Loyal Packers fan
 
@@ -72,7 +77,7 @@ services:
 ### Node.js
 
 **Prerequisites**:
-* Node.js (18.17.0 or latest 18.xx.xx is required and latest 18.x.x LTS is recommended) (Version 18 due to opus dependency)
+* Node.js (20.0.0 or later is required, latest 20.x.x LTS recommended)
 * ffmpeg (4.1 or later)
 
 1. `git clone https://github.com/soulwax/ECHO.git && cd ECHO`
@@ -87,7 +92,9 @@ services:
 
 ### Cache
 
-By default, ECHO limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
+ECHO uses advanced local MP3 caching for optimal performance and sound quality. By default, ECHO limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
+
+The cache stores high-quality MP3 files (320kbps) locally for instant playback, reducing API calls and ensuring consistent audio quality.
 
 ### Custom Bot Status
 
@@ -125,11 +132,13 @@ In the default state, ECHO has the status "Online" and the text "Listening to Mu
 
 If you have ECHO running in a lot of guilds (10+) you may want to switch to registering commands bot-wide rather than for each guild. (The downside to this is that command updates can take up to an hour to propagate.) To do this, set the environment variable `REGISTER_COMMANDS_ON_BOT` to `true`.
 
-### Automatically turn down volume when people speak
+### Automatic Volume Management
 
-You can configure the bot to automatically turn down the volume when people are speaking in the channel using the following commands:
+ECHO can automatically adjust volume when people speak in the voice channel:
 
-- `/config set-reduce-vol-when-voice true` - Enable automatic volume reduction
+- `/config set-reduce-vol-when-voice true` - Enable automatic volume reduction when people speak
 - `/config set-reduce-vol-when-voice false` - Disable automatic volume reduction
 - `/config set-reduce-vol-when-voice-target <volume>` - Set the target volume percentage when people speak (0-100, default is 70)
+
+This feature ensures clear communication during conversations while maintaining music playback.
 

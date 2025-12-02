@@ -22,6 +22,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.12.1] - 2025-04-07
 
+### Fixed
+
+- Fixed Typescript type errors, and increase type safety across the entire codebase
+- Fix linting and formatting, overhaul husky, apply dependabot suggestions, fix breaking changes coming with those
+- Fix build errors, and improve build process massively
+
+
+### Changed
+
 - Complete overhaul of the entire codebase, moving away from the youtube and spotify api
 - Update dependencies and fix breaking changes caused by them
 - Use a self-written api for music streaming and searching called starchild-api

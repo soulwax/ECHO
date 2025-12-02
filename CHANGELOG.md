@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.12.2] - 2025-12-02
+
+### Fixed
+
+- Fixed TypeScript build error with hasha import (changed from default to named export `hashSync`)
+- Fixed TypeScript build error with parse-duration null check in duration-string-to-seconds utility
+
+### Changed
+
+- Updated Dockerfile to use npm instead of yarn for package management
+- Updated Dockerfile to use package-lock.json instead of yarn.lock
+- Improved Dockerfile structure to properly include Prisma CLI and migrations for runtime
+- Modernized Dockerfile build process with better multi-stage optimization
+
+## [2.12.1] - 2025-04-07
+
+- Complete overhaul of the entire codebase, moving away from the youtube and spotify api
+- Update dependencies and fix breaking changes caused by them
+- Use a self-written api for music streaming and searching called starchild-api
+- Remove all dependencies on youtube and spotify, now only using starchild-api for music streaming and searching
+- The changes made with 2.12.1 are massive and should be considered a complete rewrite of the bot
+
 ## [2.11.1] - 2025-04-07
 
 - Revert Dockerfile to inherit dependencies image from base image

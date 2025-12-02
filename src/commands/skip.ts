@@ -41,6 +41,7 @@ export default class implements Command {
         content: 'keep \'er movin\'',
         embeds: player.getCurrent() ? [buildPlayingMessageEmbed(player)] : [],
       });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_: unknown) {
       throw new Error('no song to skip to');
     }

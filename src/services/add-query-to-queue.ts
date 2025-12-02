@@ -1,6 +1,5 @@
 // File: src/services/add-query-to-queue.ts
 
-/* eslint-disable complexity */
 import shuffle from 'array-shuffle';
 import { ChatInputCommandInteraction, GuildMember, MessageFlags } from 'discord.js';
 import { inject, injectable } from 'inversify';
@@ -38,7 +37,6 @@ export default class AddQueryToQueue {
     query,
     addToFrontOfQueue,
     shuffleAdditions,
-    shouldSplitChapters,
     skipCurrentTrack,
     interaction,
   }: {
@@ -57,12 +55,12 @@ export default class AddQueryToQueue {
 
     const settings = await getGuildSettings(guildId);
 
-    const {playlistLimit, queueAddResponseEphemeral} = settings;
+    const {queueAddResponseEphemeral} = settings;
 
     await interaction.deferReply({flags: queueAddResponseEphemeral ? MessageFlags.Ephemeral : undefined});
 
     // For play command, only add one song regardless of playlist limit
-    let [newSongs, extraMsg] = await this.getSongs.getSongs(query, 1, shouldSplitChapters);
+    let [newSongs, extraMsg] = await this.getSongs.getSongs(query, 1);
 
     if (newSongs.length === 0) {
       throw new Error('no songs found');
@@ -164,7 +162,7 @@ export default class AddQueryToQueue {
       ) ?? [];
       const skipSegments = segments
         .sort((a, b) => a.startTime - b.startTime)
-        .reduce((acc: Array<{startTime: number; endTime: number}>, {startTime, endTime}) => {
+        .reduce((acc: {startTime: number; endTime: number}[], {startTime, endTime}) => {
           const previousSegment = acc[acc.length - 1];
           // If segments overlap merge
           if (previousSegment && previousSegment.endTime > startTime) {

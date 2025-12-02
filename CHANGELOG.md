@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.12.4] - 2025-12-02
+
+### Fixed
+
+- Fixed malformed comment block in ecosystem.config.cjs that caused build errors with PM2
+
+### Changed
+
+- HENCEFORTH: This codebase is GPL3 licensed, and all contributions must be GPL3 licensed
+
+## [2.12.3] - 2025-12-02
+
+### Fixed
+
+- Fixed TypeScript linting errors across the codebase:
+  - Replaced ternary operator with nullish coalescing operator in config.ts
+  - Fixed promise return type in file-cache.ts event handler
+  - Removed unused error variable in file-cache.ts catch block
+  - Fixed template literal type error in player.ts by properly converting unknown error to string
+  - Replaced `any` types with `unknown`/`never` in key-value-cache.ts for better type safety
+  - Changed `Array<T>` to `T[]` syntax in register-commands-on-guild.ts
+  - Fixed unsafe `any` type assertion in favorites.ts using `@ts-expect-error` for type resolution mismatch
+
 ## [2.12.2] - 2025-12-02
 
 ### Fixed

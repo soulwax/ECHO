@@ -157,9 +157,9 @@ export default class implements Command {
     }
 
     // Type assertion needed due to discord.js type resolution mismatch between pagination.djs and our imports
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await new Pagination(
-      interaction as any,
+      // @ts-expect-error - Type resolution mismatch between pagination.djs and discord.js imports
+      interaction,
       {ephemeral: true, limit: DISCORD_PAGINATION_LIMIT})
       .setFields(fields)
       .paginateFields(true)

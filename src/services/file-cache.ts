@@ -39,7 +39,7 @@ export default class FileCacheProvider {
 
     try {
       await fs.access(resolvedPath);
-    } catch (_: unknown) {
+    } catch {
       await prisma.fileCache.delete({
         where: {
           hash,
@@ -73,23 +73,25 @@ export default class FileCacheProvider {
 
     const stream = createWriteStream(tmpPath);
 
-    stream.on('close', async () => {
+    stream.on('close', () => {
       // Only move if size is non-zero (may have errored out)
-      const stats = await fs.stat(tmpPath);
+      void (async () => {
+        const stats = await fs.stat(tmpPath);
 
-      if (stats.size !== 0) {
-        await fs.rename(tmpPath, finalPath);
+        if (stats.size !== 0) {
+          await fs.rename(tmpPath, finalPath);
 
-        await prisma.fileCache.create({
-          data: {
-            hash,
-            accessedAt: new Date(),
-            bytes: stats.size,
-          },
-        });
-      }
+          await prisma.fileCache.create({
+            data: {
+              hash,
+              accessedAt: new Date(),
+              bytes: stats.size,
+            },
+          });
+        }
 
-      await this.evictOldestIfNecessary();
+        await this.evictOldestIfNecessary();
+      })();
     });
 
     return stream;
@@ -117,7 +119,6 @@ export default class FileCacheProvider {
     let totalSizeBytes = await this.getDiskUsageInBytes();
     let numOfEvictedFiles = 0;
     // Continue to evict until we're under the limit
-    /* eslint-disable no-await-in-loop */
     while (totalSizeBytes > this.config.CACHE_LIMIT_IN_BYTES) {
       const oldest = await prisma.fileCache.findFirst({
         orderBy: {
@@ -139,7 +140,6 @@ export default class FileCacheProvider {
 
       totalSizeBytes = await this.getDiskUsageInBytes();
     }
-    /* eslint-enable no-await-in-loop */
 
     if (numOfEvictedFiles > 0) {
       debug(`${numOfEvictedFiles} files have been evicted`);

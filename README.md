@@ -255,4 +255,4 @@ If you want to contribute or develop ECHO:
 
 ## 📝 License
 
-MIT License - see LICENSE file for details.
+GPLv3 - see LICENSE file for details.

@@ -19,9 +19,8 @@ muse
 ├───.github/
 │   ├───dependabot.yml
 │   ├───FUNDING.yml
-│   ├───hero.png
-│   ├───logo.png
 │   ├───pull_request_template.md
+│   ├───songbird.png
 │   ├───ISSUE_TEMPLATE/
 │   │   └───support-request.md
 │   └───workflows/

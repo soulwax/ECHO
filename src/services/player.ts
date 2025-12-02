@@ -595,7 +595,7 @@ export default class {
       debug(`Cached MP3 for ${song.title}`);
       return finalPath;
     } catch (error) {
-      debug(`Error downloading/caching MP3 for ${String(song.title)}: ${error}`);
+      debug(`Error downloading/caching MP3 for ${String(song.title)}: ${String(error)}`);
       throw error;
     }
   }

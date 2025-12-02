@@ -8,7 +8,7 @@ interface RegisterCommandsOnGuildOptions {
   rest: REST;
   applicationId: string;
   guildId: string;
-  commands: Array<Command['slashCommand']>;
+  commands: Command['slashCommand'][];
 }
 
 const registerCommandsOnGuild = async ({rest, applicationId, guildId, commands}: RegisterCommandsOnGuildOptions) => {

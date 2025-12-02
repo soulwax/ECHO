@@ -1,6 +1,6 @@
 {
   "name": "echo",
-  "version": "2.12.2",
+  "version": "2.12.4",
   "description": "🎧 a self-hosted Discord music bot that doesn't suck ",
   "repository": "git@github.com:soulwax/ECHO.git",
   "author": "Max Isom <hi@maxisom.me>",

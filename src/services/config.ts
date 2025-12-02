@@ -9,12 +9,12 @@ import { ConditionalKeys } from 'type-fest';
 import xbytes from 'xbytes';
 dotenv.config({path: process.env.ENV_FILE ?? path.resolve(process.cwd(), '.env')});
 
-export const DATA_DIR = path.resolve(process.env.DATA_DIR ? process.env.DATA_DIR : './data');
+export const DATA_DIR = path.resolve(process.env.DATA_DIR ?? './data');
 
 const CONFIG_MAP = {
   DISCORD_TOKEN: process.env.DISCORD_TOKEN,
   STARCHILD_API_KEY: process.env.STARCHILD_API_KEY,
-  STARCHILD_BASE_URL: process.env.STARCHILD_BASE_URL ?? 'https://api.starchildmusic.com',
+  STARCHILD_BASE_URL: process.env.STARCHILD_BASE_URL,
   REGISTER_COMMANDS_ON_BOT: process.env.REGISTER_COMMANDS_ON_BOT === 'true',
   DATA_DIR,
   CACHE_DIR: path.join(DATA_DIR, 'cache'),

@@ -15,9 +15,9 @@ export default class {
     this.starchildAPI = starchildAPI;
   }
 
-  async getSongs(query: string, playlistLimit: number, shouldSplitChapters: boolean): Promise<[SongMetadata[], string]> {
+  async getSongs(query: string, playlistLimit: number): Promise<[SongMetadata[], string]> {
     const newSongs: SongMetadata[] = [];
-    let extraMsg = '';
+    const extraMsg = '';
 
     // Test if it's a complete URL (for HLS streams)
     try {

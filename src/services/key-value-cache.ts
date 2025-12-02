@@ -25,7 +25,7 @@ export default class KeyValueCacheProvider {
    * @param options - Cache options including expiration and optional key
    * @returns The cached or newly computed result
    */
-  async wrap<F extends (...args: any[]) => Promise<any>, R = Awaited<ReturnType<F>>>(
+  async wrap<F extends (...args: never[]) => Promise<unknown>, R = Awaited<ReturnType<F>>>(
     func: F,
     ...options: [...Parameters<F>, Options]
   ): Promise<R> {

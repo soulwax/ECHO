@@ -16,12 +16,14 @@ import shuffle from 'array-shuffle';
 import { Message, Snowflake, VoiceChannel } from 'discord.js';
 import ffmpeg from 'fluent-ffmpeg';
 import { WriteStream } from 'fs-capacitor';
+import got from 'got';
 import hasha from 'hasha';
 import { inject } from 'inversify';
+import { pipeline } from 'node:stream/promises';
 import { Readable } from 'stream';
 import { TYPES } from '../types.js';
 import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
-import { AUDIO_BITRATE_KBPS, AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, NOW_PLAYING_UPDATE_INTERVAL_MS, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
+import { AUDIO_BITRATE_KBPS, AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, NOW_PLAYING_UPDATE_INTERVAL_MS, OPUS_OUTPUT_BITRATE_KBPS, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
 import debug from '../utils/debug.js';
 import { getGuildSettings } from '../utils/get-guild-settings.js';
 import FileCacheProvider from './file-cache.js';
@@ -514,6 +516,42 @@ export default class {
     return hasha(url);
   }
 
+  /**
+   * Downloads and caches MP3 file from Starchild API
+   * @param song - The song to download
+   * @returns Path to cached MP3 file
+   */
+  private async downloadAndCacheMP3(song: QueuedSong): Promise<string> {
+    const cacheKey = `mp3:${song.url}:${AUDIO_BITRATE_KBPS}`;
+    const hash = this.getHashForCache(cacheKey);
+    
+    // Check if already cached
+    const cachedPath = await this.fileCache.getPathFor(hash);
+    if (cachedPath) {
+      debug(`Using cached MP3 for ${song.title}`);
+      return cachedPath;
+    }
+
+    // Download MP3 file
+    debug(`Downloading MP3 for ${song.title} at ${AUDIO_BITRATE_KBPS}kbps...`);
+    const streamUrl = this.starchildAPI.getStreamUrl(song.url, {
+      kbps: AUDIO_BITRATE_KBPS as number,
+    });
+
+    const writeStream = this.fileCache.createWriteStream(hash);
+    const downloadStream = got.stream(streamUrl);
+
+    await pipeline(downloadStream, writeStream);
+    
+    const finalPath = await this.fileCache.getPathFor(hash);
+    if (!finalPath) {
+      throw new Error('Failed to cache MP3 file');
+    }
+
+    debug(`Cached MP3 for ${song.title}`);
+    return finalPath;
+  }
+
   private async getStream(song: QueuedSong, options: {seek?: number; to?: number} = {}): Promise<Readable> {
     if (this.status === STATUS.PLAYING) {
       this.audioPlayer?.stop();
@@ -525,20 +563,10 @@ export default class {
       return this.createReadStream({url: song.url, cacheKey: song.url});
     }
 
-    // Use Starchild API for streaming
-    const streamUrl = this.starchildAPI.getStreamUrl(song.url, {
-      kbps: AUDIO_BITRATE_KBPS as number,
-      offset: options.seek,
-    });
+    // Download and cache MP3 file for higher fidelity
+    const mp3Path = await this.downloadAndCacheMP3(song);
 
-    const ffmpegInputOptions: string[] = [
-      '-reconnect',
-      '1',
-      '-reconnect_streamed',
-      '1',
-      '-reconnect_delay_max',
-      '5',
-    ];
+    const ffmpegInputOptions: string[] = [];
 
     if (options.seek) {
       ffmpegInputOptions.push('-ss', options.seek.toString());
@@ -548,11 +576,12 @@ export default class {
       ffmpegInputOptions.push('-to', options.to.toString());
     }
 
+    // Use cached MP3 file as input
     return this.createReadStream({
-      url: streamUrl,
+      url: mp3Path,
       cacheKey: song.url,
       ffmpegInputOptions,
-      cache: false, // Don't cache Starchild streams
+      cache: false, // Already cached as MP3
     });
   }
 
@@ -700,12 +729,16 @@ export default class {
       const returnedStream = capacitor.createReadStream();
       let hasReturnedStreamClosed = false;
 
+      // Determine if input is a file path or URL
+      const isFile = !options.url.startsWith('http://') && !options.url.startsWith('https://');
+      const inputOptions = options?.ffmpegInputOptions ?? (isFile ? [] : ['-re']);
+      
       const stream = ffmpeg(options.url)
-        .inputOptions(options?.ffmpegInputOptions ?? ['-re'])
+        .inputOptions(inputOptions)
         .noVideo()
         .audioCodec('libopus')
         .outputFormat('webm')
-        .audioBitrate(AUDIO_BITRATE_KBPS as number)
+        .audioBitrate(OPUS_OUTPUT_BITRATE_KBPS as number)
         .addOutputOption(['-filter:a', `volume=${options?.volumeAdjustment ?? '1'}`])
         .on('error', error => {
           if (!hasReturnedStreamClosed) {

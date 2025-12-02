@@ -67,7 +67,7 @@ export default class Config {
       } else if (typeof value === 'string') {
         // Type-safe assignment for string properties
         const stringKey = key as ConditionalKeys<typeof CONFIG_MAP, string>;
-        (this as Record<string, string>)[stringKey] = value.trim();
+        (this as unknown as Record<string, string>)[stringKey] = value.trim();
       } else if (typeof value === 'boolean') {
         this[key as ConditionalKeys<typeof CONFIG_MAP, boolean>] = value;
       } else {

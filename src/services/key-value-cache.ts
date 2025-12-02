@@ -1,18 +1,16 @@
 // File: src/services/key-value-cache.ts
 
 import { injectable } from 'inversify';
-import { prisma } from '../utils/db.js';
 import { MIN_CACHE_KEY_LENGTH } from '../utils/constants.js';
+import { prisma } from '../utils/db.js';
 import debug from '../utils/debug.js';
 
 type Seconds = number;
 
-type Options = {
+interface Options {
   expiresIn: Seconds;
   key?: string;
-};
-
-type FunctionArgs = unknown[];
+}
 
 const futureTimeToDate = (time: Seconds) => new Date(new Date().getTime() + (time * 1000));
 
@@ -27,7 +25,7 @@ export default class KeyValueCacheProvider {
    * @param options - Cache options including expiration and optional key
    * @returns The cached or newly computed result
    */
-  async wrap<F extends (...args: FunctionArgs) => Promise<unknown>, R = Awaited<ReturnType<F>>>(
+  async wrap<F extends (...args: any[]) => Promise<any>, R = Awaited<ReturnType<F>>>(
     func: F,
     ...options: [...Parameters<F>, Options]
   ): Promise<R> {
@@ -87,6 +85,6 @@ export default class KeyValueCacheProvider {
       },
     });
 
-    return result as R;
+    return result;
   }
 }

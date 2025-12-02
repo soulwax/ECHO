@@ -55,7 +55,7 @@ export default class {
   }
 
   async search(query: string, limit = 10): Promise<SongMetadata[]> {
-    return this.cache.wrap(
+    return this.cache.wrap<(...args: [string, number]) => Promise<SongMetadata[]>, SongMetadata[]>(
       async (q: string, lim: number) => {
         const response = await this.httpClient.get<DeezerSearchResponse>('music/search', {
           searchParams: {

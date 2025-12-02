@@ -12,6 +12,8 @@ import { ONE_HOUR_IN_SECONDS } from '../utils/constants.js';
 import getStarchildSuggestionsFor from '../utils/get-starchild-suggestions-for.js';
 import Command from './index.js';
 
+type GetStarchildSuggestionsForReturn = Awaited<ReturnType<typeof getStarchildSuggestionsFor>>;
+
 @injectable()
 export default class implements Command {
   public readonly slashCommand: (SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder) & Pick<SlashCommandBuilder, 'toJSON'>;
@@ -78,7 +80,7 @@ export default class implements Command {
       return;
     } catch {}
 
-    const suggestions = await this.cache.wrap(
+    const suggestions = await this.cache.wrap<typeof getStarchildSuggestionsFor, GetStarchildSuggestionsForReturn>(
       getStarchildSuggestionsFor,
       query,
       this.starchildAPI,

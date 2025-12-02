@@ -128,7 +128,7 @@ export default class {
    */
   private async handleInteraction(interaction: Interaction): Promise<void> {
     try {
-      if (interaction.isCommand()) {
+      if (interaction.isCommand() && interaction.isChatInputCommand()) {
         await this.handleCommandInteraction(interaction);
       } else if (interaction.isButton()) {
         await this.handleButtonInteraction(interaction);

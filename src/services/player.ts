@@ -17,7 +17,7 @@ import { Message, Snowflake, VoiceChannel } from 'discord.js';
 import ffmpeg from 'fluent-ffmpeg';
 import { WriteStream } from 'fs-capacitor';
 import got from 'got';
-import hasha from 'hasha';
+import { hashSync } from 'hasha';
 import { inject } from 'inversify';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'stream';
@@ -513,7 +513,7 @@ export default class {
   }
 
   private getHashForCache(url: string): string {
-    return hasha(url);
+    return hashSync(url);
   }
 
   /**

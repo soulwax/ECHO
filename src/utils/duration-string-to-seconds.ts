@@ -14,7 +14,11 @@ const durationStringToSeconds = (str: string) => {
   if (isInputSeconds) {
     seconds = Number.parseInt(str, 10);
   } else {
-    seconds = parse(str) / 1000;
+    const parsed = parse(str);
+    if (parsed === null) {
+      throw new Error(`Invalid duration string: ${str}`);
+    }
+    seconds = parsed / 1000;
   }
 
   return seconds;

@@ -86,6 +86,7 @@ export default class AddQueryToQueue {
     const firstSong = newSongs[0];
 
     let statusMsg = '';
+    let showedEmbed = false;
 
     if (player.voiceConnection === null) {
       await player.connect(targetVoiceChannel);
@@ -97,9 +98,15 @@ export default class AddQueryToQueue {
         statusMsg = 'resuming playback';
       }
 
-      await interaction.editReply({
+      const message = await interaction.editReply({
         embeds: [buildPlayingMessageEmbed(player)],
       });
+      
+      // Set the message for animated progress bar updates
+      if (message) {
+        player.setNowPlayingMessage(message);
+        showedEmbed = true;
+      }
     } else if (player.status === STATUS.IDLE) {
       // Player is idle, start playback instead
       await player.play();
@@ -126,10 +133,14 @@ export default class AddQueryToQueue {
       extraMsg = ` (${extraMsg})`;
     }
 
-    if (newSongs.length === 1) {
-      await interaction.editReply(`**${firstSong.title}** added to the${addToFrontOfQueue ? ' front of the' : ''} queue${skipCurrentTrack ? ' and current track skipped' : ''}${extraMsg}`);
-    } else {
-      await interaction.editReply(`**${firstSong.title}** and ${newSongs.length - 1} other songs were added to the queue${skipCurrentTrack ? ' and current track skipped' : ''}${extraMsg}`);
+    // Only update message if we didn't already show the embed
+    // If we showed the embed, keep it animated; otherwise show the text response
+    if (!showedEmbed) {
+      await interaction.editReply(
+        newSongs.length === 1
+          ? `**${firstSong.title}** added to the${addToFrontOfQueue ? ' front of the' : ''} queue${skipCurrentTrack ? ' and current track skipped' : ''}${extraMsg}`
+          : `**${firstSong.title}** and ${newSongs.length - 1} other songs were added to the queue${skipCurrentTrack ? ' and current track skipped' : ''}${extraMsg}`
+      );
     }
   }
 

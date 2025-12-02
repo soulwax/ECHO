@@ -13,7 +13,7 @@ import {
 } from '@discordjs/voice';
 import type { Setting } from '@prisma/client';
 import shuffle from 'array-shuffle';
-import { Snowflake, VoiceChannel } from 'discord.js';
+import { Message, Snowflake, TextChannel, VoiceChannel } from 'discord.js';
 import ffmpeg from 'fluent-ffmpeg';
 import { WriteStream } from 'fs-capacitor';
 import hasha from 'hasha';
@@ -21,7 +21,7 @@ import { inject } from 'inversify';
 import { Readable } from 'stream';
 import { TYPES } from '../types.js';
 import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
-import { AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
+import { AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, NOW_PLAYING_UPDATE_INTERVAL_MS, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
 import debug from '../utils/debug.js';
 import { getGuildSettings } from '../utils/get-guild-settings.js';
 import FileCacheProvider from './file-cache.js';
@@ -87,6 +87,8 @@ export default class {
   private readonly fileCache: FileCacheProvider;
   private readonly starchildAPI: StarchildAPI;
   private disconnectTimer: NodeJS.Timeout | null = null;
+  private nowPlayingMessage: Message | null = null;
+  private embedUpdateInterval: NodeJS.Timeout | undefined;
 
   private readonly channelToSpeakingUsers: Map<string, Set<string>> = new Map();
 
@@ -147,6 +149,7 @@ export default class {
       this.audioPlayer = null;
       this.audioResource = null;
     }
+    this.stopEmbedUpdates();
   }
 
   async seek(positionSeconds: number): Promise<void> {
@@ -262,6 +265,9 @@ export default class {
         this.startTrackingPosition(positionSeconds ?? 0);
         this.lastSongURL = currentSong.url;
       }
+
+      // Start updating the embed periodically
+      this.startEmbedUpdates();
     } catch (error: unknown) {
       await this.forward(1);
 
@@ -290,6 +296,7 @@ export default class {
     }
 
     this.stopTrackingPosition();
+    this.stopEmbedUpdates();
   }
 
   async forward(skip: number): Promise<void> {
@@ -474,6 +481,7 @@ export default class {
   }
 
   stop(): void {
+    this.stopEmbedUpdates();
     this.disconnect();
     this.queuePosition = 0;
     this.queue = [];
@@ -570,6 +578,50 @@ export default class {
   private stopTrackingPosition(): void {
     if (this.playPositionInterval) {
       clearInterval(this.playPositionInterval);
+      this.playPositionInterval = undefined;
+    }
+  }
+
+  /**
+   * Sets the message to update with the now-playing embed
+   * @param message - The Discord message to update
+   */
+  setNowPlayingMessage(message: Message | null): void {
+    this.nowPlayingMessage = message;
+  }
+
+  /**
+   * Starts periodically updating the now-playing embed
+   */
+  private startEmbedUpdates(): void {
+    this.stopEmbedUpdates(); // Clear any existing interval
+
+    this.embedUpdateInterval = setInterval(async () => {
+      if (this.status === STATUS.PLAYING && this.nowPlayingMessage && this.getCurrent()) {
+        try {
+          await this.nowPlayingMessage.edit({
+            embeds: [buildPlayingMessageEmbed(this)],
+          });
+        } catch (error) {
+          // Message might have been deleted or bot lost permissions
+          debug(`Failed to update now-playing embed: ${error}`);
+          // Clear the message reference if we can't update it
+          if ((error as {code: number}).code === 10008) { // Unknown Message
+            this.nowPlayingMessage = null;
+            this.stopEmbedUpdates();
+          }
+        }
+      }
+    }, NOW_PLAYING_UPDATE_INTERVAL_MS);
+  }
+
+  /**
+   * Stops updating the now-playing embed
+   */
+  private stopEmbedUpdates(): void {
+    if (this.embedUpdateInterval) {
+      clearInterval(this.embedUpdateInterval);
+      this.embedUpdateInterval = undefined;
     }
   }
 

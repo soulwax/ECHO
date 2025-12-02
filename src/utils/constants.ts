@@ -50,3 +50,9 @@ export const AUDIO_PLAYER_MAX_MISSED_FRAMES = 50;
  * HTTP status code for gone/unavailable content
  */
 export const HTTP_STATUS_GONE = 410;
+
+/**
+ * Interval for updating the now-playing embed (in milliseconds)
+ * Set to 5 seconds to balance smoothness with Discord rate limits
+ */
+export const NOW_PLAYING_UPDATE_INTERVAL_MS = 5000;

@@ -27,8 +27,14 @@ export default class implements Command {
       throw new Error('nothing is currently playing');
     }
 
-    await interaction.reply({
+    const message = await interaction.reply({
       embeds: [buildPlayingMessageEmbed(player)],
+      fetchReply: true,
     });
+    
+    // Set the message for animated progress bar updates
+    if (message) {
+      player.setNowPlayingMessage(message);
+    }
   }
 }

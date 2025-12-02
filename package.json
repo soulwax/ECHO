@@ -70,7 +70,7 @@
     "@types/debug": "^4.1.12",
     "@types/fluent-ffmpeg": "^2.1.28",
     "@types/fs-capacitor": "^2.0.0",
-    "@types/ms": "0.7.34",
+    "@types/ms": "2.1.0",
     "@types/node": "^20.19.25",
     "@types/node-emoji": "^1.8.2",
     "@types/spotify-web-api-node": "^5.0.11",

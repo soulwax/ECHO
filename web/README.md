@@ -1,6 +1,7 @@
 # ECHO Web Interface
 
-A professional React web interface for the ECHO Discord music bot.
+This should mark the beginning of the ECHO web interface.
+For now it is a simple landing page that showcases the bot's features.
 
 ## Development
 
@@ -17,15 +18,6 @@ npm run build
 # Preview production build
 npm run preview
 ```
-
-## Features
-
-- 🎨 Modern, professional landing page
-- 📱 Fully responsive design
-- 🎯 Showcases all bot features
-- ⚡ Built with Vite for fast development and builds
-- 🎨 Discord-inspired color scheme
-
 ## Tech Stack
 
 - React 19

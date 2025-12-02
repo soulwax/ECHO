@@ -1,3 +1,14 @@
+import {
+  HiOutlineCode,
+  HiOutlineExternalLink,
+  HiOutlineFastForward,
+  HiOutlineMusicNote,
+  HiOutlineSave,
+  HiOutlineSpeakerphone,
+  HiOutlineStop,
+  HiOutlineVideoCamera,
+  HiOutlineVolumeUp
+} from 'react-icons/hi'
 import './App.css'
 
 function App() {
@@ -6,7 +17,7 @@ function App() {
       <nav className="nav">
         <div className="nav-container">
           <div className="logo">
-            <span className="logo-icon">🎧</span>
+            <HiOutlineSpeakerphone className="logo-icon" />
             <span className="logo-text">ECHO</span>
           </div>
           <div className="nav-links">
@@ -26,20 +37,18 @@ function App() {
 
       <main>
         <section className="hero">
-          <div className="hero-top">
-            <div className="hero-image">
-              <img src="/songbird.png" alt="ECHO Songbird" className="songbird-img" />
-            </div>
-          </div>
           <div className="hero-bottom">
             <div className="hero-content">
-              <h1 className="hero-title">
-                A Discord Music Bot
-                <span className="highlight"> That Doesn't Suck</span>
-              </h1>
+              <div className="hero-title-section">
+                <img src="/songbird.png" alt="ECHO Songbird" className="songbird-img" />
+                <h1 className="hero-title">
+                  A Discord Music Bot
+                  <span className="highlight"> That Doesn't Suck</span>
+                </h1>
+              </div>
               <p className="hero-subtitle">
                 High-quality audio streaming, smart caching, overall imo, a good experience 10/10. 
-                Better than the majority of the other discord music bots but with fewer features yet. Made with love and a trade secret streaming and searching api.
+                Better than the majority of the other discord music bots but with fewer features yet. Made with love, as is the songbird api that enables the bot's capabilities.
               </p>
               <div className="hero-buttons">
                 <a 
@@ -77,7 +86,9 @@ function App() {
                   </div>
                   <div className="mockup-embed">
                     <div className="embed-content">
-                      <div className="embed-title">🎵 Now Playing</div>
+                      <div className="embed-title">
+                        <HiOutlineMusicNote className="inline-icon" /> Now Playing
+                      </div>
                       <div className="embed-description">High-quality audio streaming</div>
                       <div className="embed-progress">
                         <div className="progress-bar"></div>
@@ -98,63 +109,81 @@ function App() {
             </p>
             <div className="features-grid">
               <div className="feature-card">
-                <div className="feature-icon">🎵</div>
+                <div className="feature-icon">
+                  <HiOutlineMusicNote />
+                </div>
                 <h3 className="feature-title">High-Quality Audio</h3>
                 <p className="feature-description">
                   320kbps MP3 source with 192kbps Opus output for crystal-clear sound
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">⏹️</div>
+                <div className="feature-icon">
+                  <HiOutlineStop />
+                </div>
                 <h3 className="feature-title">Animated Progress Bar</h3>
                 <p className="feature-description">
                   Real-time updating progress bar in discord embed lmao
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">🎥</div>
+                <div className="feature-icon">
+                  <HiOutlineVideoCamera />
+                </div>
                 <h3 className="feature-title">Livestream Support</h3>
                 <p className="feature-description">
                   Stream HLS live audio feeds
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">⏩</div>
+                <div className="feature-icon">
+                  <HiOutlineFastForward />
+                </div>
                 <h3 className="feature-title">Seeking</h3>
                 <p className="feature-description">
                   Seek to any position within a song instantly
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">💾</div>
+                <div className="feature-icon">
+                  <HiOutlineSave />
+                </div>
                 <h3 className="feature-title">Advanced Caching</h3>
                 <p className="feature-description">
                   Local MP3 caching for instant playback and better performance
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">🔊</div>
+                <div className="feature-icon">
+                  <HiOutlineVolumeUp />
+                </div>
                 <h3 className="feature-title">Volume Management</h3>
                 <p className="feature-description">
                   Normalizes volume across tracks with automatic ducking when people speak
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">↗️</div>
+                <div className="feature-icon">
+                  <HiOutlineExternalLink />
+                </div>
                 <h3 className="feature-title">Custom Shortcuts</h3>
                 <p className="feature-description">
                   Users can add custom shortcuts (aliases) for quick access
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">🎶</div>
+                <div className="feature-icon">
+                  <HiOutlineMusicNote />
+                </div>
                 <h3 className="feature-title">Starchild Music API</h3>
                 <p className="feature-description">
                   Streams directly from the Starchild Music API - no YouTube or Spotify required
                 </p>
               </div>
               <div className="feature-card">
-                <div className="feature-icon">✍️</div>
+                <div className="feature-icon">
+                  <HiOutlineCode />
+                </div>
                 <h3 className="feature-title">TypeScript</h3>
                 <p className="feature-description">
                   Written in TypeScript with full type safety, easily extendable
@@ -207,7 +236,7 @@ function App() {
         <div className="container">
           <div className="footer-content">
             <div className="footer-logo">
-              <span className="logo-icon">🎧</span>
+              <HiOutlineSpeakerphone className="logo-icon" />
               <span className="logo-text">ECHO</span>
             </div>
             <div className="footer-links">

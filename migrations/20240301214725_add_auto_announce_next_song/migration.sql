@@ -1,6 +1,6 @@
 -- File: migrations/20240301214725_add_auto_announce_next_song/migration.sql
-
 -- RedefineTables
+
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (
     "guildId" TEXT NOT NULL PRIMARY KEY,

@@ -1,3 +1,5 @@
+# File: .github/workflows/pr-release.yml
+
 name: Release snapshot of PR
 on:
   workflow_run:

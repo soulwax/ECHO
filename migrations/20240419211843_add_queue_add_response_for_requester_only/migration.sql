@@ -1,6 +1,6 @@
 -- File: migrations/20240419211843_add_queue_add_response_for_requester_only/migration.sql
-
 -- RedefineTables
+
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (
     "guildId" TEXT NOT NULL PRIMARY KEY,

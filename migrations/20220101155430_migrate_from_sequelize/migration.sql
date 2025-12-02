@@ -1,6 +1,6 @@
 -- File: migrations/20220101155430_migrate_from_sequelize/migration.sql
-
 -- CreateTable
+
 CREATE TABLE `FileCaches` (`hash` VARCHAR(255) UNIQUE PRIMARY KEY, `bytes` INTEGER, `accessedAt` DATETIME, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
 
 -- CreateTable

@@ -1,6 +1,6 @@
 -- File: migrations/20220212014052_add_seconds_to_wait_after_queue_empties_and_leave_if_no_listeners/migration.sql
-
 -- RedefineTables
+
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_Setting" (
     "guildId" TEXT NOT NULL PRIMARY KEY,

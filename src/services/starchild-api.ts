@@ -102,4 +102,3 @@ export default class {
     return `${this.baseUrl}/music/stream?${params.toString()}`;
   }
 }
-

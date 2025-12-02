@@ -13,4 +13,3 @@ const getStarchildSuggestionsFor = async (query: string, starchildAPI: Starchild
 };
 
 export default getStarchildSuggestionsFor;
-

@@ -1,3 +1,5 @@
+# File: .github/workflows/publish.yml
+
 name: Make release & publish Docker image
 
 on:

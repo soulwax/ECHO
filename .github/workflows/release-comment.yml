@@ -1,3 +1,5 @@
+# File: .github/workflows/release-comment.yml
+
 on:
   release:
     types: [published]

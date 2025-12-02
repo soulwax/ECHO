@@ -1,3 +1,5 @@
+# File: .github/workflows/pr-snapshot.yml
+
 name: Build snapshot of PR
 
 on: pull_request

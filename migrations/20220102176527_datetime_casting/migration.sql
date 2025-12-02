@@ -1,5 +1,4 @@
 -- File: migrations/20220102176527_datetime_casting/migration.sql
-
 -- Manual migration to cast DateTime Column from "2021-12-29 20:16:54.221 +00:00" format to timestamp
 
 UPDATE FileCache SET createdAt = CAST(strftime('%s', createdAt) AS INT) ,updatedAt = CAST(strftime('%s', updatedAt) AS INT), accessedAt = CAST(strftime('%s', accessedAt) AS INT);

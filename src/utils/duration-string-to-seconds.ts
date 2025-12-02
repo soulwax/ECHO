@@ -1,6 +1,5 @@
 // File: src/utils/duration-string-to-seconds.ts
 
-// @ts-expect-error - parse-duration has module resolution issues with package.json exports
 import parse from 'parse-duration';
 
 /**

@@ -1,3 +1,5 @@
+# File: Dockerfile
+
 FROM node:20-bookworm-slim AS base
 
 # openssl will be a required package if base is updated to 18.16+ due to node:*-slim base distro change

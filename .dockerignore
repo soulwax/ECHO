@@ -1,3 +1,5 @@
+# File: .dockerignore
+
 node_modules
 data
 dist

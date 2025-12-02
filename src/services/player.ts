@@ -13,7 +13,7 @@ import {
 } from '@discordjs/voice';
 import type { Setting } from '@prisma/client';
 import shuffle from 'array-shuffle';
-import { Message, Snowflake, TextChannel, VoiceChannel } from 'discord.js';
+import { Message, Snowflake, VoiceChannel } from 'discord.js';
 import ffmpeg from 'fluent-ffmpeg';
 import { WriteStream } from 'fs-capacitor';
 import hasha from 'hasha';
@@ -21,7 +21,7 @@ import { inject } from 'inversify';
 import { Readable } from 'stream';
 import { TYPES } from '../types.js';
 import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
-import { AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, NOW_PLAYING_UPDATE_INTERVAL_MS, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
+import { AUDIO_BITRATE_KBPS, AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, NOW_PLAYING_UPDATE_INTERVAL_MS, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
 import debug from '../utils/debug.js';
 import { getGuildSettings } from '../utils/get-guild-settings.js';
 import FileCacheProvider from './file-cache.js';
@@ -90,7 +90,7 @@ export default class {
   private nowPlayingMessage: Message | null = null;
   private embedUpdateInterval: NodeJS.Timeout | undefined;
 
-  private readonly channelToSpeakingUsers: Map<string, Set<string>> = new Map();
+  private readonly channelToSpeakingUsers = new Map<string, Set<string>>();
 
   constructor(fileCache: FileCacheProvider, guildId: string, @inject(TYPES.Services.StarchildAPI) starchildAPI: StarchildAPI) {
     this.fileCache = fileCache;
@@ -525,7 +525,7 @@ export default class {
 
     // Use Starchild API for streaming
     const streamUrl = this.starchildAPI.getStreamUrl(song.url, {
-      kbps: 128, // Default bitrate
+      kbps: AUDIO_BITRATE_KBPS,
       offset: options.seek,
     });
 
@@ -695,6 +695,7 @@ export default class {
         .noVideo()
         .audioCodec('libopus')
         .outputFormat('webm')
+        .audioBitrate(AUDIO_BITRATE_KBPS)
         .addOutputOption(['-filter:a', `volume=${options?.volumeAdjustment ?? '1'}`])
         .on('error', error => {
           if (!hasReturnedStreamClosed) {

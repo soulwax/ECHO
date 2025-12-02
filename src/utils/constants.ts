@@ -56,3 +56,8 @@ export const HTTP_STATUS_GONE = 410;
  * Set to 5 seconds to balance smoothness with Discord rate limits
  */
 export const NOW_PLAYING_UPDATE_INTERVAL_MS = 5000;
+
+/**
+ * Audio bitrate in kbps for streaming
+ */
+export const AUDIO_BITRATE_KBPS = 192;

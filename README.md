@@ -24,26 +24,72 @@ Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot
 
 ## Running
 
-ECHO is written in TypeScript. You can either run ECHO with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables:
+ECHO is written in TypeScript. You can either run ECHO with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables.
 
-### Required Environment Variables
+### Environment Variables
+
+Create a `.env` file in the project root with the following variables:
+
+#### Required Variables
+
+```env
+DISCORD_TOKEN=your-discord-bot-token
+STARCHILD_BASE_URL=https://your-api-url
+STARCHILD_API_KEY=your-api's-key
+```
 
 - `DISCORD_TOKEN` - Your Discord bot token. Can be acquired [here](https://discordapp.com/developers/applications) by creating a 'New Application', then going to 'Bot'.
+- `STARCHILD_BASE_URL` - The base URL for your Starchild Music API instance
 - `STARCHILD_API_KEY` - Your Starchild Music API key. This unlocks streaming on the Starchild Music API. Create this key in your Starchild dashboard.
 
-### Optional Environment Variables
+#### Optional Variables
 
-- `STARCHILD_BASE_URL` - The base URL for your Starchild Music API instance (defaults to `https://api.starchildmusic.com`)
+```env
+DATA_DIR=./data
+CACHE_LIMIT=2GB
+
+# SponsorBlock integration (optional)
+# ENABLE_SPONSORBLOCK=true
+# SPONSORBLOCK_TIMEOUT=5    # Delay (in minutes) before retrying when SponsorBlock servers are unreachable
+
+# Bot status and activity (optional)
+BOT_STATUS=online
+# BOT_ACTIVITY_TYPE=LISTENING
+# BOT_ACTIVITY_URL=
+# BOT_ACTIVITY=music
+```
+
 - `DATA_DIR` - Directory for storing data files (defaults to `./data`)
 - `CACHE_LIMIT` - Cache size limit (defaults to `2GB`, examples: `512MB`, `10GB`)
-- `REGISTER_COMMANDS_ON_BOT` - Set to `true` to register commands bot-wide instead of per-guild (defaults to `false`)
+- `ENABLE_SPONSORBLOCK` - Set to `true` to enable SponsorBlock integration (defaults to `false`)
+- `SPONSORBLOCK_TIMEOUT` - Delay (in minutes) before retrying when SponsorBlock servers are unreachable (defaults to `5`)
 - `BOT_STATUS` - Bot presence status: `online`, `idle`, or `dnd` (defaults to `online`)
 - `BOT_ACTIVITY_TYPE` - Activity type: `PLAYING`, `LISTENING`, `WATCHING`, or `STREAMING` (defaults to `LISTENING`)
 - `BOT_ACTIVITY` - Activity text (defaults to `music`)
 - `BOT_ACTIVITY_URL` - Required if using `STREAMING` activity type. A Twitch or YouTube stream URL.
-- `ENABLE_SPONSORBLOCK` - Set to `true` to enable SponsorBlock integration (defaults to `false`)
-- `SPONSORBLOCK_TIMEOUT` - SponsorBlock API timeout in seconds (defaults to `5`)
-- `ENV_FILE` - Path to environment file (defaults to `.env` in current directory)
+
+**Complete `.env` example**:
+
+```env
+DISCORD_TOKEN=your-discord-bot-token-here
+DATA_DIR=./data
+STARCHILD_BASE_URL=https://your-api-url
+STARCHILD_API_KEY=your-api's-key
+
+############
+# Optional #
+############
+
+CACHE_LIMIT=2GB
+
+# ENABLE_SPONSORBLOCK=true
+# SPONSORBLOCK_TIMEOUT=5    # Delay (in minutes) before retrying when SponsorBlock servers are unreachable
+
+BOT_STATUS=online
+# BOT_ACTIVITY_TYPE=LISTENING
+# BOT_ACTIVITY_URL=
+# BOT_ACTIVITY=music
+```
 
 ECHO will log a URL when run. Open this URL in a browser to invite ECHO to your server. ECHO will DM the server owner after it's added with setup instructions.
 
@@ -63,8 +109,6 @@ There are a variety of image tags available:
 - `:2.12.2`: an exact version specifier
 - `:latest`: whatever the latest version is
 
-(Replace empty config strings with correct values.)
-
 **Basic Docker Run**:
 
 ```bash
@@ -72,7 +116,7 @@ docker run -it \
   -v "$(pwd)/data":/data \
   -e DISCORD_TOKEN='your-discord-token' \
   -e STARCHILD_API_KEY='your-starchild-api-key' \
-  -e STARCHILD_BASE_URL='https://api.starchildmusic.com' \
+  -e STARCHILD_BASE_URL='https://your-api-url' \
   ghcr.io/soulwax/ECHO:latest
 ```
 
@@ -91,12 +135,12 @@ services:
       - ./data:/data
     environment:
       - DISCORD_TOKEN=your-discord-token
-      - STARCHILD_API_KEY=your-starchild-api-key
-      - STARCHILD_BASE_URL=https://api.starchildmusic.com
+      - STARCHILD_API_KEY=your-api-key
+      - STARCHILD_BASE_URL=your-api-url
       # Optional: Custom cache limit
       - CACHE_LIMIT=5GB
-      # Optional: Bot-wide command registration
-      - REGISTER_COMMANDS_ON_BOT=false
+      # Optional: Bot status
+      - BOT_STATUS=online
 ```
 
 ### Node.js
@@ -148,23 +192,33 @@ In the default state, ECHO has the status "Online" and the text "Listening to Mu
 #### Examples
 
 **ECHO is watching a movie and is DND**:
-```bash
+```env
 BOT_STATUS=dnd
 BOT_ACTIVITY_TYPE=WATCHING
 BOT_ACTIVITY=a movie
 ```
 
 **ECHO is streaming Monstercat**:
-```bash
+```env
 BOT_STATUS=online
 BOT_ACTIVITY_TYPE=STREAMING
 BOT_ACTIVITY_URL=https://www.twitch.tv/monstercat
 BOT_ACTIVITY=Monstercat
 ```
 
-### Bot-wide commands
+**ECHO is in debugging mode**:
+```env
+BOT_STATUS=DEBUGGING
+```
 
-If you have ECHO running in a lot of guilds (10+) you may want to switch to registering commands bot-wide rather than for each guild. (The downside to this is that command updates can take up to an hour to propagate.) To do this, set the environment variable `REGISTER_COMMANDS_ON_BOT` to `true`.
+### SponsorBlock Integration
+
+ECHO supports SponsorBlock integration to automatically skip non-music segments of tracks. To enable:
+
+```env
+ENABLE_SPONSORBLOCK=true
+SPONSORBLOCK_TIMEOUT=5    # Delay (in minutes) before retrying when SponsorBlock servers are unreachable
+```
 
 ### Automatic Volume Management
 
@@ -186,7 +240,7 @@ ECHO uses the Starchild Music API for all music streaming and searching. This me
 - ✅ **High-quality audio streaming**
 - ✅ **Fast and reliable search**
 
-You'll need to set up your own Starchild Music API instance or use the default public instance at `https://api.starchildmusic.com`. Make sure you have a valid `STARCHILD_API_KEY` to enable streaming functionality.
+You'll need to set up your own Music API instance.
 
 ## 🔧 Development
 

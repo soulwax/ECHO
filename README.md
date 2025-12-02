@@ -1,7 +1,7 @@
 # ECHO
 
 <div align="center">
-  <img src=".github/emily.png" width="600" alt="ECHO - A Discord Music Bot">
+  <img src=".github/songbird.png" width="600" alt="ECHO - A Discord Music Bot">
 </div>
 
 Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).

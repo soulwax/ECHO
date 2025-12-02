@@ -25,14 +25,8 @@ export default class implements Command {
   public async execute(interaction: ChatInputCommandInteraction) {
     const player = this.playerManager.get(interaction.guild!.id);
 
-    if (!player.voiceConnection) {
-      throw new Error('not connected');
-    }
-
-    if (player.status !== STATUS.PLAYING) {
-      throw new Error('not currently playing');
-    }
-
+    // Stop playback and clear queue regardless of connection status
+    // This allows stopping even if already disconnected
     player.stop();
     await interaction.reply('Stopped');
   }

@@ -4,6 +4,8 @@
   <img src=".github/songbird.png" width="600" alt="ISOBEL - A Discord Music Bot">
 </div>
 
+
+
 ISOBEL is a **highly-opinionated midwestern German self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).
 
 ## Features
@@ -243,6 +245,23 @@ ISOBEL uses the Starchild Music API for all music streaming and searching. This 
 - ✅ **Fast and reliable search**
 
 You'll need to set up your own Music API instance.
+
+*My name Isobel*
+
+*Married to myself*  
+*My love Isobel*  
+*Living by herself*
+
+*In a heart full of dust*
+
+*Lives a creature called lust*  
+*It surprises and scares*  
+*Like me, like me*
+
+*My name Isobel*  
+*Married to myself*  
+*My love Isobel*  
+*Living by herself*
 
 ## 🔧 Development
 

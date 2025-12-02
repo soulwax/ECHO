@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Web Interface**: New React-based web interface and landing page for ECHO
+- **Web Interface**: New React-based web interface and landing page for ISOBEL
   - Modern, professional react application for now just flexing bot features
   - Fully responsive design with Discord-inspired color scheme
   - Built with React 19, TypeScript, and Vite
@@ -153,14 +153,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed import issue that broke ECHO inside of Docker. Thanks @sonroyaalmerol!
+- Fixed import issue that broke ISOBEL inside of Docker. Thanks @sonroyaalmerol!
 
 ## [2.8.0] - 2024-04-28
 
 ### Added
 
 - SponsorBlock is now supported as an opt-in feature and will skip non-music segments of videos when possible. Check the readme for config details. Thanks @Charlignon!
-- There's a new config setting to make ECHO responses when adding items to the queue visible only to the requester. Thanks @Sheeley7!
+- There's a new config setting to make ISOBEL responses when adding items to the queue visible only to the requester. Thanks @Sheeley7!
 
 ## [2.7.1] - 2024-03-18
 
@@ -177,7 +177,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ECHO can now auto-announce new tracks in your voice channel on the transition of a new track. Use `/config set-auto-announce-next-song True` to enable.
+- ISOBEL can now auto-announce new tracks in your voice channel on the transition of a new track. Use `/config set-auto-announce-next-song True` to enable.
 
 ## [2.5.0] - 2024-01-16
 
@@ -227,7 +227,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ECHO now normalizes playback volume across tracks. Thanks to @UniversalSuperBox for sponsoring this feature!
+- ISOBEL now normalizes playback volume across tracks. Thanks to @UniversalSuperBox for sponsoring this feature!
 
 ### Fixed
 
@@ -419,13 +419,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Now uses [esmo](https://github.com/antfu/esno) so we don't have to build
-- `/seek` and `/fseek` can now be given duration strings. For example, `1m` and `2m 15s` work. If the input consists only of numbers, ECHO will treat it as the number of seconds to advance (backwards-compatible behavior).
+- `/seek` and `/fseek` can now be given duration strings. For example, `1m` and `2m 15s` work. If the input consists only of numbers, ISOBEL will treat it as the number of seconds to advance (backwards-compatible behavior).
 
 ## [1.5.0] - 2022-03-12
 
 ### Changed
 
-- ECHO will now allow the member who invited ECHO to set config options. For this to work, the View Audit Logs permission must be given when inviting ECHO. If it isn't given, ECHO still works and will contact the owner instead for initial setup.
+- ISOBEL will now allow the member who invited ISOBEL to set config options. For this to work, the View Audit Logs permission must be given when inviting ISOBEL. If it isn't given, ISOBEL still works and will contact the owner instead for initial setup.
 
 ## [1.4.1] - 2022-03-12s
 
@@ -437,7 +437,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ECHO can now HTTP stream live audio files (see #396)
+- ISOBEL can now HTTP stream live audio files (see #396)
 
 ## [1.3.0] - 2022-03-09
 
@@ -476,7 +476,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- ECHO now stays in a voice channel after the queue finishes for 30 seconds by default. This behavior can be changed with `/config set-wait-after-queue-empties`.
+- ISOBEL now stays in a voice channel after the queue finishes for 30 seconds by default. This behavior can be changed with `/config set-wait-after-queue-empties`.
 
 ## [1.0.0] - 2022-02-05
 
@@ -484,7 +484,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrated to [Slash Commands](https://support.discord.com/hc/en-us/articles/1500000368501-Slash-Commands-FAQ)
 - Upgrading **will cause unavoidable data loss**. Because slash commands work differently, **all shortcuts will be lost**. Functionality similar to shortcuts is provided by the `/favorites` command.
-- Because slash commands require different permissions, **you must kick ECHO and re-add ECHO to your server** before you can use the bot.
+- Because slash commands require different permissions, **you must kick ISOBEL and re-add ISOBEL to your server** before you can use the bot.
 
 ## [0.5.4] - 2022-02-01
 

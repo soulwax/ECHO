@@ -1,6 +1,6 @@
 # PM2 Process Management Guide
 
-This guide covers the comprehensive PM2 setup for ECHO Discord bot.
+This guide covers the comprehensive PM2 setup for ISOBEL Discord bot.
 
 ## Quick Start
 

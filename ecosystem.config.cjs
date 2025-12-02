@@ -17,7 +17,7 @@
 module.exports = {
   apps: [
     {
-      name: 'echo',
+      name: 'isobel',
       script: 'dist/scripts/migrate-and-start.js',
       interpreter: 'node',
       interpreter_args: '--enable-source-maps',
@@ -61,7 +61,7 @@ module.exports = {
       },
       env_development: {
         NODE_ENV: 'development',
-        DEBUG: 'echo:*',
+        DEBUG: 'isobel:*',
       },
       env_staging: {
         NODE_ENV: 'staging',
@@ -91,8 +91,8 @@ module.exports = {
       user: 'node',
       host: ['your-server.com'],
       ref: 'origin/main',
-      repo: 'git@github.com:soulwax/ECHO.git',
-      path: '/var/www/echo',
+      repo: 'git@github.com:soulwax/ISOBEL.git',
+      path: '/var/www/isobel',
       'post-deploy': 'npm install && npm run build && pm2 reload ecosystem.config.cjs --env production',
       'pre-setup': '',
     },

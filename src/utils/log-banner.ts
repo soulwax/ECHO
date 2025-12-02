@@ -6,7 +6,7 @@ import { readPackageSync } from 'read-pkg';
 const logBanner = () => {
   console.log(makeLines({
     user: 'soulwax',
-    repository: 'ECHO',
+    repository: 'ISOBEL',
     version: readPackageSync().version,
     paypalUser: 'soulwax',
     githubSponsor: 'soulwax',

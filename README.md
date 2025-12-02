@@ -1,10 +1,10 @@
-# ECHO
+# ISOBEL
 
 <div align="center">
-  <img src=".github/songbird.png" width="600" alt="ECHO - A Discord Music Bot">
+  <img src=".github/songbird.png" width="600" alt="ISOBEL - A Discord Music Bot">
 </div>
 
-Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).
+ISOBEL is a **highly-opinionated midwestern German self-hosted** Discord music bot **that doesn't suck**. It's made for small to medium-sized Discord servers/guilds (think about a group the size of you, your friends, and your friend's friends).
 
 ## Features
 
@@ -24,7 +24,7 @@ Echo is a **highly-opinionated midwestern German self-hosted** Discord music bot
 
 ## Running
 
-ECHO is written in TypeScript. You can either run ECHO with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables.
+ISOBEL is written in TypeScript. You can either run ISOBEL with Docker (recommended) or directly with Node.js. Both methods require API keys passed in as environment variables.
 
 ### Environment Variables
 
@@ -91,15 +91,15 @@ BOT_STATUS=online
 # BOT_ACTIVITY=music
 ```
 
-ECHO will log a URL when run. Open this URL in a browser to invite ECHO to your server. ECHO will DM the server owner after it's added with setup instructions.
+ISOBEL will log a URL when run. Open this URL in a browser to invite ISOBEL to your server. ISOBEL will DM the server owner after it's added with setup instructions.
 
-A 64-bit OS is required to run ECHO.
+A 64-bit OS is required to run ISOBEL.
 
 ### Versioning
 
 The `master` branch acts as the developing / bleeding edge branch and is not guaranteed to be stable.
 
-When running a production instance, I recommend that you use the [latest release](https://github.com/soulwax/ECHO/releases/).
+When running a production instance, I recommend that you use the [latest release](https://github.com/soulwax/ISOBEL/releases/).
 
 ### 🐳 Docker
 
@@ -117,10 +117,10 @@ docker run -it \
   -e DISCORD_TOKEN='your-discord-token' \
   -e STARCHILD_API_KEY='your-starchild-api-key' \
   -e STARCHILD_BASE_URL='https://your-api-url' \
-  ghcr.io/soulwax/ECHO:latest
+  ghcr.io/soulwax/ISOBEL:latest
 ```
 
-This starts ECHO and creates a data directory in your current directory.
+This starts ISOBEL and creates a data directory in your current directory.
 
 You can also store your tokens in an environment file and make it available to your container. By default, the container will look for a `/config` environment file. You can customize this path with the `ENV_FILE` environment variable to use with, for example, [docker secrets](https://docs.docker.com/engine/swarm/secrets/).
 
@@ -128,8 +128,8 @@ You can also store your tokens in an environment file and make it available to y
 
 ```yaml
 services:
-  echo:
-    image: ghcr.io/soulwax/ECHO:latest
+  isobel:
+    image: ghcr.io/soulwax/ISOBEL:latest
     restart: always
     volumes:
       - ./data:/data
@@ -150,7 +150,7 @@ services:
 * ffmpeg (4.1 or later)
 * npm (comes with Node.js)
 
-1. `git clone --recursive https://github.com/soulwax/ECHO.git && cd ECHO`
+1. `git clone --recursive https://github.com/soulwax/ISOBEL.git && cd ISOBEL`
    - The `--recursive` flag is required to pull the web interface submodule located at `./web`
 2. Copy `.env.example` to `.env` and populate with values:
    ```bash
@@ -162,19 +162,19 @@ services:
    - This will automatically initialize the web submodule and install its dependencies via the `postinstall` script
 5. `npm run start`
 
-**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/soulwax/ECHO/issues/345) for details.
+**Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/soulwax/ISOBEL/issues/345) for details.
 
 ## ⚙️ Additional configuration (advanced)
 
 ### Cache
 
-ECHO uses advanced local MP3 caching for optimal performance and sound quality. By default, ECHO limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
+ISOBEL uses advanced local MP3 caching for optimal performance and sound quality. By default, ISOBEL limits the total cache size to around 2 GB. If you want to change this, set the environment variable `CACHE_LIMIT`. For example, `CACHE_LIMIT=512MB` or `CACHE_LIMIT=10GB`.
 
 The cache stores high-quality MP3 files (320kbps) locally for instant playback, reducing API calls and ensuring consistent audio quality.
 
 ### Custom Bot Status
 
-In the default state, ECHO has the status "Online" and the text "Listening to Music". You can change the status through environment variables:
+In the default state, ISOBEL has the status "Online" and the text "Listening to Music". You can change the status through environment variables:
 
 - `BOT_STATUS`:
   - `online` (Online)
@@ -193,14 +193,14 @@ In the default state, ECHO has the status "Online" and the text "Listening to Mu
 
 #### Examples
 
-**ECHO is watching a movie and is DND**:
+**ISOBEL is watching a movie and is DND**:
 ```env
 BOT_STATUS=dnd
 BOT_ACTIVITY_TYPE=WATCHING
 BOT_ACTIVITY=a movie
 ```
 
-**ECHO is streaming Monstercat**:
+**ISOBEL is streaming Monstercat**:
 ```env
 BOT_STATUS=online
 BOT_ACTIVITY_TYPE=STREAMING
@@ -208,14 +208,14 @@ BOT_ACTIVITY_URL=https://www.twitch.tv/monstercat
 BOT_ACTIVITY=Monstercat
 ```
 
-**ECHO is in debugging mode**:
+**ISOBEL is in debugging mode**:
 ```env
 BOT_STATUS=DEBUGGING
 ```
 
 ### SponsorBlock Integration
 
-ECHO supports SponsorBlock integration to automatically skip non-music segments of tracks. To enable:
+ISOBEL supports SponsorBlock integration to automatically skip non-music segments of tracks. To enable:
 
 ```env
 ENABLE_SPONSORBLOCK=true
@@ -224,7 +224,7 @@ SPONSORBLOCK_TIMEOUT=5    # Delay (in minutes) before retrying when SponsorBlock
 
 ### Automatic Volume Management
 
-ECHO can automatically adjust volume when people speak in the voice channel:
+ISOBEL can automatically adjust volume when people speak in the voice channel:
 
 - `/config set-reduce-vol-when-voice true` - Enable automatic volume reduction when people speak
 - `/config set-reduce-vol-when-voice false` - Disable automatic volume reduction
@@ -234,7 +234,7 @@ This feature ensures clear communication during conversations while maintaining 
 
 ## 🎵 About Starchild Music API
 
-ECHO uses the Starchild Music API for all music streaming and searching. This means:
+ISOBEL uses the Starchild Music API for all music streaming and searching. This means:
 
 - ✅ **No YouTube API keys required**
 - ✅ **No Spotify credentials required**
@@ -246,9 +246,9 @@ You'll need to set up your own Music API instance.
 
 ## 🔧 Development
 
-If you want to contribute or develop ECHO:
+If you want to contribute or develop ISOBEL:
 
-1. Clone the repository with `git clone --recursive https://github.com/soulwax/ECHO.git`
+1. Clone the repository with `git clone --recursive https://github.com/soulwax/ISOBEL.git`
    - The `--recursive` flag is required to pull the web interface submodule located at `./web`
    - If you forgot `--recursive`, you can initialize submodules later with `npm run submodule:init`
 2. Install dependencies: `npm install`

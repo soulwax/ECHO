@@ -11,7 +11,7 @@ import Command from './index.js';
 export default class implements Command {
   public readonly slashCommand = new SlashCommandBuilder()
     .setName('disconnect')
-    .setDescription('pause and disconnect ECHO');
+    .setDescription('pause and disconnect ISOBEL');
 
   public requiresVC = true;
 

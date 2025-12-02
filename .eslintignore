@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Web submodule (has its own linting)
+web/
+
+# Data and logs
+data/
+logs/
+
+# Database migrations
+migrations/
+
+# Git
+.git/
+
+# Config files
+*.config.js
+*.config.cjs
+*.config.mjs
+
+# Other generated/cache files
+*.d.ts
+coverage/
+.cache/
+

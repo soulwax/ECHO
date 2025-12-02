@@ -2,4 +2,4 @@
 
 import debug from 'debug';
 
-export default debug('ECHO');
+export default debug('ISOBEL');

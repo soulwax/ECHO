@@ -1,6 +1,6 @@
 {
   "name": "echo",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "description": "🎧 a self-hosted Discord music bot that doesn't suck ",
   "repository": "git@github.com:soulwax/ECHO.git",
   "author": "Max Isom <hi@maxisom.me>",
@@ -61,7 +61,20 @@
     "pm2:update": "pm2 update",
     "pm2:kill": "pm2 kill",
     "pm2:version": "pm2 --version",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package && npm run submodule:init && npm run install:web",
+    "submodule:init": "git submodule update --init --recursive || true",
+    "submodule:update": "git submodule update --remote --recursive",
+    "submodule:status": "git submodule status",
+    "install:all": "npm install",
+    "install:web": "test -d web && cd web && npm install || echo 'Web submodule not found. Run: git submodule update --init --recursive'",
+    "web:dev": "test -d web && cd web && npm run dev || echo 'Web submodule not found. Run: npm run submodule:init'",
+    "web:build": "test -d web && cd web && npm run build || echo 'Web submodule not found. Run: npm run submodule:init'",
+    "web:lint": "test -d web && cd web && npm run lint || echo 'Web submodule not found. Run: npm run submodule:init'",
+    "web:preview": "test -d web && cd web && npm run preview || echo 'Web submodule not found. Run: npm run submodule:init'",
+    "lint:all": "npm run lint && (test -d web && cd web && npm run lint || echo 'Web lint skipped - submodule may not be initialized')",
+    "lint:fix:all": "npm run lint:fix && (test -d web && cd web && npm run lint -- --fix || echo 'Web lint:fix skipped - submodule may not be initialized')",
+    "typecheck:all": "npm run typecheck && (test -d web && cd web && npx tsc --noEmit || echo 'Web typecheck skipped - submodule may not be initialized')",
+    "build:all": "npm run build && (test -d web && npm run web:build || echo 'Web build skipped - submodule may not be initialized')"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

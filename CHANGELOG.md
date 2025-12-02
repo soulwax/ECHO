@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.15.0] - 2025-12-02
+
+### Added
+
+-**More elegant solution to the web interface**
+- Turning it into a submodule and adding it to the package.json
+- Adding unified scripts for linting, type checking, and building both the bot and web interface
+- Update README.md to inform about the submodule and web interface
+
+
 ## [2.14.0] - 2025-12-02
 
 ### Added

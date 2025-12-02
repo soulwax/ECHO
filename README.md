@@ -150,14 +150,16 @@ services:
 * ffmpeg (4.1 or later)
 * npm (comes with Node.js)
 
-1. `git clone https://github.com/soulwax/ECHO.git && cd ECHO`
+1. `git clone --recursive https://github.com/soulwax/ECHO.git && cd ECHO`
+   - The `--recursive` flag is required to pull the web interface submodule located at `./web`
 2. Copy `.env.example` to `.env` and populate with values:
    ```bash
    cp .env.example .env
    # Edit .env with your credentials
    ```
 3. I recommend checking out a tagged release with `git checkout v[latest release]`
-4. `npm install`
+4. Install dependencies: `npm install`
+   - This will automatically initialize the web submodule and install its dependencies via the `postinstall` script
 5. `npm run start`
 
 **Note**: if you're on Windows, you may need to manually set the ffmpeg path. See [#345](https://github.com/soulwax/ECHO/issues/345) for details.
@@ -246,12 +248,39 @@ You'll need to set up your own Music API instance.
 
 If you want to contribute or develop ECHO:
 
-1. Clone the repository
+1. Clone the repository with `git clone --recursive https://github.com/soulwax/ECHO.git`
+   - The `--recursive` flag is required to pull the web interface submodule located at `./web`
+   - If you forgot `--recursive`, you can initialize submodules later with `npm run submodule:init`
 2. Install dependencies: `npm install`
+   - This automatically initializes the web submodule and installs its dependencies via the `postinstall` script
 3. Set up your `.env` file with required variables
 4. Run in development mode: `npm run dev`
-5. Run linting: `npm run lint`
-6. Run type checking: `npm run typecheck`
+5. Run linting: `npm run lint` (or `npm run lint:all` for both bot and web)
+6. Run type checking: `npm run typecheck` (or `npm run typecheck:all` for both bot and web)
+
+### Unified Scripts
+
+The project includes unified scripts that work across both the bot and web interface:
+
+- `npm run lint:all` - Lint both bot and web projects
+- `npm run lint:fix:all` - Auto-fix linting issues in both projects
+- `npm run typecheck:all` - Type check both projects
+- `npm run build:all` - Build both projects
+
+### Web Interface Scripts
+
+Access web interface commands from the root:
+
+- `npm run web:dev` - Start web development server
+- `npm run web:build` - Build web interface for production
+- `npm run web:lint` - Lint web interface
+- `npm run web:preview` - Preview production build
+
+### Submodule Management
+
+- `npm run submodule:init` - Initialize and update submodules
+- `npm run submodule:update` - Update submodules to latest remote commits
+- `npm run submodule:status` - Check submodule status
 
 ## 📝 License
 

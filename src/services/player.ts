@@ -119,9 +119,11 @@ export default class {
       const oldNetworking = Reflect.get(oldState, 'networking');
       const newNetworking = Reflect.get(newState, 'networking');
 
-      const networkStateChangeHandler = (_: any, newNetworkState: any) => {
-        const newUdp = Reflect.get(newNetworkState, 'udp');
-        clearInterval(newUdp?.keepAliveInterval);
+      const networkStateChangeHandler = (_: unknown, newNetworkState: unknown) => {
+        const newUdp = Reflect.get(newNetworkState as Record<string, unknown>, 'udp') as {keepAliveInterval?: NodeJS.Timeout} | undefined;
+        if (newUdp?.keepAliveInterval) {
+          clearInterval(newUdp.keepAliveInterval);
+        }
       };
 
       oldNetworking?.off('stateChange', networkStateChangeHandler);
@@ -525,7 +527,7 @@ export default class {
 
     // Use Starchild API for streaming
     const streamUrl = this.starchildAPI.getStreamUrl(song.url, {
-      kbps: AUDIO_BITRATE_KBPS,
+      kbps: AUDIO_BITRATE_KBPS as number,
       offset: options.seek,
     });
 
@@ -596,21 +598,25 @@ export default class {
   private startEmbedUpdates(): void {
     this.stopEmbedUpdates(); // Clear any existing interval
 
-    this.embedUpdateInterval = setInterval(async () => {
+    this.embedUpdateInterval = setInterval(() => {
       if (this.status === STATUS.PLAYING && this.nowPlayingMessage && this.getCurrent()) {
-        try {
-          await this.nowPlayingMessage.edit({
-            embeds: [buildPlayingMessageEmbed(this)],
-          });
-        } catch (error) {
-          // Message might have been deleted or bot lost permissions
-          debug(`Failed to update now-playing embed: ${error}`);
-          // Clear the message reference if we can't update it
-          if ((error as {code: number}).code === 10008) { // Unknown Message
-            this.nowPlayingMessage = null;
-            this.stopEmbedUpdates();
+        // Use void to explicitly discard the promise - we handle errors internally
+        void (async () => {
+          try {
+            await this.nowPlayingMessage!.edit({
+              embeds: [buildPlayingMessageEmbed(this)],
+            });
+          } catch (error: unknown) {
+            // Message might have been deleted or bot lost permissions
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            debug(`Failed to update now-playing embed: ${errorMessage}`);
+            // Clear the message reference if we can't update it
+            if (this.isHttpError(error, 10008)) { // Unknown Message
+              this.nowPlayingMessage = null;
+              this.stopEmbedUpdates();
+            }
           }
-        }
+        })();
       }
     }, NOW_PLAYING_UPDATE_INTERVAL_MS);
   }
@@ -639,8 +645,12 @@ export default class {
     }
 
     // Remove any existing listeners before adding new ones to prevent duplicates
-    this.audioPlayer.removeListener(AudioPlayerStatus.Idle, this.onAudioPlayerIdle.bind(this));
-    this.audioPlayer.on(AudioPlayerStatus.Idle, this.onAudioPlayerIdle.bind(this));
+    // Wrap async handler to avoid Promise return type error - event listeners expect void
+    const idleHandler = (_oldState: AudioPlayerState, newState: AudioPlayerState) => {
+      void this.onAudioPlayerIdle(_oldState, newState);
+    };
+    this.audioPlayer.removeListener(AudioPlayerStatus.Idle, idleHandler);
+    this.audioPlayer.on(AudioPlayerStatus.Idle, idleHandler);
   }
 
   private onVoiceConnectionDisconnect(): void {
@@ -695,7 +705,7 @@ export default class {
         .noVideo()
         .audioCodec('libopus')
         .outputFormat('webm')
-        .audioBitrate(AUDIO_BITRATE_KBPS)
+        .audioBitrate(AUDIO_BITRATE_KBPS as number)
         .addOutputOption(['-filter:a', `volume=${options?.volumeAdjustment ?? '1'}`])
         .on('error', error => {
           if (!hasReturnedStreamClosed) {

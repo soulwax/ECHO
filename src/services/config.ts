@@ -65,8 +65,9 @@ export default class Config {
       if (typeof value === 'number') {
         this[key as ConditionalKeys<typeof CONFIG_MAP, number>] = value;
       } else if (typeof value === 'string') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (this as any)[key] = value.trim();
+        // Type-safe assignment for string properties
+        const stringKey = key as ConditionalKeys<typeof CONFIG_MAP, string>;
+        (this as Record<string, string>)[stringKey] = value.trim();
       } else if (typeof value === 'boolean') {
         this[key as ConditionalKeys<typeof CONFIG_MAP, boolean>] = value;
       } else {

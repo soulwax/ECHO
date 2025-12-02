@@ -2,6 +2,7 @@
 
 import { EmbedBuilder } from 'discord.js';
 import Player, { MediaSource, QueuedSong, STATUS } from '../services/player.js';
+import { PROGRESS_BAR_SEGMENTS } from './constants.js';
 import getProgressBar from './get-progress-bar.js';
 import { truncate } from './string.js';
 import { prettyTime } from './time.js';
@@ -45,13 +46,19 @@ const getPlayerUI = (player: Player) => {
 
   const position = player.getPosition();
   const button = player.status === STATUS.PLAYING ? '⏹️' : '▶️';
-  const progressBar = getProgressBar(10, position / song.length);
+  const progressBar = getProgressBar(PROGRESS_BAR_SEGMENTS, position / song.length);
   const elapsedTime = song.isLive ? 'live' : `${prettyTime(position)}/${prettyTime(song.length)}`;
   const loop = player.loopCurrentSong ? '🔂' : player.loopCurrentQueue ? '🔁' : '';
   const vol: string = typeof player.getVolume() === 'number' ? `${player.getVolume()!}%` : '';
   return `${button} ${progressBar} \`[${elapsedTime}]\`🔉 ${vol} ${loop}`;
 };
 
+/**
+ * Builds a Discord embed for the currently playing song
+ * @param player - The player instance containing the current song and status
+ * @returns A Discord embed builder with song information
+ * @throws {Error} If no song is currently playing
+ */
 export const buildPlayingMessageEmbed = (player: Player): EmbedBuilder => {
   const currentlyPlaying = player.getCurrent();
 
@@ -78,6 +85,14 @@ export const buildPlayingMessageEmbed = (player: Player): EmbedBuilder => {
   return message;
 };
 
+/**
+ * Builds a Discord embed showing the queue with pagination
+ * @param player - The player instance containing the queue
+ * @param page - The page number to display (1-indexed)
+ * @param pageSize - The number of songs to display per page
+ * @returns A Discord embed builder with queue information
+ * @throws {Error} If the queue is empty or the page number is invalid
+ */
 export const buildQueueEmbed = (player: Player, page: number, pageSize: number): EmbedBuilder => {
   const currentlyPlaying = player.getCurrent();
 

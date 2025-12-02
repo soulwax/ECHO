@@ -2,6 +2,7 @@
 
 import { injectable } from 'inversify';
 import { prisma } from '../utils/db.js';
+import { MIN_CACHE_KEY_LENGTH } from '../utils/constants.js';
 import debug from '../utils/debug.js';
 
 type Seconds = number;
@@ -11,11 +12,25 @@ type Options = {
   key?: string;
 };
 
+type FunctionArgs = unknown[];
+
 const futureTimeToDate = (time: Seconds) => new Date(new Date().getTime() + (time * 1000));
 
+/**
+ * Key-value cache provider for caching function results
+ */
 @injectable()
 export default class KeyValueCacheProvider {
-  async wrap<T extends [...any[], Options], F>(func: (...options: any) => Promise<F>, ...options: T): Promise<F> {
+  /**
+   * Wraps a function with caching logic
+   * @param func - The function to cache
+   * @param options - Cache options including expiration and optional key
+   * @returns The cached or newly computed result
+   */
+  async wrap<F extends (...args: FunctionArgs) => Promise<unknown>, R = Awaited<ReturnType<F>>>(
+    func: F,
+    ...options: [...Parameters<F>, Options]
+  ): Promise<R> {
     if (options.length === 0) {
       throw new Error('Missing cache options');
     }
@@ -27,8 +42,8 @@ export default class KeyValueCacheProvider {
       expiresIn,
     } = options[options.length - 1] as Options;
 
-    if (key.length < 4) {
-      throw new Error(`Cache key ${key} is too short.`);
+    if (key.length < MIN_CACHE_KEY_LENGTH) {
+      throw new Error(`Cache key ${key} is too short. Minimum length is ${MIN_CACHE_KEY_LENGTH}.`);
     }
 
     const cachedResult = await prisma.keyValueCache.findUnique({
@@ -40,7 +55,7 @@ export default class KeyValueCacheProvider {
     if (cachedResult) {
       if (new Date() < cachedResult.expiresAt) {
         debug(`Cache hit: ${key}`);
-        return JSON.parse(cachedResult.value) as F;
+        return JSON.parse(cachedResult.value) as R;
       }
 
       await prisma.keyValueCache.delete({
@@ -52,7 +67,7 @@ export default class KeyValueCacheProvider {
 
     debug(`Cache miss: ${key}`);
 
-    const result = await func(...options as any[]);
+    const result = await func(...(functionArgs as Parameters<F>)) as R;
 
     // Save result
     const value = JSON.stringify(result);
@@ -72,6 +87,6 @@ export default class KeyValueCacheProvider {
       },
     });
 
-    return result;
+    return result as R;
   }
 }

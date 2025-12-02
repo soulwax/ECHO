@@ -3,7 +3,7 @@
 import { REST } from '@discordjs/rest';
 import { generateDependencyReport } from '@discordjs/voice';
 import { Routes } from 'discord-api-types/v10';
-import { Client, Collection, MessageFlags, User } from 'discord.js';
+import { AutocompleteInteraction, ButtonInteraction, ChatInputCommandInteraction, Client, Collection, Interaction, MessageFlags, User } from 'discord.js';
 import { inject, injectable } from 'inversify';
 import ora from 'ora';
 import Command from './commands/index.js';
@@ -16,6 +16,17 @@ import { isUserInVoice } from './utils/channels.js';
 import debug from './utils/debug.js';
 import errorMsg from './utils/error-msg.js';
 import registerCommandsOnGuild from './utils/register-commands-on-guild.js';
+
+/**
+ * Discord API version constant
+ */
+const DISCORD_API_VERSION = '10' as const;
+
+/**
+ * Bot permissions constant (required permissions for the bot)
+ * Calculated as: Manage Channels (16) + Connect (1048576) + Speak (2097152) + Use Voice Activity (33554432)
+ */
+const BOT_REQUIRED_PERMISSIONS = 36700160;
 
 @injectable()
 export default class {
@@ -56,64 +67,7 @@ export default class {
     }
 
     // Register event handlers
-    // eslint-disable-next-line complexity
-    this.client.on('interactionCreate', async interaction => {
-      try {
-        if (interaction.isCommand()) {
-          const command = this.commandsByName.get(interaction.commandName);
-
-          if (!command || !interaction.isChatInputCommand()) {
-            return;
-          }
-
-          if (!interaction.guild) {
-            await interaction.reply(errorMsg('you can\'t use this bot in a DM'));
-            return;
-          }
-
-          const requiresVC = command.requiresVC instanceof Function ? command.requiresVC(interaction) : command.requiresVC;
-          if (requiresVC && interaction.member && !isUserInVoice(interaction.guild, interaction.member.user as User)) {
-            await interaction.reply({content: errorMsg('You must be in a voice channel'), flags: MessageFlags.Ephemeral});
-            return;
-          }
-
-          if (command.execute) {
-            await command.execute(interaction);
-          }
-        } else if (interaction.isButton()) {
-          const command = this.commandsByButtonId.get(interaction.customId);
-
-          if (!command) {
-            return;
-          }
-
-          if (command.handleButtonInteraction) {
-            await command.handleButtonInteraction(interaction);
-          }
-        } else if (interaction.isAutocomplete()) {
-          const command = this.commandsByName.get(interaction.commandName);
-
-          if (!command) {
-            return;
-          }
-
-          if (command.handleAutocompleteInteraction) {
-            await command.handleAutocompleteInteraction(interaction);
-          }
-        }
-      } catch (error: unknown) {
-        debug(error);
-
-        // This can fail if the message was deleted, and we don't want to crash the whole bot
-        try {
-          if ((interaction.isCommand() || interaction.isButton()) && (interaction.replied || interaction.deferred)) {
-            await interaction.editReply(errorMsg(error as Error));
-          } else if (interaction.isCommand() || interaction.isButton()) {
-            await interaction.reply({content: errorMsg(error as Error), flags: MessageFlags.Ephemeral});
-          }
-        } catch {}
-      }
-    });
+    this.client.on('interactionCreate', interaction => this.handleInteraction(interaction));
 
     const spinner = ora('📡 connecting to Discord...').start();
 
@@ -121,7 +75,7 @@ export default class {
       debug(generateDependencyReport());
 
       // Update commands
-      const rest = new REST({version: '10'}).setToken(this.config.DISCORD_TOKEN);
+      const rest = new REST({version: DISCORD_API_VERSION}).setToken(this.config.DISCORD_TOKEN);
       if (this.shouldRegisterCommandsOnBot) {
         spinner.text = '📡 updating commands on bot...';
         await rest.put(
@@ -157,7 +111,7 @@ export default class {
         status: this.config.BOT_STATUS,
       });
 
-      spinner.succeed(`Ready! Invite the bot with https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id ?? ''}&scope=bot%20applications.commands&permissions=36700160`);
+      spinner.succeed(`Ready! Invite the bot with https://discordapp.com/oauth2/authorize?client_id=${this.client.user?.id ?? ''}&scope=bot%20applications.commands&permissions=${BOT_REQUIRED_PERMISSIONS}`);
     });
 
     this.client.on('error', console.error);
@@ -166,5 +120,120 @@ export default class {
     this.client.on('guildCreate', handleGuildCreate);
     this.client.on('voiceStateUpdate', handleVoiceStateUpdate);
     await this.client.login();
+  }
+
+  /**
+   * Handles incoming Discord interactions (commands, buttons, autocomplete)
+   * @param interaction - The Discord interaction to handle
+   */
+  private async handleInteraction(interaction: Interaction): Promise<void> {
+    try {
+      if (interaction.isCommand()) {
+        await this.handleCommandInteraction(interaction);
+      } else if (interaction.isButton()) {
+        await this.handleButtonInteraction(interaction);
+      } else if (interaction.isAutocomplete()) {
+        await this.handleAutocompleteInteraction(interaction);
+      }
+    } catch (error: unknown) {
+      await this.handleInteractionError(interaction, error);
+    }
+  }
+
+  /**
+   * Handles command interactions
+   * @param interaction - The command interaction to handle
+   */
+  private async handleCommandInteraction(interaction: ChatInputCommandInteraction): Promise<void> {
+    const command = this.commandsByName.get(interaction.commandName);
+
+    if (!command || !interaction.isChatInputCommand()) {
+      return;
+    }
+
+    if (!interaction.guild) {
+      await interaction.reply(errorMsg('you can\'t use this bot in a DM'));
+      return;
+    }
+
+    const requiresVC = command.requiresVC instanceof Function ? command.requiresVC(interaction) : command.requiresVC;
+    if (requiresVC && interaction.member && !isUserInVoice(interaction.guild, interaction.member.user as User)) {
+      await interaction.reply({content: errorMsg('You must be in a voice channel'), flags: MessageFlags.Ephemeral});
+      return;
+    }
+
+    if (command.execute) {
+      await command.execute(interaction);
+    }
+  }
+
+  /**
+   * Handles button interactions
+   * @param interaction - The button interaction to handle
+   */
+  private async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
+    const command = this.commandsByButtonId.get(interaction.customId);
+
+    if (!command) {
+      return;
+    }
+
+    if (command.handleButtonInteraction) {
+      await command.handleButtonInteraction(interaction);
+    }
+  }
+
+  /**
+   * Handles autocomplete interactions
+   * @param interaction - The autocomplete interaction to handle
+   */
+  private async handleAutocompleteInteraction(interaction: AutocompleteInteraction): Promise<void> {
+    const command = this.commandsByName.get(interaction.commandName);
+
+    if (!command) {
+      return;
+    }
+
+    if (command.handleAutocompleteInteraction) {
+      await command.handleAutocompleteInteraction(interaction);
+    }
+  }
+
+  /**
+   * Handles errors that occur during interaction processing
+   * @param interaction - The interaction that caused the error
+   * @param error - The error that occurred
+   */
+  private async handleInteractionError(interaction: Interaction, error: unknown): Promise<void> {
+    debug(error);
+
+    // This can fail if the message was deleted, and we don't want to crash the whole bot
+    try {
+      const isCommandOrButton = interaction.isCommand() || interaction.isButton();
+      const canEdit = isCommandOrButton && (interaction.replied || interaction.deferred);
+
+      if (canEdit) {
+        await interaction.editReply(errorMsg(this.normalizeError(error)));
+      } else if (isCommandOrButton) {
+        await interaction.reply({content: errorMsg(this.normalizeError(error)), flags: MessageFlags.Ephemeral});
+      }
+    } catch {
+      // Silently fail if we can't send error message (e.g., message was deleted)
+    }
+  }
+
+  /**
+   * Normalizes an unknown error to an Error object
+   * @param error - The error to normalize
+   * @returns An Error object
+   */
+  private normalizeError(error: unknown): Error {
+    if (error instanceof Error) {
+      return error;
+    }
+    if (typeof error === 'string') {
+      return new Error(error);
+    }
+    return new Error('Unknown error occurred');
   }
 }

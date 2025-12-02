@@ -21,6 +21,7 @@ import { inject } from 'inversify';
 import { Readable } from 'stream';
 import { TYPES } from '../types.js';
 import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
+import { AUDIO_PLAYER_MAX_MISSED_FRAMES, HTTP_STATUS_GONE, VOLUME_DEFAULT, VOLUME_MAX } from '../utils/constants.js';
 import debug from '../utils/debug.js';
 import { getGuildSettings } from '../utils/get-guild-settings.js';
 import FileCacheProvider from './file-cache.js';
@@ -63,7 +64,7 @@ export interface PlayerEvents {
 }
 
 
-export const DEFAULT_VOLUME = 100;
+export const DEFAULT_VOLUME = VOLUME_DEFAULT;
 
 export default class {
   public voiceConnection: VoiceConnection | null = null;
@@ -176,7 +177,7 @@ export default class {
     this.audioPlayer = createAudioPlayer({
       behaviors: {
         // Needs to be somewhat high for livestreams
-        maxMissedFrames: 50,
+        maxMissedFrames: AUDIO_PLAYER_MAX_MISSED_FRAMES,
       },
     });
     this.voiceConnection.subscribe(this.audioPlayer);
@@ -239,7 +240,7 @@ export default class {
       this.audioPlayer = createAudioPlayer({
         behaviors: {
           // Needs to be somewhat high for livestreams
-          maxMissedFrames: 50,
+          maxMissedFrames: AUDIO_PLAYER_MAX_MISSED_FRAMES,
         },
       });
       this.voiceConnection.subscribe(this.audioPlayer);
@@ -260,7 +261,7 @@ export default class {
     } catch (error: unknown) {
       await this.forward(1);
 
-      if ((error as {statusCode: number}).statusCode === 410 && currentSong) {
+      if (this.isHttpError(error, HTTP_STATUS_GONE) && currentSong) {
         const channelId = currentSong.addedInChannelId;
 
         if (channelId) {
@@ -672,6 +673,17 @@ export default class {
 
   private setAudioPlayerVolume(level?: number) {
     // Audio resource expects a float between 0 and 1 to represent level percentage
-    this.audioResource?.volume?.setVolume((level ?? this.getVolume()) / 100);
+    const volumeLevel = level ?? this.getVolume();
+    this.audioResource?.volume?.setVolume(volumeLevel / VOLUME_MAX);
+  }
+
+  /**
+   * Type guard to check if an error is an HTTP error with a specific status code
+   * @param error - The error to check
+   * @param statusCode - The HTTP status code to check for
+   * @returns True if the error has the specified status code
+   */
+  private isHttpError(error: unknown, statusCode: number): error is {statusCode: number} {
+    return typeof error === 'object' && error !== null && 'statusCode' in error && (error as {statusCode: number}).statusCode === statusCode;
   }
 }

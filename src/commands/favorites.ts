@@ -6,6 +6,7 @@ import { inject, injectable } from 'inversify';
 import { Pagination } from 'pagination.djs';
 import AddQueryToQueue from '../services/add-query-to-queue.js';
 import { TYPES } from '../types.js';
+import { DISCORD_AUTOCOMPLETE_MAX_CHOICES, DISCORD_PAGINATION_LIMIT } from '../utils/constants.js';
 import { prisma } from '../utils/db.js';
 import Command from './index.js';
 
@@ -101,8 +102,8 @@ export default class implements Command {
       results = interaction.member?.user.id === interaction.guild?.ownerId ? results : results.filter((r: { authorId: string }) => r.authorId === interaction.member!.user.id);
     }
 
-    // Limit results to 25 maximum per Discord limits
-    const trimmed = results.length > 25 ? results.slice(0, 25) : results;
+    // Limit results to maximum per Discord limits
+    const trimmed = results.length > DISCORD_AUTOCOMPLETE_MAX_CHOICES ? results.slice(0, DISCORD_AUTOCOMPLETE_MAX_CHOICES) : results;
     await interaction.respond(trimmed.map((r: { name: string }) => ({
       name: r.name,
       value: r.name,
@@ -157,8 +158,8 @@ export default class implements Command {
 
     // Type assertion needed due to discord.js type resolution mismatch between pagination.djs and our imports
     await new Pagination(
-      interaction as any,
-      {ephemeral: true, limit: 25})
+      interaction as unknown as ChatInputCommandInteraction,
+      {ephemeral: true, limit: DISCORD_PAGINATION_LIMIT})
       .setFields(fields)
       .paginateFields(true)
       .render();

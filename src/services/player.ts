@@ -541,11 +541,42 @@ export default class {
     const writeStream = this.fileCache.createWriteStream(hash);
     const downloadStream = got.stream(streamUrl);
 
+    // Wait for pipeline to complete
     await pipeline(downloadStream, writeStream);
+    
+    // Wait for the file cache write stream's async close handler to complete
+    // The close handler moves the file and creates the DB entry asynchronously
+    await new Promise<void>((resolve, reject) => {
+      const checkCache = async () => {
+        let finalPath = await this.fileCache.getPathFor(hash);
+        let retries = 5;
+        while (!finalPath && retries > 0) {
+          await new Promise(r => setTimeout(r, 200));
+          finalPath = await this.fileCache.getPathFor(hash);
+          retries--;
+        }
+        if (finalPath) {
+          resolve();
+        } else {
+          reject(new Error('Failed to cache MP3 file - file may not have been written correctly'));
+        }
+      };
+
+      if (writeStream.closed) {
+        // Stream already closed, wait for async handler
+        void checkCache();
+      } else {
+        writeStream.once('close', () => {
+          // Wait for async close handler to complete
+          void checkCache();
+        });
+        writeStream.once('error', reject);
+      }
+    });
     
     const finalPath = await this.fileCache.getPathFor(hash);
     if (!finalPath) {
-      throw new Error('Failed to cache MP3 file');
+      throw new Error('Failed to cache MP3 file - file may not have been written correctly');
     }
 
     debug(`Cached MP3 for ${song.title}`);

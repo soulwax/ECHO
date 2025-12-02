@@ -26,55 +26,62 @@ function App() {
 
       <main>
         <section className="hero">
-          <div className="hero-content">
-            <h1 className="hero-title">
-              A Discord Music Bot
-              <span className="highlight"> That Doesn't Suck</span>
-            </h1>
-            <p className="hero-subtitle">
-              High-quality audio streaming, smart caching, and a seamless experience 
-              for your Discord server. Made for small to medium-sized communities.
-            </p>
-            <div className="hero-buttons">
-              <a 
-                href="https://discord.com/oauth2/authorize" 
-                className="btn btn-primary"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Add to Discord
-              </a>
-              <a 
-                href="https://github.com/soulwax/ECHO" 
-                className="btn btn-secondary"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View on GitHub
-              </a>
+          <div className="hero-top">
+            <div className="hero-image">
+              <img src="/songbird.png" alt="ECHO Songbird" className="songbird-img" />
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="discord-mockup">
-              <div className="mockup-header">
-                <div className="mockup-dot"></div>
-                <div className="mockup-dot"></div>
-                <div className="mockup-dot"></div>
+          <div className="hero-bottom">
+            <div className="hero-content">
+              <h1 className="hero-title">
+                A Discord Music Bot
+                <span className="highlight"> That Doesn't Suck</span>
+              </h1>
+              <p className="hero-subtitle">
+                High-quality audio streaming, smart caching, and a seamless experience 
+                for your Discord server. Made for small to medium-sized communities.
+              </p>
+              <div className="hero-buttons">
+                <a 
+                  href="https://discord.com/oauth2/authorize" 
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Add to Discord
+                </a>
+                <a 
+                  href="https://github.com/soulwax/ECHO" 
+                  className="btn btn-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View on GitHub
+                </a>
               </div>
-              <div className="mockup-content">
-                <div className="mockup-message">
-                  <div className="mockup-avatar"></div>
-                  <div className="mockup-text">
-                    <span className="mockup-username">ECHO</span>
-                    <span className="mockup-time">Today at 2:30 PM</span>
-                  </div>
+            </div>
+            <div className="hero-visual">
+              <div className="discord-mockup">
+                <div className="mockup-header">
+                  <div className="mockup-dot"></div>
+                  <div className="mockup-dot"></div>
+                  <div className="mockup-dot"></div>
                 </div>
-                <div className="mockup-embed">
-                  <div className="embed-content">
-                    <div className="embed-title">🎵 Now Playing</div>
-                    <div className="embed-description">High-quality audio streaming</div>
-                    <div className="embed-progress">
-                      <div className="progress-bar"></div>
+                <div className="mockup-content">
+                  <div className="mockup-message">
+                    <div className="mockup-avatar"></div>
+                    <div className="mockup-text">
+                      <span className="mockup-username">ECHO</span>
+                      <span className="mockup-time">Today at 2:30 PM</span>
+                    </div>
+                  </div>
+                  <div className="mockup-embed">
+                    <div className="embed-content">
+                      <div className="embed-title">🎵 Now Playing</div>
+                      <div className="embed-description">High-quality audio streaming</div>
+                      <div className="embed-progress">
+                        <div className="progress-bar"></div>
+                      </div>
                     </div>
                   </div>
                 </div>

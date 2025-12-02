@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.13.0] - 2025-12-02
+
+### Changed
+
+- Improved guild join message to better reflect bot capabilities and added homepage URL (https://echo.soulwax.dev)
+
 ## [2.12.4] - 2025-12-02
 
 ### Fixed

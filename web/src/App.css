@@ -103,11 +103,38 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.songbird-img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.hero-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
-  min-height: 80vh;
+  width: 100%;
 }
 
 .hero-content {
@@ -442,9 +469,17 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
   .hero {
-    grid-template-columns: 1fr;
     padding: 2rem 1rem;
     text-align: center;
+  }
+
+  .hero-bottom {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .songbird-img {
+    max-width: 100%;
   }
 
   .hero-title {

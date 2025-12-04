@@ -15,5 +15,6 @@ export const TYPES = {
     AddQueryToQueue: Symbol('AddQueryToQueue'),
     GetSongs: Symbol('GetSongs'),
     StarchildAPI: Symbol('StarchildAPI'),
+    HealthServer: Symbol('HealthServer'),
   },
 };

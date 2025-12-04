@@ -14,6 +14,7 @@ import PlayerManager from './managers/player.js';
 import AddQueryToQueue from './services/add-query-to-queue.js';
 import GetSongs from './services/get-songs.js';
 import StarchildAPI from './services/starchild-api.js';
+import HealthServer from './services/health-server.js';
 
 // Commands
 import Clear from './commands/clear.js';

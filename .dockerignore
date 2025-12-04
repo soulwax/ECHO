@@ -1,0 +1,8 @@
+# File: .dockerignore
+
+node_modules
+data
+dist
+dts
+.env
+Dockerfile

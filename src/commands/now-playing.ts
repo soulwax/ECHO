@@ -1,0 +1,40 @@
+// File: src/commands/now-playing.ts
+
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { ChatInputCommandInteraction } from 'discord.js';
+import { inject, injectable } from 'inversify';
+import PlayerManager from '../managers/player.js';
+import { TYPES } from '../types.js';
+import { buildPlayingMessageEmbed } from '../utils/build-embed.js';
+import Command from './index.js';
+
+@injectable()
+export default class implements Command {
+  public readonly slashCommand = new SlashCommandBuilder()
+    .setName('now-playing')
+    .setDescription('shows the currently played song');
+
+  private readonly playerManager: PlayerManager;
+
+  constructor(@inject(TYPES.Managers.Player) playerManager: PlayerManager) {
+    this.playerManager = playerManager;
+  }
+
+  public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    const player = this.playerManager.get(interaction.guild!.id);
+
+    if (!player.getCurrent()) {
+      throw new Error('nothing is currently playing');
+    }
+
+    const message = await interaction.reply({
+      embeds: [buildPlayingMessageEmbed(player)],
+      fetchReply: true,
+    });
+    
+    // Set the message for animated progress bar updates
+    if (message) {
+      player.setNowPlayingMessage(message);
+    }
+  }
+}

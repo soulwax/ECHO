@@ -1,0 +1,157 @@
+muse
+├───.dockerignore
+├───.env.example
+├───.gitignore
+├───.release-it.json
+├───CHANGELOG.md
+├───Dockerfile
+├───ecosystem.config.cjs
+├───eslint.config.js
+├───LICENSE
+├───package-lock.json
+├───package.json
+├───PM2.md
+├───README.md
+├───RELEASING.md
+├───schema.prisma
+├───tree.txt
+├───tsconfig.json
+├───.github/
+│   ├───dependabot.yml
+│   ├───FUNDING.yml
+│   ├───pull_request_template.md
+│   ├───songbird.png
+│   ├───ISSUE_TEMPLATE/
+│   │   └───support-request.md
+│   └───workflows/
+│       ├───lint.yml
+│       ├───pr-release.yml
+│       ├───pr-snapshot.yml
+│       ├───publish.yml
+│       ├───release-comment.yml
+│       └───type-check.yml
+├───data/
+│   ├───db.sqlite
+│   └───cache/
+│       ├───2ab6b551ed1903c6399b69d9d1f61ebe35f04943a04b9fea2bdbc1b726097eef4021194587f83e3d8f2f303ec8ea5b8cf72fbf300824f3c868c94dd09027fcc9
+│       ├───33aea3d1e05f5e6f74dcc7119c05c9e68f2e157b45800e491f04c48c36378c78dc9c372255105e4ab115201f5b48afc4f17d4f742bfd84a0c4fddda8fef3b624
+│       ├───4ab1af3e7e9d21b05b580d1cc7ddd97fbd261719e43dd23726c6b29e465754ae4f0dddbf4c4481915bc6b413f54cc05ad1db5202c0766ef156d14d82fb3c5e90
+│       ├───4af01376962c24db42a0e88b5a838db3e231839763244378409d8f3021b0e83e241098013831b1de809a2beb1fe7c7da4de0d6d4851494210340f7430d03c501
+│       ├───55c157d1f3bc25e0feec0d800f890e60df302b90227eb89e6e515f82e6430f1b40d0ad66a04ba16b46a89c0728a23c5995e8b40df5f04d917afee35ec896a14a
+│       ├───664aca5634c1dea723f51b97f728ea96c45489b59e28107331aa4dfd9d6c8bb70af3bc3ed8c4f18cf2e3a1a1d6019b09ce0a081c0d43ad4b67fbfee11e575042
+│       ├───7479654d3809b1e6f2a087a9fe5a6a31509f2bdd956d42a10695653350e2addb7c833fcf806ffd3af7178817508c755d69b4238d85e2dce25a5fbb63d29e2ad1
+│       ├───8c5eba18cb655f12c42f05be017362909170fde72d554c047beabe2b01f26458f5a85808f96a7369b102efd63d620b655e8f1817250593ed051dd046cc5435b8
+│       ├───9227bde5088eb24034b126c2f08bbc9707f10e79d4d5522cba31be1bcdc2b359be8b411bbcffc21096c6bde22d5692effac622cd28023b074028a34a1dc44342
+│       ├───a23a7c59f85e0353b4a311ec7f21df582ae56e860abc27a6e9f997b8b8a1675e647bbb8434b526c6453010ddaad3f7dc23a384d05284e339d59df9cd6b91aa0f
+│       ├───d58c0364cd2ccb47c202712aa7d4ee0fff5d39a43da4810126461b7c7ced6d5ee46c34e48000db4e20c14fd83deb9386a6e7703794b247c84209f2b473db3ce1
+│       ├───f86c4f30de45dadef9a936cf685d30d739cd99dcb34767e3d2380ca1ed09123d124937929097f4a08f4e1ea4946584aeefaa7984cdfee03cffaff39d5002c410
+│       └───tmp/
+├───logs/
+│   ├───pm2-combined.log
+│   ├───pm2-error.log
+│   └───pm2-out.log
+├───migrations/
+│   ├───migration_lock.toml
+│   ├───20220101155430_migrate_from_sequelize/
+│   │   └───migration.sql
+│   ├───20220102125208_datatype_and_nullable/
+│   │   └───migration.sql
+│   ├───20220102176527_datetime_casting/
+│   │   └───migration.sql
+│   ├───20220128000207_add_favorite_query_model/
+│   │   └───migration.sql
+│   ├───20220128000623_remove_shortcut_model/
+│   │   └───migration.sql
+│   ├───20220128003935_make_favorite_query_name_unqiue/
+│   │   └───migration.sql
+│   ├───20220128012347_fix_unique_constraint/
+│   │   └───migration.sql
+│   ├───20220128020826_remove_prefix_from_setting/
+│   │   └───migration.sql
+│   ├───20220129010359_remove_channel/
+│   │   └───migration.sql
+│   ├───20220129012310_add_role_id_column/
+│   │   └───migration.sql
+│   ├───20220212014052_add_seconds_to_wait_after_queue_empties_and_leave_if_no_listeners/
+│   │   └───migration.sql
+│   ├───20220312230720_add_invited_by_user_id/
+│   │   └───migration.sql
+│   ├───20220514002538_remove_invited_by_user_id/
+│   │   └───migration.sql
+│   ├───20220514164137_remove_role_id/
+│   │   └───migration.sql
+│   ├───20240301214725_add_auto_announce_next_song/
+│   │   └───migration.sql
+│   ├───20240312135407_add_default_volume/
+│   │   └───migration.sql
+│   ├───20240419211843_add_queue_add_response_for_requester_only/
+│   │   └───migration.sql
+│   ├───20240824215313_add_default_queue_page_size/
+│   │   └───migration.sql
+│   └───20241031084730_add_turn_down_volume_when_people_speak/
+│       └───migration.sql
+└───src/
+    ├───bot.ts
+    ├───index.ts
+    ├───inversify.config.ts
+    ├───types.ts
+    ├───commands/
+    │   ├───clear.ts
+    │   ├───config.ts
+    │   ├───disconnect.ts
+    │   ├───favorites.ts
+    │   ├───fseek.ts
+    │   ├───index.ts
+    │   ├───loop-queue.ts
+    │   ├───loop.ts
+    │   ├───move.ts
+    │   ├───next.ts
+    │   ├───now-playing.ts
+    │   ├───pause.ts
+    │   ├───play.ts
+    │   ├───queue.ts
+    │   ├───remove.ts
+    │   ├───replay.ts
+    │   ├───resume.ts
+    │   ├───seek.ts
+    │   ├───shuffle.ts
+    │   ├───skip.ts
+    │   ├───stop.ts
+    │   ├───unskip.ts
+    │   └───volume.ts
+    ├───events/
+    │   ├───guild-create.ts
+    │   └───voice-state-update.ts
+    ├───managers/
+    │   └───player.ts
+    ├───scripts/
+    │   ├───cache-clear-key-value.ts
+    │   ├───migrate-and-start.ts
+    │   ├───run-with-database-url.ts
+    │   └───start.ts
+    ├───services/
+    │   ├───add-query-to-queue.ts
+    │   ├───config.ts
+    │   ├───file-cache.ts
+    │   ├───get-songs.ts
+    │   ├───key-value-cache.ts
+    │   ├───player.ts
+    │   └───starchild-api.ts
+    └───utils/
+        ├───arrays.ts
+        ├───build-embed.ts
+        ├───channels.ts
+        ├───constants.ts
+        ├───create-database-url.ts
+        ├───db.ts
+        ├───debug.ts
+        ├───duration-string-to-seconds.ts
+        ├───error-msg.ts
+        ├───get-guild-settings.ts
+        ├───get-progress-bar.ts
+        ├───get-starchild-suggestions-for.ts
+        ├───log-banner.ts
+        ├───register-commands-on-guild.ts
+        ├───string.ts
+        ├───time.ts
+        └───url.ts

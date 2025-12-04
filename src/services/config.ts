@@ -1,0 +1,78 @@
+// File: src/services/config.ts
+
+import { ActivityType, PresenceStatusData } from 'discord.js';
+import dotenv from 'dotenv';
+import { injectable } from 'inversify';
+import path from 'path';
+import 'reflect-metadata';
+import { ConditionalKeys } from 'type-fest';
+import xbytes from 'xbytes';
+dotenv.config({path: process.env.ENV_FILE ?? path.resolve(process.cwd(), '.env')});
+
+export const DATA_DIR = path.resolve(process.env.DATA_DIR ?? './data');
+
+const CONFIG_MAP = {
+  DISCORD_TOKEN: process.env.DISCORD_TOKEN,
+  STARCHILD_API_KEY: process.env.STARCHILD_API_KEY,
+  STARCHILD_BASE_URL: process.env.STARCHILD_BASE_URL,
+  REGISTER_COMMANDS_ON_BOT: process.env.REGISTER_COMMANDS_ON_BOT === 'true',
+  DATA_DIR,
+  CACHE_DIR: path.join(DATA_DIR, 'cache'),
+  CACHE_LIMIT_IN_BYTES: xbytes.parseSize(process.env.CACHE_LIMIT ?? '2GB'),
+  BOT_STATUS: process.env.BOT_STATUS ?? 'online',
+  BOT_ACTIVITY_TYPE: process.env.BOT_ACTIVITY_TYPE ?? 'LISTENING',
+  BOT_ACTIVITY_URL: process.env.BOT_ACTIVITY_URL ?? '',
+  BOT_ACTIVITY: process.env.BOT_ACTIVITY ?? 'music',
+  ENABLE_SPONSORBLOCK: process.env.ENABLE_SPONSORBLOCK === 'true',
+  SPONSORBLOCK_TIMEOUT: process.env.ENABLE_SPONSORBLOCK ?? 5,
+} as const;
+
+const BOT_ACTIVITY_TYPE_MAP = {
+  PLAYING: ActivityType.Playing,
+  LISTENING: ActivityType.Listening,
+  WATCHING: ActivityType.Watching,
+  STREAMING: ActivityType.Streaming,
+} as const;
+
+@injectable()
+export default class Config {
+  readonly DISCORD_TOKEN!: string;
+  readonly STARCHILD_API_KEY!: string;
+  readonly STARCHILD_BASE_URL!: string;
+  readonly REGISTER_COMMANDS_ON_BOT!: boolean;
+  readonly DATA_DIR!: string;
+  readonly CACHE_DIR!: string;
+  readonly CACHE_LIMIT_IN_BYTES!: number;
+  readonly BOT_STATUS!: PresenceStatusData;
+  readonly BOT_ACTIVITY_TYPE!: Exclude<ActivityType, ActivityType.Custom>;
+  readonly BOT_ACTIVITY_URL!: string;
+  readonly BOT_ACTIVITY!: string;
+  readonly ENABLE_SPONSORBLOCK!: boolean;
+  readonly SPONSORBLOCK_TIMEOUT!: number;
+
+  constructor() {
+    for (const [key, value] of Object.entries(CONFIG_MAP)) {
+      if (typeof value === 'undefined') {
+        console.error(`Missing environment variable for ${key}`);
+        process.exit(1);
+      }
+
+      if (key === 'BOT_ACTIVITY_TYPE') {
+        this[key] = BOT_ACTIVITY_TYPE_MAP[(value as string).toUpperCase() as keyof typeof BOT_ACTIVITY_TYPE_MAP];
+        continue;
+      }
+
+      if (typeof value === 'number') {
+        this[key as ConditionalKeys<typeof CONFIG_MAP, number>] = value;
+      } else if (typeof value === 'string') {
+        // Type-safe assignment for string properties
+        const stringKey = key as ConditionalKeys<typeof CONFIG_MAP, string>;
+        (this as unknown as Record<string, string>)[stringKey] = value.trim();
+      } else if (typeof value === 'boolean') {
+        this[key as ConditionalKeys<typeof CONFIG_MAP, boolean>] = value;
+      } else {
+        throw new Error(`Unsupported type for ${key}`);
+      }
+    }
+  }
+}

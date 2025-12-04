@@ -33,13 +33,19 @@ const BOT_REQUIRED_PERMISSIONS = 36700160;
 export default class {
   private readonly client: Client;
   private readonly config: Config;
+  private readonly healthServer: HealthServer;
   private readonly shouldRegisterCommandsOnBot: boolean;
   private readonly commandsByName!: Collection<string, Command>;
   private readonly commandsByButtonId!: Collection<string, Command>;
 
-  constructor(@inject(TYPES.Client) client: Client, @inject(TYPES.Config) config: Config) {
+  constructor(
+    @inject(TYPES.Client) client: Client,
+    @inject(TYPES.Config) config: Config,
+    @inject(TYPES.Services.HealthServer) healthServer: HealthServer
+  ) {
     this.client = client;
     this.config = config;
+    this.healthServer = healthServer;
     this.shouldRegisterCommandsOnBot = config.REGISTER_COMMANDS_ON_BOT;
     this.commandsByName = new Collection();
     this.commandsByButtonId = new Collection();
@@ -74,6 +80,9 @@ export default class {
 
     this.client.once('ready', async () => {
       debug(generateDependencyReport());
+
+      // Start health server
+      this.healthServer.start();
 
       // Update commands
       const rest = new REST({version: DISCORD_API_VERSION}).setToken(this.config.DISCORD_TOKEN);

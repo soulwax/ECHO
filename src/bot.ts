@@ -11,6 +11,7 @@ import handleGuildCreate from './events/guild-create.js';
 import handleVoiceStateUpdate from './events/voice-state-update.js';
 import container from './inversify.config.js';
 import Config from './services/config.js';
+import HealthServer from './services/health-server.js';
 import { TYPES } from './types.js';
 import { isUserInVoice } from './utils/channels.js';
 import debug from './utils/debug.js';

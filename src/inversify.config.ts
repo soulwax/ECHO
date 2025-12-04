@@ -65,6 +65,7 @@ container.bind(TYPES.Config).toConstantValue(new ConfigProvider());
 container.bind<GetSongs>(TYPES.Services.GetSongs).to(GetSongs).inSingletonScope();
 container.bind<AddQueryToQueue>(TYPES.Services.AddQueryToQueue).to(AddQueryToQueue).inSingletonScope();
 container.bind<StarchildAPI>(TYPES.Services.StarchildAPI).to(StarchildAPI).inSingletonScope();
+container.bind<HealthServer>(TYPES.Services.HealthServer).to(HealthServer).inSingletonScope();
 
 // Commands
 [

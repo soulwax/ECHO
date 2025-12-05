@@ -148,7 +148,7 @@
     "inversify": "^7.10.4",
     "iso8601-duration": "^2.1.3",
     "libsodium-wrappers": "^0.7.15",
-    "make-dir": "^3.1.0",
+    "make-dir": "^5.1.0",
     "node-emoji": "^2.2.0",
     "nodesplash": "^0.1.1",
     "ora": "^9.0.0",

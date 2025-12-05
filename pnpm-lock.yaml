@@ -211,8 +211,8 @@ importers:
         specifier: ^19.0.6
         version: 19.0.6(@types/node@20.19.25)
       type-fest:
-        specifier: ^2.19.0
-        version: 2.19.0
+        specifier: ^5.3.0
+        version: 5.3.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

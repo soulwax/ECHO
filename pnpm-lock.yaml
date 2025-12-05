@@ -151,8 +151,8 @@ importers:
         specifier: ^9.0.0
         version: 9.39.1
       '@release-it/keep-a-changelog':
-        specifier: ^2.5.0
-        version: 2.5.0(release-it@19.0.6(@types/node@20.19.25))
+        specifier: ^7.0.0
+        version: 7.0.0(release-it@19.0.6(@types/node@20.19.25))
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
@@ -795,11 +795,11 @@ packages:
   '@prisma/get-platform@5.22.0':
     resolution: {integrity: sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q==}
 
-  '@release-it/keep-a-changelog@2.5.0':
-    resolution: {integrity: sha512-hsG7sq0XGL0ylqdaIEbObdArEaxOUl80jb0BwPrzp2KOyk51s07dimInBUBt7r4hDR9XUtsqF4/Rcylwg8gS6Q==}
-    engines: {node: '>=10'}
+  '@release-it/keep-a-changelog@7.0.0':
+    resolution: {integrity: sha512-POWxbrMpO/UjphgXku7LYL+BWyiCc0S4tprEMO1+iHSk/CXE8xs6VecfH9KJyQ9Ke3SY4VdHAbMQv/lmizr/lA==}
+    engines: {node: ^20.9.0 || >=22.0.0}
     peerDependencies:
-      release-it: ^14.13.1
+      release-it: ^18.0.0 || ^19.0.0
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -1465,9 +1465,9 @@ packages:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
 
-  detect-newline@3.1.0:
-    resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
-    engines: {node: '>=8'}
+  detect-newline@4.0.1:
+    resolution: {integrity: sha512-qE3Veg1YXzGHQhlA6jzebZN2qVf6NX+A7m7qlhCGG30dJixrAQhYOsJjsnBjJkCSmuOPpCk30145fr8FV0bzog==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   discord-api-types@0.38.36:
     resolution: {integrity: sha512-qrbUbjjwtyeBg5HsAlm1C859epfOyiLjPqAOzkdWlCNsZCWJrertnETF/NwM8H+waMFU58xGSc5eXUfXah+WTQ==}
@@ -3966,10 +3966,11 @@ snapshots:
     dependencies:
       '@prisma/debug': 5.22.0
 
-  '@release-it/keep-a-changelog@2.5.0(release-it@19.0.6(@types/node@20.19.25))':
+  '@release-it/keep-a-changelog@7.0.0(release-it@19.0.6(@types/node@20.19.25))':
     dependencies:
-      detect-newline: 3.1.0
+      detect-newline: 4.0.1
       release-it: 19.0.6(@types/node@20.19.25)
+      semver: 7.7.3
       string-template: 1.0.0
 
   '@rtsao/scc@1.1.0': {}
@@ -4620,7 +4621,7 @@ snapshots:
 
   detect-libc@2.1.2: {}
 
-  detect-newline@3.1.0: {}
+  detect-newline@4.0.1: {}
 
   discord-api-types@0.38.36: {}
 

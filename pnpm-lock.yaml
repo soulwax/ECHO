@@ -129,8 +129,8 @@ importers:
         specifier: ^0.2.4
         version: 0.2.4(debug@4.4.3)
       spotify-uri:
-        specifier: ^3.0.4
-        version: 3.0.4
+        specifier: ^4.1.0
+        version: 4.1.0
       spotify-web-api-node:
         specifier: ^5.0.2
         version: 5.0.2
@@ -2985,8 +2985,8 @@ packages:
   sponsorblock-api@0.2.4:
     resolution: {integrity: sha512-f0pQ86rOdCoOaJZnflL1VvtjOUEiGtYCkE+BwQIJBTNbQw6ToU/1jksIhBlj3VJ4pt0D74vaPrTuw1vzQnuQzg==}
 
-  spotify-uri@3.0.4:
-    resolution: {integrity: sha512-wtofZNzMjPXR1KD2/gw8F/7ng1QwxpfFbrVgcRaAh0oSJ6ZGC5ln+IBptIRuti1dYGOxJqEIvDc88ctLvTSWiQ==}
+  spotify-uri@4.1.0:
+    resolution: {integrity: sha512-SFpBt8pQqO7DOFBsdUjv3GxGZAKYP7UqcTflfE7h3YL1lynl/6Motq7NERoJJR8eF9kXQRSpcdMmV5ou84rbng==}
     engines: {node: '>= 16'}
 
   spotify-web-api-node@5.0.2:
@@ -6379,7 +6379,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  spotify-uri@3.0.4: {}
+  spotify-uri@4.1.0: {}
 
   spotify-web-api-node@5.0.2:
     dependencies:
